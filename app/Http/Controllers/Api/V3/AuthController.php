@@ -6,9 +6,37 @@ use App\Services\Auth\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate(['email' => 'required|email|max:255']);
+        try {
+            $this->service->sendStorefrontResetLink($validated['email']);
+        } catch (\Throwable $e) {
+            Log::error('Storefront password reset email failed', ['exception' => get_class($e)]);
+        }
+
+        return $this->successResponse(null, ['message' => 'If the account exists, reset instructions will be sent.']);
+    }
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|max:255',
+            'token' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if (!$this->service->resetPassword($validated)) {
+            return $this->errorResponse('Invalid or expired reset link.', 422, 'VALIDATION_FAILED');
+        }
+
+        return $this->successResponse(null, ['message' => 'Password reset.']);
+    }
+
     private AuthService $service;
 
     public function __construct(AuthService $service)

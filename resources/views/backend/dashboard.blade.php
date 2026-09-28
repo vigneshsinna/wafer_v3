@@ -14,12 +14,6 @@
 
     @can('admin_dashboard')
         @php
-            // Category stock vs sales series (from cached graph data)
-            $rs_cat_labels = [];
-            foreach ($root_categories as $rc) { $rs_cat_labels[] = $rc->getTranslation('name'); }
-            $rs_cat_sales = array_values(array_filter(explode(',', $cached_graph_data['num_of_sale_data'] ?? ''), fn($v) => $v !== ''));
-            $rs_cat_qty   = array_values(array_filter(explode(',', $cached_graph_data['qty_data'] ?? ''), fn($v) => $v !== ''));
-
             $rs_admin_month = (float) ($admin_sale_this_month->total_sale ?? 0);
             $rs_seller_month = (float) ($seller_sale_this_month->total_sale ?? 0);
             $rs_month_total = max(1, $rs_admin_month + $rs_seller_month);
@@ -265,6 +259,7 @@
 @endsection
 
 @section('script')
+    @can('admin_dashboard')
     @include('backend.dashboard.dashboard_js')
 
     <script type="text/javascript">
@@ -325,10 +320,10 @@
         AIZ.plugins.chart('#rsChartCategory', {
             type: 'bar',
             data: {
-                labels: [@foreach ($rs_cat_labels as $l)"{{ $l }}",@endforeach],
+                labels: @json($rs_cat_labels),
                 datasets: [
-                    { label: "{{ translate('Units Sold') }}", data: [{{ implode(',', $rs_cat_sales) ?: '0' }}], backgroundColor: '#2f6fed', borderRadius: 4 },
-                    { label: "{{ translate('Stock Qty') }}", data: [{{ implode(',', $rs_cat_qty) ?: '0' }}], backgroundColor: '#cdd7ea', borderRadius: 4 }
+                    { label: "{{ translate('Units Sold') }}", data: @json($rs_cat_sales), backgroundColor: '#2f6fed', borderRadius: 4 },
+                    { label: "{{ translate('Stock Qty') }}", data: @json($rs_cat_qty), backgroundColor: '#cdd7ea', borderRadius: 4 }
                 ]
             },
             options: {
@@ -371,4 +366,5 @@
             $(this).addClass('active');
         });
     </script>
+    @endcan
 @endsection

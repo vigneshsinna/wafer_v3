@@ -143,7 +143,7 @@
                             @endcan
                             @can('show_all_products')
                             <li class="aiz-side-nav-item">
-                                <a href="{{route('products.all')}}" class="aiz-side-nav-link {{ areActiveRoutes(['digitalproducts.edit']) }}">
+                                <a href="{{route('products.all')}}" class="aiz-side-nav-link {{ areActiveRoutes(['products.all', 'digitalproducts.edit']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('All Products') }}</span>
                                 </a>
                             </li>

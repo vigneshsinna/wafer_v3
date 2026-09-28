@@ -17,12 +17,11 @@ class ProductResource extends JsonResource
             'slug'              => $this->slug,
             'description'       => $this->getTranslation('description'),
             'unit_price'        => (float) $this->unit_price,
-            'purchase_price'    => (float) $this->purchase_price,
             'discount'          => (float) $this->discount,
             'discount_type'     => $this->discount_type,
             'discount_start'    => $this->discount_start_date,
             'discount_end'      => $this->discount_end_date,
-            'thumbnail_url'     => $this->thumbnail ? uploaded_asset($this->thumbnail_img) : null,
+            'thumbnail_url'     => $this->thumbnail_img ? uploaded_asset($this->thumbnail_img) : null,
             'photos'            => $this->photos ? array_map(function ($id) {
                 return uploaded_asset($id);
             }, explode(',', $this->photos)) : [],

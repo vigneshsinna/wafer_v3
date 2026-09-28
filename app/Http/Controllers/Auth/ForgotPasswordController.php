@@ -54,7 +54,7 @@ class ForgotPasswordController extends Controller
     public function showResetForm(Request $request)
     {
         $email = $request->query('email');
-        return view('auth.' . get_setting('authentication_layout_select') . '.reset_password', compact('email'));
+        return view('auth.' . get_setting('authentication_layout_select', 'boxed') . '.reset_password', compact('email'));
     }
 
     public function sendResetLinkEmail(Request $request)
@@ -106,7 +106,7 @@ class ForgotPasswordController extends Controller
                 $user->save();
                 SmsUtility::password_reset($user);
                 $country_code= $request['country_code'];
-                return view('otp_systems.frontend.auth.'.get_setting('authentication_layout_select').'.reset_with_phone', compact('phone','country_code'));
+                return view('otp_systems.frontend.auth.'.get_setting('authentication_layout_select', 'boxed').'.reset_with_phone', compact('phone','country_code'));
             }
             else {
                 flash(translate('No account exists with this phone number'))->error();

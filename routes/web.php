@@ -91,7 +91,7 @@ Route::get('/pincode/{pin}', [PincodeController::class, 'lookup'])
 // AIZ Uploader
 Route::controller(AizUploadController::class)->group(function () {
     Route::post('/aiz-uploader', 'show_uploader');
-    Route::post('/aiz-uploader/upload', 'upload');
+    Route::post('/aiz-uploader/upload', 'upload')->middleware('auth');
     Route::get('/aiz-uploader/get-uploaded-files', 'get_uploaded_files')->middleware('auth');
     Route::post('/aiz-uploader/get_file_by_ids', 'get_preview_files');
     Route::get('/aiz-uploader/download/{id}', 'attachment_download')->name('download_attachment');

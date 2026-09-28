@@ -89,4 +89,11 @@ class CartController extends Controller
             return $this->notFoundResponse('Cart item not found.');
         }
     }
+
+    public function clear(Request $request): JsonResponse
+    {
+        $this->service->clear($request->user()->id);
+
+        return $this->successResponse(null, ['message' => 'Cart cleared.']);
+    }
 }

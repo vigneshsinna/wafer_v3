@@ -3,7 +3,12 @@
 .env.php
 
 /node_modules
-/public/assets
+/storefront/node_modules
+/storefront/.next
+/storefront/out
+/storefront/.env
+/storefront/.env.local
+/storefront/.env.*.local
 /public/storage
 /public/uploads
 /storage/*.key
@@ -20,9 +25,8 @@ yarn-error.log
 .DS_Store
 .idea/
 /public/*
-!/public/assets/css/rudraspirit.css
-!/public/assets/css/shivarudraksha.css
-!/public/assets/js/rudraspirit.js
+!/public/assets/
+!/public/assets/**
 !/public/data/
 !/public/data/**
 !/public/index.php

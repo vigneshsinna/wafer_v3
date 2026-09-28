@@ -8,6 +8,8 @@ use App;
 
 class Page extends Model
 {
+  public const STOREFRONT_SLUGS = ['about', 'faq', 'privacy-policy', 'terms-of-service', 'refund-policy', 'return-policy', 'shipping-policy'];
+
   use PreventDemoModeChanges;
 
   public function getTranslation($field = '', $lang = false){

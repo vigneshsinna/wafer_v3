@@ -31,6 +31,9 @@ class CartService
     public function addItem(int $userId, int $productId, ?string $variant, int $quantity): Cart
     {
         $product = Product::findOrFail($productId);
+        if (!$product->published) {
+            throw new \Exception('Product is unavailable.');
+        }
         $carts = Cart::where('user_id', $userId)->active()->get();
 
         // Auction product checks
@@ -51,11 +54,15 @@ class CartService
         if (!$productStock) {
             throw new \Exception("Variant not available.");
         }
+        if ($product->digital == 0 && $productStock->qty < $quantity) {
+            throw new \Exception("Only {$productStock->qty} item(s) available.");
+        }
 
         $cart = Cart::firstOrNew([
             'variation'  => $variant,
             'user_id'    => $userId,
             'product_id' => $productId,
+            'status'     => 1,
         ]);
 
         $finalQuantity = $quantity;
@@ -84,7 +91,7 @@ class CartService
      */
     public function updateQuantity(int $cartItemId, int $quantity, int $userId): Cart
     {
-        $cart = Cart::where('id', $cartItemId)->where('user_id', $userId)->firstOrFail();
+        $cart = Cart::where('id', $cartItemId)->where('user_id', $userId)->active()->firstOrFail();
         $product = Product::findOrFail($cart->product_id);
 
         if ($product->auction_product == 1) {
@@ -110,8 +117,13 @@ class CartService
      */
     public function removeItem(int $cartItemId, int $userId): void
     {
-        $cart = Cart::where('id', $cartItemId)->where('user_id', $userId)->firstOrFail();
+        $cart = Cart::where('id', $cartItemId)->where('user_id', $userId)->active()->firstOrFail();
         $cart->delete();
+    }
+
+    public function clear(int $userId): void
+    {
+        Cart::where('user_id', $userId)->active()->delete();
     }
 
     /**
@@ -134,20 +146,25 @@ class CartService
             ];
         }
 
-        $subtotal = 0;
-        $tax = 0;
+        $grossSubtotal = 0;
+        $additiveTax = 0;
+        $includedGst = 0;
 
         foreach ($items as $cartItem) {
             $product = Product::find($cartItem['product_id']);
             if ($product) {
-                $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
-                $tax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
+                $gross = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                $grossSubtotal += $gross;
+                $additiveTax += cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
+                $includedGst += self::includedGst(max(0, $gross - $cartItem->discount), (float) $product->gst_rate);
             }
         }
 
         $shippingCost = $items->sum('shipping_cost');
         $discount = $items->sum('discount');
-        $grandTotal = ($subtotal + $tax + $shippingCost) - $discount;
+        $subtotal = $grossSubtotal - $includedGst;
+        $tax = $additiveTax + $includedGst;
+        $grandTotal = ($grossSubtotal + $additiveTax + $shippingCost) - $discount;
 
         return [
             'sub_total'      => round($subtotal, 2),
@@ -159,5 +176,10 @@ class CartService
             'coupon_applied' => (bool) $items->first()->coupon_applied,
             'total_items'    => $items->count(),
         ];
+    }
+
+    public static function includedGst(float $gross, float $rate): float
+    {
+        return $rate > 0 ? round($gross * $rate / (100 + $rate), 2) : 0;
     }
 }

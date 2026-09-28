@@ -529,7 +529,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     });
 
     // Order
-    Route::resource('orders', OrderController::class);
+    Route::get('/orders', fn () => redirect()->route('all_orders.index'))->name('orders.index');
+    Route::resource('orders', OrderController::class)->except('index');
     Route::controller(OrderController::class)->group(function () {
         // All Orders
         Route::get('/all_orders', 'all_orders')->name('all_orders.index');

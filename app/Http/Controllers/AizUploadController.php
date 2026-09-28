@@ -156,7 +156,7 @@ class AizUploadController extends Controller
                     $upload->file_size = $fileSizeKB . ' kb';
                     $upload->save();
 
-                    return '{}';
+                    return response()->json(['id' => $upload->id, 'url' => uploaded_asset($upload->id)]);
                 } elseif ($extension == 'gif') {
                     $img = $request->file('aiz_file');
 
@@ -181,7 +181,7 @@ class AizUploadController extends Controller
                     $upload->file_size = $fileSizeKB . ' kb';
                     $upload->save();
 
-                    return '{}';
+                    return response()->json(['id' => $upload->id, 'url' => uploaded_asset($upload->id)]);
                 } elseif ($extension == 'svg') {
                     $sanitizer = new Sanitizer();
                     // Load the dirty svg
@@ -288,7 +288,11 @@ class AizUploadController extends Controller
                         \Log::error('Upload Error: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
                     }
                 } else {
-                    $path = $request->file('aiz_file')->store('uploads/all', 'local');
+                    $directory = public_path('uploads/all');
+                    if (!is_dir($directory)) mkdir($directory, 0775, true);
+                    $filename = Str::random(40).'.'.$extension;
+                    $request->file('aiz_file')->move($directory, $filename);
+                    $path = 'uploads/all/'.$filename;
                 }
 
                 if (env('FILESYSTEM_DRIVER') != 'local') {
@@ -318,7 +322,9 @@ class AizUploadController extends Controller
                 $upload->file_size = $size;
                 $upload->save();
             }
-            return '{}';
+            return $upload->exists
+                ? response()->json(['id' => $upload->id, 'url' => uploaded_asset($upload->id)])
+                : response()->json(['message' => 'Unsupported file type.'], 422);
         }
     }
 

@@ -73,7 +73,7 @@
                                 href="javascript:void(0)" id="order-bulk-export" onclick="order_bulk_export()">{{ translate('Export') }}</a>
                             @endcan
 
-                            @if(auth()->user()->can('unpaid_order_payment_notification_send') && $unpaid_order_payment_notification->status == 1 && Route::currentRouteName() == 'unpaid_orders.index')
+                            @if(Route::currentRouteName() == 'unpaid_orders.index' && auth()->user()->can('unpaid_order_payment_notification_send') && optional($unpaid_order_payment_notification)->status == 1)
                             <a class="dropdown-item text-secondary fs-14 fw-500 hov-bg-light hov-text-blue" id="bulk_unpaid_order_payment_notification"
                                href="javascript:void(0)" onclick="bulk_unpaid_order_payment_notification()">{{ translate('Unpaid Order Payment Notification') }}</a>
                             @endif

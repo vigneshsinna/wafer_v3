@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * CORS Middleware for Headless API V3
  *
- * Handles Cross-Origin Resource Sharing headers so any frontend
- * (Next.js, Nuxt, React, Flutter web, etc.) can call the API.
+ * Handles V3 preflight requests before route matching and adds CORS headers
+ * to V3 responses. Other routes keep their existing CORS behavior.
  *
  * Configuration: config/headless.php → cors section
  * Env variable:  API_CORS_ORIGINS (comma-separated domains, or * for all)
@@ -19,9 +19,13 @@ class HeadlessCors
 {
     public function handle(Request $request, Closure $next): Response
     {
+        if (!$request->is('api/v3', 'api/v3/*')) {
+            return $next($request);
+        }
+
         // Handle preflight OPTIONS request immediately
         if ($request->isMethod('OPTIONS')) {
-            return $this->addCorsHeaders(response('', 204), $request);
+            return $this->addCorsHeaders(new Response('', 204), $request);
         }
 
         $response = $next($request);
@@ -34,7 +38,7 @@ class HeadlessCors
      */
     private function addCorsHeaders($response, Request $request)
     {
-        $allowedOrigins = config('headless.cors.origins', ['*']);
+        $allowedOrigins = config('headless.cors.origins', ['http://localhost:3000']);
         $origin = $request->header('Origin', '');
 
         // Determine the Access-Control-Allow-Origin value
@@ -50,7 +54,10 @@ class HeadlessCors
         $response->headers->set('Access-Control-Allow-Origin', $allowOrigin);
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
         $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With, X-CSRF-TOKEN, X-Locale');
-        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+        if ($allowOrigin !== '*') {
+            $response->headers->set('Access-Control-Allow-Credentials', 'true');
+            $response->headers->set('Vary', 'Origin');
+        }
         $response->headers->set('Access-Control-Max-Age', (string) config('headless.cors.max_age', 86400));
         $response->headers->set('Access-Control-Expose-Headers', 'X-RateLimit-Limit, X-RateLimit-Remaining');
 

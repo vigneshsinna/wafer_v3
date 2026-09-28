@@ -25,6 +25,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
+        \App\Http\Middleware\HeadlessCors::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
@@ -63,7 +64,6 @@ class Kernel extends HttpKernel
         // V3 Headless API — used by routes/api_v3.php and routes/api_v3_admin.php
         'api_v3' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \App\Http\Middleware\HeadlessCors::class,
             'throttle:v3_public',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\AppLanguage::class,

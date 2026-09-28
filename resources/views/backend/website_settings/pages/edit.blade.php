@@ -41,11 +41,11 @@
 					<label class="col-sm-2 col-from-label" for="name">{{translate('Link')}} <span class="text-danger">*</span></label>
 					<div class="col-sm-10">
 						<div class="input-group d-block d-md-flex">
-							@if($page->type == 'custom_page')
+							@if($page->type == 'custom_page' && !in_array($page->slug, \App\Models\Page::STOREFRONT_SLUGS))
 								<div class="input-group-prepend"><span class="input-group-text flex-grow-1">{{ route('home') }}/</span></div>
 								<input type="text" class="form-control w-100 w-md-auto" placeholder="{{ translate('Slug') }}" name="slug" value="{{ $page->slug }}">
 							@else
-								<input class="form-control w-100 w-md-auto" value="{{ route('home') }}/{{ $page->slug }}" disabled>
+								<input class="form-control w-100 w-md-auto" value="{{ rtrim(config('headless.storefront_url'), '/') }}/{{ in_array($page->slug, ['privacy-policy','terms-of-service','refund-policy','return-policy','shipping-policy']) ? 'legal/' : ($page->slug == 'about' || $page->slug == 'faq' ? '' : 'pages/') }}{{ $page->slug }}" disabled>
 							@endif
 						</div>
 						<small class="form-text text-muted">{{ translate('Use character, number, hypen only') }}</small>

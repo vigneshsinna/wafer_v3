@@ -3,7 +3,6 @@
 namespace App\Services\Order;
 
 use App\Models\Order;
-use App\Models\CombinedOrder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
@@ -15,23 +14,33 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  */
 class OrderQueryService
 {
+    public function getPublicTracking(string $code): array
+    {
+        $order = Order::query()
+            ->where('code', $code)
+            ->where('payment_status', 'paid')
+            ->firstOrFail(['code', 'delivery_status', 'created_at']);
+
+        return [
+            'code' => $order->code,
+            'delivery_status' => $order->delivery_status,
+            'created_at' => $order->created_at?->toIso8601String(),
+        ];
+    }
+
     /**
      * Get paginated orders for a user.
      */
     public function getUserOrders(int $userId, array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
-        $query = CombinedOrder::where('user_id', $userId)->latest();
+        $query = Order::where('user_id', $userId)->with('orderDetails.product')->latest();
 
         if (!empty($filters['delivery_status'])) {
-            $query->whereHas('orders', function ($q) use ($filters) {
-                $q->where('delivery_status', $filters['delivery_status']);
-            });
+            $query->where('delivery_status', $filters['delivery_status']);
         }
 
         if (!empty($filters['payment_status'])) {
-            $query->whereHas('orders', function ($q) use ($filters) {
-                $q->where('payment_status', $filters['payment_status']);
-            });
+            $query->where('payment_status', $filters['payment_status']);
         }
 
         return $query->paginate($perPage);

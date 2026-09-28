@@ -30,8 +30,8 @@
         	@foreach ($page as $key => $page)
         	<tr>
         		<td>{{ $key+1 }}</td>
-				<td><a href="{{ route('custom-pages.show_custom_page', $page->slug) }}" class="text-reset">{{ $page->getTranslation('title') }}</a></td>
-				<td>{{ route('home') }}/{{ $page->slug }}</td>
+				<td><a href="{{ rtrim(config('headless.storefront_url'), '/') }}/{{ in_array($page->slug, ['privacy-policy','terms-of-service','refund-policy','return-policy','shipping-policy']) ? 'legal/' : ($page->slug == 'about' || $page->slug == 'faq' ? '' : 'pages/') }}{{ $page->slug }}" class="text-reset">{{ $page->getTranslation('title') }}</a></td>
+				<td>{{ rtrim(config('headless.storefront_url'), '/') }}/{{ in_array($page->slug, ['privacy-policy','terms-of-service','refund-policy','return-policy','shipping-policy']) ? 'legal/' : ($page->slug == 'about' || $page->slug == 'faq' ? '' : 'pages/') }}{{ $page->slug }}</td>
         		<td class="text-right">
 					@can('edit_website_page')
 						@if($page->type == 'home_page')
@@ -65,7 +65,7 @@
 							</a>
 						@endif
 					@endcan
-					@if($page->type == 'custom_page' && auth()->user()->can('delete_website_page'))
+					@if($page->type == 'custom_page' && !in_array($page->slug, \App\Models\Page::STOREFRONT_SLUGS) && auth()->user()->can('delete_website_page'))
           				<a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{ route('custom-pages.destroy', $page->id)}} " title="{{ translate('Delete') }}">
           					<i class="las la-trash"></i>
           				</a>

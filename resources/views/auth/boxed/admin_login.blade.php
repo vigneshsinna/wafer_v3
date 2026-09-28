@@ -7,13 +7,13 @@
                     <div class="row no-gutters">
                         <!-- Left Side Image-->
                         <div class="col-lg-6">
-                            <img src="{{ uploaded_asset(get_setting('admin_login_page_image')) }}" alt="{{ translate('Admin Login Page Image') }}" class="img-fit h-100">
+                            <img src="{{ get_setting('admin_login_page_image') ? uploaded_asset(get_setting('admin_login_page_image')) : static_asset('assets/img/admin-login.png') }}" alt="Wafer King Hibiscus wafers" class="img-fit h-100">
                         </div>
 
                         <div class="col-lg-6 p-4 p-lg-5 d-flex flex-column justify-content-center border right-content" style="height: auto;">
                             <!-- Site Icon -->
                             <div class="size-48px mb-3 mx-auto mx-lg-0">
-                                <img src="{{ uploaded_asset(get_setting('site_icon')) }}" alt="{{ translate('Site Icon')}}" class="img-fit h-100">
+                                <img src="{{ get_setting('site_icon') ? uploaded_asset(get_setting('site_icon')) : static_asset('assets/img/site-icon.svg') }}" alt="Wafer King" class="img-fit h-100">
                             </div>
 
                             <!-- Titles -->

@@ -5,8 +5,10 @@ namespace App\Services\Auth;
 use App\Models\BusinessSetting;
 use App\Models\Cart;
 use App\Models\User;
+use App\Notifications\StorefrontResetPassword;
 use App\Notifications\AppEmailVerificationNotification;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 /**
  * AuthService — Registration, login, logout, password reset.
@@ -15,6 +17,25 @@ use Illuminate\Support\Facades\Hash;
  */
 class AuthService
 {
+    public function sendStorefrontResetLink(string $email): void
+    {
+        Password::broker('users')->sendResetLink(['email' => $email], function (User $user, string $token) {
+            $user->notify(new StorefrontResetPassword($token));
+        });
+    }
+
+    public function resetPassword(array $data): bool
+    {
+        $status = Password::broker('users')->reset($data, function (User $user, string $password) {
+            $user->password = Hash::make($password);
+            $user->setRememberToken(\Illuminate\Support\Str::random(60));
+            $user->save();
+            $user->tokens()->delete();
+        });
+
+        return $status === Password::PASSWORD_RESET;
+    }
+
     /**
      * Register a new customer.
      *
@@ -118,6 +139,17 @@ class AuthService
     public function logout(User $user): void
     {
         $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+    }
+
+    public function changePassword(User $user, string $currentPassword, string $newPassword): void
+    {
+        if (!Hash::check($currentPassword, $user->password)) {
+            throw new \InvalidArgumentException('Current password is incorrect.');
+        }
+
+        $user->password = Hash::make($newPassword);
+        $user->save();
+        $user->tokens()->where('id', '!=', $user->currentAccessToken()->id)->delete();
     }
 
     /**

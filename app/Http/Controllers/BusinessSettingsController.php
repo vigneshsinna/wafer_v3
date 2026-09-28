@@ -31,7 +31,7 @@ class BusinessSettingsController extends Controller
         $this->middleware(['permission:general_settings'])->only('general_setting');
         $this->middleware(['permission:features_activation'])->only('activation');
         $this->middleware(['permission:smtp_settings'])->only('smtp_settings');
-        $this->middleware(['permission:payment_methods_configurations'])->only('payment_method');
+        $this->middleware(['permission:payment_methods_configurations'])->only('payment_method', 'payment_method_update', 'updatePaymentActivationSettings');
         $this->middleware(['permission:order_configuration'])->only('order_configuration');
         $this->middleware(['permission:file_system_&_cache_configuration'])->only('file_system');
         $this->middleware(['permission:social_media_logins'])->only('social_login');
@@ -41,7 +41,7 @@ class BusinessSettingsController extends Controller
         $this->middleware(['permission:google_recaptcha_configuration'])->only('google_recaptcha');
         $this->middleware(['permission:google_map_setting'])->only('google_map');
         $this->middleware(['permission:google_firebase_setting'])->only('google_firebase');
-        $this->middleware(['permission:shipping_configuration'])->only('shipping_configuration');
+        $this->middleware(['permission:shipping_configuration'])->only('shipping_configuration', 'shipping_method', 'shipping_configuration_update');
         $this->middleware(['permission:business_settings'])->only('business_settings');
     }
 
@@ -129,6 +129,19 @@ class BusinessSettingsController extends Controller
      */
     public function payment_method_update(Request $request)
     {
+        if ($request->payment_method === 'razorpay') {
+            $request->validate([
+                'RAZOR_KEY' => 'required|string|max:255',
+                'RAZOR_SECRET' => 'nullable|string|max:255',
+                'RAZOR_WEBHOOK_SECRET' => 'nullable|string|max:255',
+            ]);
+            foreach (['RAZOR_KEY', 'RAZOR_SECRET', 'RAZOR_WEBHOOK_SECRET'] as $key) {
+                if ($request->filled($key)) $this->overWriteEnvFile($key, $request->input($key));
+            }
+            Artisan::call('config:clear');
+            flash(translate('Settings updated successfully'))->success();
+            return back();
+        }
         foreach ($request->types as $key => $type) {
             $this->overWriteEnvFile($type, $request[$type]);
         }
@@ -366,21 +379,19 @@ class BusinessSettingsController extends Controller
      */
     public function overWriteEnvFile($type, $val)
     {
-        if (env('DEMO_MODE') != 'On') {
-            $path = base_path('.env');
-            if (file_exists($path)) {
-                $val = '"' . trim($val) . '"';
-                if (is_numeric(strpos(file_get_contents($path), $type)) && strpos(file_get_contents($path), $type) >= 0) {
-                    file_put_contents($path, str_replace(
-                        $type . '="' . env($type) . '"',
-                        $type . '=' . $val,
-                        file_get_contents($path)
-                    ));
-                } else {
-                    file_put_contents($path, file_get_contents($path) . "\r\n" . $type . '=' . $val);
-                }
-            }
+        if (env('DEMO_MODE') == 'On' || !preg_match('/^[A-Z][A-Z0-9_]*$/', $type)) return;
+        $path = base_path('.env');
+        if (!is_file($path)) return;
+
+        $entry = $type . '=' . json_encode(trim((string) $val), JSON_UNESCAPED_SLASHES);
+        $contents = file_get_contents($path);
+        $pattern = '/^' . preg_quote($type, '/') . '=.*$/m';
+        if (preg_match($pattern, $contents)) {
+            $contents = preg_replace_callback($pattern, fn () => $entry, $contents);
+        } else {
+            $contents = rtrim($contents, "\r\n") . PHP_EOL . $entry . PHP_EOL;
         }
+        file_put_contents($path, $contents, LOCK_EX);
     }
 
     public function seller_verification_form(Request $request)
@@ -528,6 +539,10 @@ class BusinessSettingsController extends Controller
     public function updatePaymentActivationSettings(Request $request)
     {
         $payment_method = PaymentMethod::findOrFail($request->id);
+        if ($payment_method->name === 'razorpay' && $request->value == 1 &&
+            (!filled(config('services.razorpay.key')) || !filled(config('services.razorpay.secret')) || !filled(config('services.razorpay.webhook_secret')))) {
+            return response()->json(['message' => 'Save the Razorpay key, secret, and webhook secret before enabling checkout.'], 422);
+        }
         $payment_method->active = $request->value;
         $payment_method->save();
 
@@ -586,6 +601,12 @@ class BusinessSettingsController extends Controller
 
     public function shipping_configuration_update(Request $request)
     {
+        $request->validate([
+            'type' => 'required|in:shipping_type,flat_rate_shipping_cost,shipping_cost_admin',
+            'shipping_type' => 'required_if:type,shipping_type|in:flat_rate,product_wise_shipping,seller_wise_shipping,area_wise_shipping,carrier_wise_shipping',
+            'flat_rate_shipping_cost' => 'required_if:type,flat_rate_shipping_cost|nullable|numeric|min:0',
+            'shipping_cost_admin' => 'required_if:type,shipping_cost_admin|nullable|numeric|min:0',
+        ]);
         if ($request->type == 'shipping_type' && $request->shipping_type == 'carrier_wise_shipping') {
             $inactiveZoneIds = Zone::where('status', 0)->pluck('id')->toArray();
             $hasInvalidCountries = Country::where('status', 1)
@@ -600,7 +621,7 @@ class BusinessSettingsController extends Controller
                 return back();
             }
         }
-        $business_settings = BusinessSetting::where('type', $request->type)->first();
+        $business_settings = BusinessSetting::firstOrNew(['type' => $request->type]);
         $business_settings->value = $request[$request->type];
 
         $business_settings->save();

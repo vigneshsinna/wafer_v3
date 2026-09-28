@@ -1319,7 +1319,7 @@ if (!function_exists('uploaded_asset')) {
         if (($asset = Upload::find($id)) != null) {
             return $asset->external_link == null ? my_asset($asset->file_name) : $asset->external_link;
         }
-        return static_asset('assets/img/placeholder.jpg');
+        return static_asset('assets/img/placeholder.svg');
     }
 }
 
@@ -1351,6 +1351,9 @@ if (!function_exists('static_asset')) {
      */
     function static_asset($path, $secure = null)
     {
+        if (preg_match('~^assets/img/.+\.(?:png|jpe?g|gif|webp|svg)$~i', $path) && !is_file(public_path($path))) {
+            $path = $path === 'assets/img/logo.png' ? 'assets/img/site-icon.svg' : 'assets/img/placeholder.svg';
+        }
         return app('url')->asset($path, $secure);
     }
 }

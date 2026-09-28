@@ -13,13 +13,14 @@ return [
     */
 
     'enabled' => env('API_V3_ENABLED', true),
+    'storefront_url' => env('STOREFRONT_URL', 'http://localhost:3000'),
 
     /*
     |--------------------------------------------------------------------------
     | CORS (Cross-Origin Resource Sharing)
     |--------------------------------------------------------------------------
     |
-    | Allowed frontend origins. Use '*' for development.
+    | Allowed frontend origins. Configure deployed storefront origin in production.
     | In production, set API_CORS_ORIGINS to your frontend domain(s).
     | Multiple origins: "https://store.com,https://admin.store.com"
     |
@@ -27,7 +28,7 @@ return [
 
     'cors' => [
         'origins' => array_filter(
-            explode(',', env('API_CORS_ORIGINS', '*'))
+            explode(',', env('API_CORS_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000'))
         ),
         'max_age' => 86400, // 24 hours
     ],

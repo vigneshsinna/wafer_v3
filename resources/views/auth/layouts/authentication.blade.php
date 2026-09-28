@@ -20,7 +20,7 @@
 
     <!-- Favicon -->
     @php
-        $site_icon = uploaded_asset(get_setting('site_icon'));
+        $site_icon = get_setting('site_icon') ? uploaded_asset(get_setting('site_icon')) : static_asset('assets/img/site-icon.svg');
     @endphp
     <link rel="icon" href="{{ $site_icon }}">
     <link rel="apple-touch-icon" href="{{ $site_icon }}">

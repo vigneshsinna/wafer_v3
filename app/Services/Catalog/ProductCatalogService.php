@@ -89,7 +89,7 @@ class ProductCatalogService
      */
     public function getBySlug(string $slug): Product
     {
-        return Product::where('slug', $slug)->firstOrFail();
+        return Product::where('slug', $slug)->where('published', 1)->firstOrFail();
     }
 
     /**
@@ -198,10 +198,10 @@ class ProductCatalogService
 
         // Relevance ordering
         if ($sort === 'relevance') {
-            $products->orderByRaw("CASE
-                WHEN name LIKE '{$query}%' THEN 1
-                WHEN name LIKE '%{$query}%' THEN 2
-                ELSE 3 END");
+            $products->orderByRaw(
+                'CASE WHEN name LIKE ? THEN 1 WHEN name LIKE ? THEN 2 ELSE 3 END',
+                [$query . '%', '%' . $query . '%']
+            );
         } else {
             $products = $this->applySorting($products, $sort);
         }

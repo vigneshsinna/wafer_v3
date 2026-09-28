@@ -14,8 +14,8 @@ class SettingsController extends Controller
     {
         return $this->successResponse([
             'store_name'           => get_setting('website_name'),
-            'store_logo'           => uploaded_asset(get_setting('header_logo')),
-            'store_favicon'        => uploaded_asset(get_setting('fav_icon')),
+            'store_logo'           => get_setting('header_logo') ? uploaded_asset(get_setting('header_logo')) : static_asset('assets/img/site-icon.svg'),
+            'store_favicon'        => get_setting('site_icon') ? uploaded_asset(get_setting('site_icon')) : static_asset('assets/img/site-icon.svg'),
             'store_motto'          => get_setting('site_motto'),
             'currency_code'        => \App\Models\Currency::find(get_setting('system_default_currency'))->code ?? 'USD',
             'currency_symbol'      => currency_symbol(),

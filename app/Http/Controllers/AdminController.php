@@ -60,6 +60,9 @@ class AdminController extends Controller
         });
 
         $data['root_categories'] = $root_categories;
+        $data['rs_cat_labels'] = $root_categories->map(fn ($category) => $category->getTranslation('name'))->all();
+        $data['rs_cat_sales'] = array_values(array_filter(explode(',', $data['cached_graph_data']['num_of_sale_data'] ?? ''), fn ($value) => $value !== ''));
+        $data['rs_cat_qty'] = array_values(array_filter(explode(',', $data['cached_graph_data']['qty_data'] ?? ''), fn ($value) => $value !== ''));
 
         $data['total_customers'] = User::where('user_type', 'customer')->where('email_verified_at', '!=', null)->count();
         $data['top_customers'] = User::select('users.id', 'users.name', 'users.avatar_original', DB::raw('SUM(grand_total) as total'))

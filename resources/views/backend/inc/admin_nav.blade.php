@@ -75,7 +75,7 @@
                     @endcan
                     @can('edit_website_page')
                         <a class="aiz-topbar-menu fs-13 fw-600 d-flex align-items-center justify-content-center {{ (url()->current() == url('/admin/website/custom-pages/edit/home')) ? 'active' : '' }}"
-                            href="{{ route('custom-pages.edit', ['id'=>'home', 'lang'=>env('DEFAULT_LANGUAGE'), 'page'=>'home']) }}">{{ translate('Homepage Settings') }}</a>
+                            href="{{ route('website.pages') }}">{{ translate('Pages') }}</a>
                     @endcan
                 </div>
             </div>
@@ -200,7 +200,7 @@
                     <a class="dropdown-toggle no-arrow" data-toggle="dropdown" href="javascript:void(0);"
                         role="button" aria-haspopup="false" aria-expanded="false">
                         <span class="btn btn-topbar btn-circle btn-light p-0 d-flex justify-content-center align-items-center" data-toggle="tooltip" data-title="{{ translate('Language') }}">
-                            <img src="{{ static_asset('assets/img/flags/' . $locale . '.png') }}" height="11">
+                            <span class="fw-700 text-uppercase fs-12">{{ $locale }}</span>
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-xs">
@@ -209,8 +209,7 @@
                             <li>
                                 <a href="javascript:void(0)" data-flag="{{ $language->code }}"
                                     class="dropdown-item @if ($locale == $language->code) active @endif">
-                                    <img src="{{ static_asset('assets/img/flags/' . $language->code . '.png') }}"
-                                        class="mr-2">
+                                    <span class="mr-2 text-uppercase">{{ $language->code }}</span>
                                     <span class="language">{{ $language->name }}</span>
                                 </a>
                             </li>
@@ -230,8 +229,7 @@
                                 <span class="d-block small opacity-60 text-right">{{ Auth::user()->user_type }}</span>
                             </span>
                             <span class="size-40px rounded-content overflow-hidden ml-md-2">
-                                <img src="{{ uploaded_asset(Auth::user()->avatar_original) }}" class="img-fit"
-                                    onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
+                                <img src="{{ Auth::user()->avatar_original ? uploaded_asset(Auth::user()->avatar_original) : static_asset('assets/img/site-icon.svg') }}" class="img-fit" alt="">
                             </span>
                         </span>
                     </a>

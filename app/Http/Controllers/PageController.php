@@ -12,8 +12,8 @@ class PageController extends Controller
 {
     public function __construct() {
         // Staff Permission Check
-        $this->middleware(['permission:add_website_page'])->only('create');
-        $this->middleware(['permission:edit_website_page'])->only('edit');
+        $this->middleware(['permission:add_website_page'])->only('create', 'store');
+        $this->middleware(['permission:edit_website_page'])->only('edit', 'update');
         $this->middleware(['permission:delete_website_page'])->only('destroy');
     }
 
@@ -135,6 +135,8 @@ class PageController extends Controller
     public function update(Request $request, $id)
     {
         $page = Page::findOrFail($id);
+        $lockedSlug = in_array($page->slug, Page::STOREFRONT_SLUGS, true);
+        $slug = $lockedSlug ? $page->slug : preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug));
         $content = $request->content;
         if($page->type == 'contact_us_page'){
             $data['description'] = $request->description;
@@ -143,9 +145,9 @@ class PageController extends Controller
             $data['email'] = $request->email;
             $content = json_encode($data);
         }
-        if (Page::where('id','!=', $id)->where('slug', preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug)))->first() == null) {
-            if($page->type == 'custom_page'){
-              $page->slug           = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->slug));
+        if (Page::where('id','!=', $id)->where('slug', $slug)->first() == null) {
+            if($page->type == 'custom_page' && !$lockedSlug){
+              $page->slug = $slug;
             }
             if($request->lang == env("DEFAULT_LANGUAGE")){
               $page->title          = $request->title;
@@ -180,6 +182,7 @@ class PageController extends Controller
     public function destroy($id)
     {
         $page = Page::findOrFail($id);
+        if (in_array($page->slug, Page::STOREFRONT_SLUGS, true)) abort(403);
         $page->page_translations()->delete();
 
         if(Page::destroy($id)){
