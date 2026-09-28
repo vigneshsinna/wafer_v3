@@ -7,7 +7,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="d-flex align-items-center">
-                            <span class="mr-3 rounded bg-soft-secondary px-2 py-1" aria-hidden="true">₹</span>
+                            <img class="mr-3" src="{{ static_asset('assets/img/cards/'.$payment_method->name.'.png') }}" height="30">
                             <h5 class="mb-0 h6">{{ ucfirst(translate($payment_method->name)) }}</h5>
                         </div>
                         <label class="aiz-switch aiz-switch-success mb-0 float-right">
@@ -22,6 +22,20 @@
             </div>
             @endforeach
 
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex align-items-center">
+                            <img class="mr-3" src="{{ static_asset('assets/img/cards/cod.png') }}" height="30">
+                            <h5 class="mb-0 h6">{{ translate('Cash Payment') }}</h5>
+                        </div>
+                        <label class="aiz-switch aiz-switch-success mb-0 float-right">
+                            <input type="checkbox" onchange="updateSettings(this, 'cash_payment')" @if (get_setting('cash_payment') == 1) checked @endif>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
         @php
             // $demo_mode = env('DEMO_MODE') == 'On' ? true : false;
@@ -53,9 +67,6 @@
                     } else {
                         AIZ.plugins.notify('danger', 'Something went wrong');
                     }
-                }).fail(function(response) {
-                    $(el).prop('checked', !$(el).is(':checked'));
-                    AIZ.plugins.notify('danger', response.responseJSON?.message || 'Could not update payment settings.');
                 });
             }
 
