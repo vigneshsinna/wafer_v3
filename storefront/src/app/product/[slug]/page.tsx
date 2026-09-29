@@ -29,5 +29,5 @@ export default function ProductPage() {
     if (!product) {
         return <div className="min-h-screen pt-32 text-center"><h1 className="font-display text-2xl font-bold text-primary">Product Not Found</h1></div>;
     }
-    return <ProductDetail product={product} relatedProducts={relatedProducts} />;
+    return <ProductDetail key={product.slug} product={product} relatedProducts={relatedProducts} />;
 }

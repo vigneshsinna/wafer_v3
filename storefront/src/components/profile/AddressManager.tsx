@@ -5,10 +5,16 @@ import { deleteAddress, getAddresses, getCities, getCountries, getStates, saveAd
 import type { Address, AddressInput, LocationOption } from "@/types";
 
 const emptyAddress: AddressInput = {
-    address: "", country_id: 0, state_id: 0, city_id: 0, postal_code: "", phone: "",
+    recipient_name: "", address: "", country_id: 0, state_id: 0, city_id: 0, postal_code: "", phone: "",
 };
 
-export default function AddressManager() {
+export default function AddressManager({ onChange, selectedId, onSelect, onEditingChange, embedded = false }: {
+    onChange?: (addresses: Address[]) => void;
+    selectedId?: number;
+    onSelect?: (id: number) => void;
+    onEditingChange?: (editing: boolean) => void;
+    embedded?: boolean;
+}) {
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [countries, setCountries] = useState<LocationOption[]>([]);
     const [states, setStates] = useState<LocationOption[]>([]);
@@ -20,7 +26,15 @@ export default function AddressManager() {
 
     useEffect(() => {
         void Promise.all([getAddresses(), getCountries()])
-            .then(([saved, available]) => { setAddresses(saved); setCountries(available); })
+            .then(([saved, available]) => {
+                setAddresses(saved);
+                setCountries(available);
+                if (embedded) {
+                    const india = available.find(option => option.name === "India");
+                    if (india) setForm(current => current.country_id ? current : { ...current, country_id: india.id });
+                }
+                onChange?.(saved);
+            })
             .catch(e => setError(e instanceof Error ? e.message : "Could not load addresses."));
     }, []);
 
@@ -45,10 +59,14 @@ export default function AddressManager() {
         setBusy(true);
         setError("");
         try {
-            await saveAddress(form, editingId);
-            setAddresses(await getAddresses());
+            const saved = await saveAddress(form, editingId);
+            const updated = await getAddresses();
+            setAddresses(updated);
+            onChange?.(updated);
+            onSelect?.(saved.id);
             setForm(emptyAddress);
             setEditingId(undefined);
+            onEditingChange?.(false);
         } catch (e) {
             setError(e instanceof Error ? e.message : "Could not save address.");
         } finally {
@@ -62,8 +80,10 @@ export default function AddressManager() {
         setError("");
         try {
             await deleteAddress(id);
-            setAddresses(current => current.filter(address => address.id !== id));
-            if (editingId === id) { setEditingId(undefined); setForm(emptyAddress); }
+            const updated = addresses.filter(address => address.id !== id);
+            setAddresses(updated);
+            onChange?.(updated);
+            if (editingId === id) { setEditingId(undefined); setForm(emptyAddress); onEditingChange?.(false); }
         } catch (e) {
             setError(e instanceof Error ? e.message : "Could not delete address.");
         } finally {
@@ -71,19 +91,21 @@ export default function AddressManager() {
         }
     }
 
-    return <section className="bg-white rounded-xl p-6 shadow-sm" aria-labelledby="addresses-title">
-        <h2 id="addresses-title" className="text-lg font-bold text-primary mb-4">Shipping addresses</h2>
+    return <section className={embedded ? "" : "bg-white rounded-xl p-6 shadow-sm"} aria-labelledby="addresses-title">
+        <h2 id="addresses-title" className={embedded ? "sr-only" : "text-lg font-bold text-primary mb-4"}>Shipping addresses</h2>
         {error && <p role="alert" className="mb-4 text-red-700">{error}</p>}
         <div className="space-y-3 mb-6">
             {addresses.length === 0 && <p className="text-primary/70">No saved addresses.</p>}
-            {addresses.map(saved => <div key={saved.id} className="border rounded-lg p-4">
-                <p>{saved.address}, {saved.city}, {saved.state}, {saved.country} {saved.postal_code}</p>
+            {addresses.map(saved => <div key={saved.id} className={`border rounded-lg p-4 ${selectedId === saved.id ? "border-secondary bg-secondary/5" : ""}`}>
+                {onSelect && <label className="flex items-center gap-2 font-semibold mb-1"><input type="radio" name="checkout-address" checked={selectedId === saved.id} onChange={() => onSelect(saved.id)} /> Deliver here</label>}
+                <p>{saved.recipient_name ? `${saved.recipient_name}, ` : ""}{saved.address}, {saved.city}, {saved.state}, {saved.country} {saved.postal_code}</p>
                 <p className="text-sm text-primary/70">{saved.phone}</p>
                 <div className="flex gap-4 mt-2">
                     <button type="button" className="text-primary underline" onClick={() => {
                         setEditingId(saved.id);
-                        setForm({ address: saved.address, country_id: saved.country_id, state_id: saved.state_id,
+                        setForm({ recipient_name: saved.recipient_name || "", address: saved.address, country_id: saved.country_id, state_id: saved.state_id,
                             city_id: saved.city_id, postal_code: saved.postal_code, phone: saved.phone });
+                        onEditingChange?.(true);
                     }}>Edit</button>
                     <button type="button" disabled={busy} className="text-red-700 underline disabled:opacity-50"
                         onClick={() => void remove(saved.id)}>Delete</button>
@@ -92,27 +114,31 @@ export default function AddressManager() {
         </div>
         <form onSubmit={submit} className="space-y-4">
             <h3 className="font-semibold">{editingId ? "Edit address" : "Add address"}</h3>
+            <label className="block">Recipient full name
+                <input required={embedded} maxLength={255} value={form.recipient_name || ""} onChange={e => { setForm({ ...form, recipient_name: e.target.value }); onEditingChange?.(true); }}
+                    className="block w-full border rounded-lg p-2 mt-1" />
+            </label>
             <label className="block">Street address
-                <textarea required maxLength={1000} value={form.address} onChange={e => setForm({ ...form, address: e.target.value })}
+                <textarea required maxLength={1000} value={form.address} onChange={e => { setForm({ ...form, address: e.target.value }); onEditingChange?.(true); }}
                     className="block w-full border rounded-lg p-2 mt-1" />
             </label>
             <div className="grid sm:grid-cols-3 gap-3">
                 <label className="block">Country
-                    <select required value={form.country_id || ""} onChange={e => setForm({ ...form, country_id: Number(e.target.value), state_id: 0, city_id: 0 })}
+                    <select required value={form.country_id || ""} onChange={e => { setForm({ ...form, country_id: Number(e.target.value), state_id: 0, city_id: 0 }); onEditingChange?.(true); }}
                         className="block w-full border rounded-lg p-2 mt-1">
                         <option value="">Select country</option>
-                        {countries.map(option => <option key={option.id} value={option.id}>{option.name}</option>)}
+                        {(embedded ? countries.filter(option => option.name === "India") : countries).map(option => <option key={option.id} value={option.id}>{option.name}</option>)}
                     </select>
                 </label>
                 <label className="block">State
-                    <select required value={form.state_id || ""} onChange={e => setForm({ ...form, state_id: Number(e.target.value), city_id: 0 })}
+                    <select required value={form.state_id || ""} onChange={e => { setForm({ ...form, state_id: Number(e.target.value), city_id: 0 }); onEditingChange?.(true); }}
                         className="block w-full border rounded-lg p-2 mt-1">
                         <option value="">Select state</option>
                         {states.map(option => <option key={option.id} value={option.id}>{option.name}</option>)}
                     </select>
                 </label>
                 <label className="block">City
-                    <select required value={form.city_id || ""} onChange={e => setForm({ ...form, city_id: Number(e.target.value) })}
+                    <select required value={form.city_id || ""} onChange={e => { setForm({ ...form, city_id: Number(e.target.value) }); onEditingChange?.(true); }}
                         className="block w-full border rounded-lg p-2 mt-1">
                         <option value="">Select city</option>
                         {cities.map(option => <option key={option.id} value={option.id}>{option.name}</option>)}
@@ -121,17 +147,17 @@ export default function AddressManager() {
             </div>
             <div className="grid sm:grid-cols-2 gap-3">
                 <label className="block">Postal code
-                    <input required maxLength={20} value={form.postal_code} onChange={e => setForm({ ...form, postal_code: e.target.value })}
+                    <input required maxLength={embedded ? 6 : 20} pattern={embedded ? "[1-9][0-9]{5}" : undefined} inputMode="numeric" value={form.postal_code} onChange={e => { setForm({ ...form, postal_code: e.target.value }); onEditingChange?.(true); }}
                         className="block w-full border rounded-lg p-2 mt-1" />
                 </label>
                 <label className="block">Phone
-                    <input required type="tel" maxLength={30} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
+                    <input required type="tel" maxLength={30} value={form.phone} onChange={e => { setForm({ ...form, phone: e.target.value }); onEditingChange?.(true); }}
                         className="block w-full border rounded-lg p-2 mt-1" />
                 </label>
             </div>
             <div className="flex gap-3">
                 <button disabled={busy} className="px-5 py-2 bg-primary text-white rounded-lg disabled:opacity-50">{busy ? "Saving…" : "Save address"}</button>
-                {editingId && <button type="button" onClick={() => { setEditingId(undefined); setForm(emptyAddress); }} className="underline">Cancel</button>}
+                {editingId && <button type="button" onClick={() => { setEditingId(undefined); setForm(emptyAddress); onEditingChange?.(false); }} className="underline">Cancel</button>}
             </div>
         </form>
     </section>;

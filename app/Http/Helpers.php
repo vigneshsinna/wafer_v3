@@ -1097,7 +1097,10 @@ function getShippingCost($carts, $index, $shipping_info = '', $carrier = '')
             return 0;
         }
 
-        $carrier = Carrier::find($carrier);
+        $carrier = Carrier::active()->find($carrier);
+        if (!$carrier || !$carrier->carrier_ranges->first()) {
+            return 0;
+        }
         if ($carrier->carrier_ranges->first()) {
             $carrier_billing_type   = $carrier->carrier_ranges->first()->billing_type;
             if ($product->added_by == 'admin') {
@@ -1109,7 +1112,10 @@ function getShippingCost($carts, $index, $shipping_info = '', $carrier = '')
 
         foreach ($carrier->carrier_ranges as $carrier_range) {
             if ($itemsWeightOrPrice >= $carrier_range->delimiter1 && $itemsWeightOrPrice < $carrier_range->delimiter2) {
-                $carrier_price = $carrier_range->carrier_range_prices->where('zone_id', $user_zone)->first()->price;
+                $carrier_price = $carrier_range->carrier_range_prices->where('zone_id', $user_zone)->first()?->price;
+                if ($carrier_price === null) {
+                    return 0;
+                }
                 return $product->added_by == 'admin' ? ($carrier_price / count($admin_products)) : ($carrier_price / count($seller_products[$product->user_id]));
             }
         }

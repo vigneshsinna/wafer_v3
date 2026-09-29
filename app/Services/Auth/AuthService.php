@@ -49,6 +49,7 @@ class AuthService
 
         if (($data['register_by'] ?? 'email') === 'email') {
             $user->email = $data['email_or_phone'];
+            $user->phone = $data['phone'] ?? null;
         } else {
             $user->phone = $data['email_or_phone'];
         }

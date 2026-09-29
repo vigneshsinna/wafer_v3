@@ -77,29 +77,33 @@
                                     </div>
 
                                     @php
-                                        function renderSingleCategoryOptions($categories, $selectedId = null, $level = 0) {
-                                            foreach ($categories as $category) {
-                                                $indent = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
-                                                $selected = ($selectedId == $category->id) ? 'selected' : '';
-                                                echo "<option value=\"{$category->id}\" {$selected}>";
-                                                echo $indent . e($category->getTranslation('name'));
-                                                echo "</option>";
-                                                
-                                                if ($category->childrenCategories && $category->childrenCategories->count() > 0) {
-                                                    renderSingleCategoryOptions($category->childrenCategories, $selectedId, $level + 1);
+                                        if (!function_exists('renderSingleCategoryOptions')) {
+                                            function renderSingleCategoryOptions($categories, $selectedId = null, $level = 0) {
+                                                foreach ($categories as $category) {
+                                                    $indent = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
+                                                    $selected = ($selectedId == $category->id) ? 'selected' : '';
+                                                    echo "<option value=\"{$category->id}\" {$selected}>";
+                                                    echo $indent . e($category->getTranslation('name'));
+                                                    echo "</option>";
+                                                    
+                                                    if ($category->childrenCategories && $category->childrenCategories->count() > 0) {
+                                                        renderSingleCategoryOptions($category->childrenCategories, $selectedId, $level + 1);
+                                                    }
                                                 }
                                             }
                                         }
-                                        function renderMultiCategoryOptions($categories, $selectedIds = [], $level = 0) {
-                                            foreach ($categories as $category) {
-                                                $indent = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
-                                                $selected = (is_array($selectedIds) && in_array($category->id, $selectedIds)) ? 'selected' : '';
-                                                echo "<option value=\"{$category->id}\" {$selected}>";
-                                                echo $indent . e($category->getTranslation('name'));
-                                                echo "</option>";
-                                                
-                                                if ($category->childrenCategories && $category->childrenCategories->count() > 0) {
-                                                    renderMultiCategoryOptions($category->childrenCategories, $selectedIds, $level + 1);
+                                        if (!function_exists('renderMultiCategoryOptions')) {
+                                            function renderMultiCategoryOptions($categories, $selectedIds = [], $level = 0) {
+                                                foreach ($categories as $category) {
+                                                    $indent = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
+                                                    $selected = (is_array($selectedIds) && in_array($category->id, $selectedIds)) ? 'selected' : '';
+                                                    echo "<option value=\"{$category->id}\" {$selected}>";
+                                                    echo $indent . e($category->getTranslation('name'));
+                                                    echo "</option>";
+                                                    
+                                                    if ($category->childrenCategories && $category->childrenCategories->count() > 0) {
+                                                        renderMultiCategoryOptions($category->childrenCategories, $selectedIds, $level + 1);
+                                                    }
                                                 }
                                             }
                                         }
@@ -542,7 +546,7 @@
                                     <input type="text" class="form-control" value="{{translate('Colors')}}" disabled>
                                 </div>
                                 <div class="col-md-8">
-                                    <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="colors[]" id="colors" multiple @if(count(json_decode($product->colors)) < 1) disabled @endif>
+                                    <select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" name="colors[]" id="colors" multiple @if(count(json_decode($product->colors ?? '[]') ?: []) < 1) disabled @endif>
                                         @foreach (\App\Models\Color::orderBy('name', 'asc')->get() as $key => $color)
                                         <option value="{{ $color->code }}" data-content="<span><span class='size-15px d-inline-block mr-2 rounded border' style='background:{{ $color->code }}'></span><span>{{ $color->name }}</span></span>"
                                             @if(in_array($color->code, json_decode($product->colors, true) ?? [])) selected @endif></option>
@@ -551,7 +555,7 @@
                                 </div>
                                 <div class="col-md-1 align-content-center">
                                     <label class="aiz-switch aiz-switch-blue mb-0">
-                                        <input value="1" type="checkbox" name="colors_active" @if(count(json_decode($product->colors)) > 0) checked @endif>
+                                        <input value="1" type="checkbox" name="colors_active" @if(count(json_decode($product->colors ?? '[]') ?: []) > 0) checked @endif>
                                         <span></span>
                                     </label>
                                 </div>
@@ -564,19 +568,19 @@
                                 <div class="col-md-9">
                                     <select name="choice_attributes[]" id="choice_attributes" class="form-control aiz-selectpicker" data-selected-text-format="count" data-live-search="true" multiple data-placeholder="{{ translate('Choose Attributes') }}">
                                         @foreach (\App\Models\Attribute::all() as $key => $attribute)
-                                        <option value="{{ $attribute->id }}" @if($product->attributes != null && in_array($attribute->id, json_decode($product->attributes, true))) selected @endif>{{ $attribute->getTranslation('name') }}</option>
+                                        <option value="{{ $attribute->id }}" @if($product->attributes != null && in_array($attribute->id, json_decode($product->attributes, true) ?: [])) selected @endif>{{ $attribute->getTranslation('name') }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-                            <div id="chose_options_text" class="{{ count(json_decode($product->choice_options ?? '[]')) == 0 ? 'd-none' : '' }}">
+                            <div id="chose_options_text" class="{{ count(json_decode($product->choice_options ?? '[]') ?: []) == 0 ? 'd-none' : '' }}">
                                 <p>{{ translate('Choose the attributes of this product and then input values of each attribute') }}</p>
                                 <br>
                             </div>
 
                             <!-- choice options -->
                             <div class="customer_choice_options mb-4" id="customer_choice_options">
-                                @foreach (json_decode($product->choice_options) as $key => $choice_option)
+                                @foreach (json_decode($product->choice_options ?? '[]') ?: [] as $key => $choice_option)
                                 <div class="form-group row">
                                     <div class="col-md-3">
                                         <input type="hidden" name="choice_no[]" value="{{ $choice_option->attribute_id }}">
@@ -1852,7 +1856,7 @@ AIZ.plugins.tagify();
     function isRefundable() {
         const refundType = "{{ get_setting('refund_type') }}";
         const $refundable = $('input[name="refundable"]');
-        const $mainCategoryRadio = $('#category_id').val();
+        const categoryId = $('#category_id').val();
         const $note = $('#refundable-note');
 
         $refundable.off('change.isRefundableLock');
@@ -1873,7 +1877,7 @@ AIZ.plugins.tagify();
             return;
         }
 
-        if (!$mainCategoryRadio.length) {
+        if (!categoryId) {
             $refundable.prop('checked', false);
             $refundable.prop('disabled', true);
             $('.refund-block').addClass('d-none');
@@ -1882,7 +1886,6 @@ AIZ.plugins.tagify();
             return;
         }
 
-        const categoryId = $mainCategoryRadio.val();
         $.ajax({
             type: 'POST',
             url: '{{ route("admin.products.check_refundable_category") }}',

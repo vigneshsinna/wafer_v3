@@ -19,7 +19,7 @@ class StorefrontPurchaseService
 {
     public function __construct(private CheckoutService $checkout, private RazorpayGateway $gateway) {}
 
-    public function start(int $userId, int $addressId): array
+    public function start(int $userId, int $addressId, ?int $carrierId = null): array
     {
         if (!$this->gateway->isAvailable()) {
             throw new \InvalidArgumentException('Razorpay is not configured in admin yet.');
@@ -27,7 +27,7 @@ class StorefrontPurchaseService
         if (\App\Models\Currency::find(get_setting('system_default_currency'))?->code !== 'INR') {
             throw new \InvalidArgumentException('Set the store currency to INR before accepting Razorpay payments.');
         }
-        $summary = $this->checkout->summary($userId, $addressId);
+        $summary = $this->checkout->summary($userId, $addressId, $carrierId);
         $amount = (int) round($summary['grand_total'] * 100);
         if ($amount < 100) {
             throw new \InvalidArgumentException('Order total must be at least ₹1.');
@@ -61,7 +61,7 @@ class StorefrontPurchaseService
         $address = Address::with(['country', 'state', 'city'])->where('id', $addressId)->where('user_id', $userId)->firstOrFail();
         $user = User::findOrFail($userId);
         $shippingAddress = [
-            'name' => $user->name, 'email' => $user->email, 'phone' => $address->phone,
+            'name' => $address->recipient_name ?: $user->name, 'email' => $user->email, 'phone' => $address->phone,
             'address' => $address->address, 'country' => $address->country->name,
             'state' => $address->state->name, 'city' => $address->city?->name,
             'postal_code' => $address->postal_code,
@@ -75,7 +75,7 @@ class StorefrontPurchaseService
             'user_id' => $userId, 'address_id' => $addressId,
             'razorpay_order_id' => $razorpay['id'], 'amount_paise' => $amount,
             'cart_fingerprint' => $fingerprint,
-            'snapshot' => ['items' => $lines, 'shipping_address' => $shippingAddress],
+            'snapshot' => ['items' => $lines, 'shipping_address' => $shippingAddress, 'carrier_id' => $summary['carrier_id']],
             'status' => 'created',
         ]);
         return ['attempt_id' => $attempt->id, 'razorpay_order_id' => $attempt->razorpay_order_id,
@@ -162,7 +162,8 @@ class StorefrontPurchaseService
                 $order->seller_id = $lines[0]['seller_id'];
                 $order->shipping_address = $address;
                 $order->billing_address = $address;
-                $order->shipping_type = 'home_delivery';
+                $order->shipping_type = $locked->snapshot['carrier_id'] ? 'carrier' : 'home_delivery';
+                $order->carrier_id = $locked->snapshot['carrier_id'];
                 $order->order_from = 'app';
                 $order->payment_type = 'razorpay';
                 $order->payment_status = 'paid';
@@ -186,7 +187,7 @@ class StorefrontPurchaseService
                     $detail->tax = $line['tax_paise'] / 100;
                     $detail->shipping_cost = $line['shipping_paise'] / 100;
                     $detail->coupon_discount = $line['discount_paise'] / 100;
-                    $detail->shipping_type = 'home_delivery';
+                    $detail->shipping_type = $locked->snapshot['carrier_id'] ? 'carrier' : 'home_delivery';
                     $detail->payment_status = 'paid';
                     $detail->delivery_status = 'pending';
                     $detail->save();

@@ -5,6 +5,8 @@ namespace App\Services\Checkout;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Address;
+use App\Models\Carrier;
+use App\Models\Pincode;
 use App\Services\Cart\CartService;
 
 /**
@@ -29,7 +31,7 @@ class CheckoutService
         ];
     }
 
-    public function summary(int $userId, int $addressId): array
+    public function summary(int $userId, int $addressId, ?int $carrierId = null): array
     {
         $this->validateCheckout($userId);
         $address = Address::where('id', $addressId)->where('user_id', $userId)
@@ -37,28 +39,60 @@ class CheckoutService
         if (strtoupper((string) $address->country?->code) !== 'IN' || !$address->state || !$address->city_id) {
             throw new \InvalidArgumentException('Select a complete Indian shipping address.');
         }
-        if (!preg_match('/^[1-9][0-9]{5}$/', trim((string) $address->postal_code))) {
-            throw new \InvalidArgumentException('Enter a valid six-digit Indian postal code.');
+        if (!Pincode::matchesIndianAddress(trim((string) $address->postal_code), (string) $address->state->name)) {
+            throw new \InvalidArgumentException('Enter an active Indian PIN code matching the selected state.');
         }
         $shippingType = get_setting('shipping_type');
         if (!$shippingType) {
             throw new \InvalidArgumentException('Configure Laravel shipping rates before checkout.');
         }
-        if ($shippingType === 'carrier_wise_shipping') {
-            throw new \InvalidArgumentException('Carrier selection is not available in storefront checkout.');
-        }
-
-        $items = Cart::where('user_id', $userId)->active()->get();
+        $items = Cart::where('user_id', $userId)->active()->with('product')->get();
         $base = (new CartService())->getSummary($userId);
         $merchandiseTotal = $base['sub_total'] + $base['tax'] - $base['discount'];
         $freeShipping = self::qualifiesForFreeShipping($address->state->name, $merchandiseTotal);
         $shipping = 0;
-        $itemShipping = [];
+        $shippingOptions = [];
         $location = ['country_id' => $address->country_id, 'city_id' => $address->city_id, 'area_id' => $address->area_id];
-        if (!$freeShipping) {
+        if ($shippingType === 'carrier_wise_shipping') {
+            $zoneId = $address->country->zone_id;
+            foreach (Carrier::active()->with('carrier_ranges.carrier_range_prices')->get() as $carrier) {
+                if (!$carrier->free_shipping && (!$zoneId || !$carrier->carrier_range_prices()->where('zone_id', $zoneId)->exists())) {
+                    continue;
+                }
+                $rate = 0;
+                $unratedPhysicalItem = false;
+                if (!$carrier->free_shipping) {
+                    foreach ($items as $index => $item) {
+                        $itemRate = getShippingCost($items, $index, $location, $carrier->id);
+                        if ($itemRate <= 0 && $item->product?->digital != 1) {
+                            $unratedPhysicalItem = true;
+                            break;
+                        }
+                        $rate += $itemRate;
+                    }
+                }
+                if (!$carrier->free_shipping && ($unratedPhysicalItem || $rate <= 0)) {
+                    continue;
+                }
+                $shippingOptions[] = [
+                    'id' => $carrier->id,
+                    'name' => $carrier->name,
+                    'transit_time' => $carrier->transit_time,
+                    'cost' => round($freeShipping ? 0 : $rate, 2),
+                ];
+            }
+            if (!$shippingOptions) {
+                throw new \InvalidArgumentException('No courier rate is configured for this address and cart.');
+            }
+            $chosen = collect($shippingOptions)->firstWhere('id', $carrierId ?? $shippingOptions[0]['id']);
+            if (!$chosen) {
+                throw new \InvalidArgumentException('Select an available courier.');
+            }
+            $carrierId = $chosen['id'];
+            $shipping = $chosen['cost'];
+        } elseif (!$freeShipping) {
             foreach ($items as $index => $item) {
-                $itemShipping[$index] = getShippingCost($items, $index, $location);
-                $shipping += $itemShipping[$index];
+                $shipping += getShippingCost($items, $index, $location);
             }
             if ($shipping <= 0) {
                 throw new \InvalidArgumentException('No shipping rate is configured for this address.');
@@ -67,6 +101,8 @@ class CheckoutService
 
         return [
             'address_id' => $addressId,
+            'carrier_id' => $carrierId,
+            'shipping_options' => $shippingOptions,
             'sub_total' => $base['sub_total'],
             'tax' => $base['tax'],
             'shipping_cost' => round($shipping, 2),

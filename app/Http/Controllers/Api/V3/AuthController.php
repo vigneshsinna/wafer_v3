@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -51,9 +52,13 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name'             => 'required|string|max:255',
-            'email_or_phone'   => 'required',
+            'email_or_phone'   => [
+                'required',
+                Rule::when($request->register_by === 'email', ['email', 'unique:users,email'], ['numeric', 'unique:users,phone']),
+            ],
             'password'         => 'required|min:6|confirmed',
             'register_by'      => 'required|in:email,phone',
+            'phone'            => 'nullable|string|max:30|unique:users,phone',
         ]);
 
         if ($validator->fails()) {

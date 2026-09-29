@@ -14,9 +14,14 @@ class SettingsController extends Controller
     {
         return $this->successResponse([
             'store_name'           => get_setting('website_name'),
-            'store_logo'           => get_setting('header_logo') ? uploaded_asset(get_setting('header_logo')) : static_asset('assets/img/site-icon.svg'),
+            'store_logo'           => get_setting('header_logo') ? uploaded_asset(get_setting('header_logo')) : null,
             'store_favicon'        => get_setting('site_icon') ? uploaded_asset(get_setting('site_icon')) : static_asset('assets/img/site-icon.svg'),
             'store_motto'          => get_setting('site_motto'),
+            'contact_email'        => get_setting('contact_email'),
+            'contact_phone'        => get_setting('contact_phone'),
+            'contact_address'      => get_setting('contact_address'),
+            'fssai_license'        => get_setting('fssai_license'),
+            'announcement_text'    => get_setting('announcement_text'),
             'currency_code'        => \App\Models\Currency::find(get_setting('system_default_currency'))->code ?? 'USD',
             'currency_symbol'      => currency_symbol(),
             'language'             => app()->getLocale(),

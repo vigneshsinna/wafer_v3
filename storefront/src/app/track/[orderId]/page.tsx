@@ -11,8 +11,8 @@ export default async function TrackOrderPage({ params }: TrackOrderPageProps) {
 
     try {
         order = await trackOrder(params.orderId);
-    } catch (err: any) {
-        error = err.message || "Order not found";
+    } catch (err) {
+        error = err instanceof Error ? err.message : "Order not found";
     }
 
     return <TrackingResult order={order} error={error} orderId={params.orderId} />;

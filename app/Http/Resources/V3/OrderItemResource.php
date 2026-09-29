@@ -12,6 +12,7 @@ class OrderItemResource extends JsonResource
             'id'              => $this->id,
             'product_id'      => $this->product_id,
             'product_name'    => $this->product ? $this->product->getTranslation('name') : null,
+            'thumbnail_url'   => $this->product && $this->product->thumbnail_img ? uploaded_asset($this->product->thumbnail_img) : null,
             'variation'       => $this->variation,
             'quantity'        => (int) $this->quantity,
             'price'           => (float) $this->price,

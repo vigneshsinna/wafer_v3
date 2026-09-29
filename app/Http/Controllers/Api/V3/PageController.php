@@ -19,6 +19,39 @@ class PageController extends Controller
             'content' => $text,
             'meta_title' => $page->meta_title,
             'meta_description' => $page->meta_description,
+            'faq_sections' => $slug === 'faq' ? $this->faqSections($html) : null,
         ]);
+    }
+
+    private function faqSections(string $html): array
+    {
+        if ($html === '') {
+            return [];
+        }
+        $document = new \DOMDocument();
+        $previous = libxml_use_internal_errors(true);
+        $document->loadHTML('<?xml encoding="utf-8" ?>' . $html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+        $sections = [];
+        foreach ((new \DOMXPath($document))->query('//h2|//h3|//p') as $node) {
+            $value = trim($node->textContent);
+            if ($value === '') {
+                continue;
+            }
+            if ($node->nodeName === 'h2') {
+                $sections[] = ['title' => $value, 'questions' => []];
+            } elseif ($node->nodeName === 'h3' && $sections) {
+                $last = count($sections) - 1;
+                $sections[$last]['questions'][] = ['question' => $value, 'answer' => ''];
+            } elseif ($node->nodeName === 'p' && $sections) {
+                $last = count($sections) - 1;
+                $question = count($sections[$last]['questions']) - 1;
+                if ($question >= 0) {
+                    $sections[$last]['questions'][$question]['answer'] .= ($sections[$last]['questions'][$question]['answer'] ? "\n" : '') . $value;
+                }
+            }
+        }
+        return $sections;
     }
 }

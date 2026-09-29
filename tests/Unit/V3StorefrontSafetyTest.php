@@ -6,6 +6,7 @@ use App\Http\Resources\V3\ProductResource;
 use App\Http\Middleware\HeadlessCors;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\ProductTax;
 use App\Models\Order;
 use App\Services\Cart\CartService;
 use App\Services\Order\OrderQueryService;
@@ -36,11 +37,24 @@ class V3StorefrontSafetyTest extends TestCase
         $product->setRelation('brand', null);
         $product->setRelation('reviews', new Collection());
         $product->setRelation('stocks', new Collection());
+        $product->setRelation('taxes', new Collection());
         $product->setRelation('thumbnail', null);
 
         $data = (new ProductResource($product))->toArray(null);
 
         self::assertArrayNotHasKey('purchase_price', $data);
+    }
+
+    public function test_catalogue_prices_apply_discount_and_product_tax(): void
+    {
+        $product = new Product();
+        $product->forceFill(['unit_price' => 100, 'discount' => 10, 'discount_type' => 'percent']);
+        $product->setRelation('taxes', new Collection([
+            (new ProductTax())->forceFill(['tax_type' => 'percent', 'tax' => 5]),
+        ]));
+
+        self::assertSame(['sale' => 94.5, 'compare_at' => 105.0],
+            (new \App\Services\Catalog\ProductCatalogService())->displayPrices($product));
     }
 
     public function test_clear_cart_affects_only_current_users_active_rows(): void

@@ -17,9 +17,9 @@ class CheckoutController extends Controller
 
     public function startPayment(Request $request, StorefrontPurchaseService $purchase): JsonResponse
     {
-        $data = $request->validate(['address_id' => 'required|integer']);
+        $data = $request->validate(['address_id' => 'required|integer', 'carrier_id' => 'nullable|integer']);
         try {
-            return $this->createdResponse($purchase->start($request->user()->id, $data['address_id']));
+            return $this->createdResponse($purchase->start($request->user()->id, $data['address_id'], $data['carrier_id'] ?? null));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return $this->notFoundResponse('Shipping address not found.');
         } catch (\InvalidArgumentException $e) {
@@ -69,9 +69,9 @@ class CheckoutController extends Controller
 
     public function summary(Request $request, CheckoutService $checkout): JsonResponse
     {
-        $data = $request->validate(['address_id' => 'required|integer']);
+        $data = $request->validate(['address_id' => 'required|integer', 'carrier_id' => 'nullable|integer']);
         try {
-            return $this->successResponse($checkout->summary($request->user()->id, $data['address_id']));
+            return $this->successResponse($checkout->summary($request->user()->id, $data['address_id'], $data['carrier_id'] ?? null));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return $this->notFoundResponse('Shipping address not found.');
         } catch (\Exception $e) {

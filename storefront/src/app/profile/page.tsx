@@ -10,9 +10,10 @@ import {
     changePassword,
     getUserOrders,
     getUserWishlist,
+    getAddresses,
     removeFromWishlist
 } from "@/lib/api";
-import type { UserProfile, Order, WishlistItem } from "@/types";
+import type { UserProfile, Order, WishlistItem, Address } from "@/types";
 import { formatINR } from "@/lib/money";
 import AddressManager from "@/components/profile/AddressManager";
 import {
@@ -24,10 +25,11 @@ import {
     Eye,
     Trash2,
     ShoppingCart,
-    ChevronRight
+    ChevronRight,
+    LogOut
 } from "lucide-react";
 
-type Tab = "orders" | "wishlist" | "settings";
+type Tab = "addresses" | "orders" | "payment" | "wishlist" | "settings";
 
 const STATUS_COLORS: Record<string, string> = {
     pending: "bg-yellow-100 text-yellow-800",
@@ -40,13 +42,22 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function ProfilePage() {
     const router = useRouter();
-    const { user, isAuthenticated, fetchProfile } = useAuthStore();
+    const { token, fetchProfile, logout } = useAuthStore();
+    const handleSignOut = async () => {
+        try {
+            await logout();
+        } catch {}
+        window.location.href = "/";
+    };
+    const [hydrated, setHydrated] = useState(false);
 
-    const [activeTab, setActiveTab] = useState<Tab>("orders");
+    const [activeTab, setActiveTab] = useState<Tab>("addresses");
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState("");
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [orders, setOrders] = useState<Order[]>([]);
     const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+    const [addresses, setAddresses] = useState<Address[]>([]);
 
     // Settings form
     const [settingsForm, setSettingsForm] = useState({
@@ -64,40 +75,44 @@ export default function ProfilePage() {
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
     useEffect(() => {
-        if (new URLSearchParams(window.location.search).get("tab") === "settings") setActiveTab("settings");
-        async function init() {
-            await fetchProfile();
-        }
-        init();
-    }, [fetchProfile]);
+        const tab = new URLSearchParams(window.location.search).get("tab");
+        if (tab === "settings" || tab === "orders" || tab === "addresses") setActiveTab(tab);
+        setHydrated(useAuthStore.persist.hasHydrated());
+        return useAuthStore.persist.onFinishHydration(() => setHydrated(true));
+    }, []);
+
+    useEffect(() => { if (hydrated && token) void fetchProfile(); }, [hydrated, token, fetchProfile]);
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!hydrated) return;
+        if (!token) {
             router.push("/login");
             return;
         }
 
-        fetchData();
-    }, [isAuthenticated, router]);
+        void fetchData();
+    }, [hydrated, token, router]);
 
     async function fetchData() {
         setLoading(true);
         try {
-            const [profileData, ordersData, wishlistData] = await Promise.all([
+            const [profileData, ordersData, wishlistData, addressesData] = await Promise.all([
                 getUserProfile(),
                 getUserOrders(),
-                getUserWishlist()
+                getUserWishlist(),
+                getAddresses(),
             ]);
             setProfile(profileData);
             setOrders(ordersData);
             setWishlist(wishlistData);
+            setAddresses(addressesData);
             setSettingsForm({
                 name: profileData.name,
                 email: profileData.email || "",
                 phone: profileData.phone || ""
             });
         } catch (error) {
-            console.error("Failed to fetch profile data:", error);
+            setLoadError(error instanceof Error ? error.message : "Could not load your account.");
         } finally {
             setLoading(false);
         }
@@ -113,7 +128,7 @@ export default function ProfilePage() {
                 name: settingsForm.name,
                 phone: settingsForm.phone || undefined
             });
-            setProfile({ ...profile!, ...updated });
+            setProfile(current => current ? { ...current, ...updated } : current);
             setMessage({ type: "success", text: "Profile updated successfully!" });
         } catch (error) {
             setMessage({ type: "error", text: "Failed to update profile" });
@@ -158,9 +173,11 @@ export default function ProfilePage() {
     }
 
     const tabs = [
-        { id: "orders" as Tab, label: "My Orders", icon: Package, count: orders.length },
+        { id: "addresses" as Tab, label: "Address Book & Logistics", icon: Package, count: addresses.length },
+        { id: "orders" as Tab, label: "Order History", icon: Package, count: orders.length },
+        { id: "payment" as Tab, label: "Saved Payment Methods", icon: Settings },
         { id: "wishlist" as Tab, label: "Wishlist", icon: Heart, count: wishlist.length },
-        { id: "settings" as Tab, label: "Settings", icon: Settings }
+        { id: "settings" as Tab, label: "Account Settings & Security", icon: Settings }
     ];
 
     if (loading) {
@@ -175,20 +192,34 @@ export default function ProfilePage() {
         );
     }
 
+    if (!profile) return <div className="min-h-screen bg-background px-4 pt-36 text-center"><h1 className="font-headline-lg text-primary">Account unavailable</h1><p role="alert" className="mt-3 text-on-surface-variant">{loadError || "Sign in to view your account."}</p><Link href="/login" className="mt-5 inline-block font-semibold text-accent-700 underline">Sign in</Link></div>;
+
     return (
         <>
             <div className="min-h-screen pt-24 pb-12 bg-background">
                 <div className="container mx-auto px-4">
                     {/* Profile Header */}
-                    <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-                        <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                                <User className="w-8 h-8 text-primary" />
+                    <div className="rounded-2xl bg-primary-container p-space-lg text-on-primary shadow-warm mb-6 lg:p-space-xl">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="w-16 h-16 bg-tertiary-fixed rounded-full flex items-center justify-center shrink-0">
+                                    <User className="w-8 h-8 text-primary" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-tertiary-fixed">Your Artisan Pantry</p>
+                                    <h1 className="font-headline-lg">{profile?.name}</h1>
+                                    <p className="text-on-primary/75">{profile?.email || profile?.phone}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h1 className="text-2xl font-bold text-primary">{profile?.name}</h1>
-                                <p className="text-primary/70">{profile?.email}</p>
-                            </div>
+                            <button type="button" onClick={handleSignOut} className="self-start sm:self-center px-4 py-2 rounded-full border border-on-primary/30 text-on-primary hover:bg-on-primary/10 transition-colors text-sm font-semibold flex items-center gap-2">
+                                <LogOut className="w-4 h-4" />
+                                <span>Sign Out</span>
+                            </button>
+                        </div>
+                        <div className="mt-space-lg rounded-xl bg-on-primary/10 p-space-md">
+                            <h2 className="font-headline-sm">Small-batch pantry perks</h2>
+                            <p className="mt-1 text-sm text-on-primary/75">Recurring delivery plans are not available yet.</p>
+                            <div className="mt-3 flex flex-wrap gap-3"><button type="button" disabled className="rounded-full bg-tertiary-fixed px-4 py-2 text-sm font-semibold text-primary opacity-50">Manage Cadence</button><Link href="/faq" className="rounded-full border border-on-primary/50 px-4 py-2 text-sm font-semibold">Pantry Perks FAQ</Link></div>
                         </div>
                     </div>
 
@@ -219,14 +250,27 @@ export default function ProfilePage() {
                                         )}
                                     </button>
                                 ))}
+                                <div className="p-3 border-t border-surface-container-high/60 mt-auto bg-surface-container-lowest">
+                                    <button
+                                        type="button"
+                                        onClick={handleSignOut}
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-error hover:bg-error-container/20 transition-colors text-left"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        <span>Sign Out</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         {/* Content */}
                         <div className="lg:col-span-3">
+                            {activeTab === "addresses" && <AddressManager onChange={setAddresses} />}
+                            {activeTab === "payment" && <div className="rounded-xl bg-background-cream p-space-lg shadow-sm"><h2 className="font-headline-md text-primary">Saved Payment Methods</h2><p className="mt-3 text-on-surface-variant">Saved cards are not available. Choose a payment method securely at checkout.</p><Link href="/checkout" className="mt-4 inline-block font-semibold text-accent-700 underline">Go to checkout</Link></div>}
                             {/* Orders Tab */}
                             {activeTab === "orders" && (
                                 <div className="space-y-4">
+                                    <h2 className="font-headline-md text-primary">Recent Orders</h2>
                                     {orders.length === 0 ? (
                                         <div className="bg-white rounded-xl p-12 text-center shadow-sm">
                                             <Package className="w-12 h-12 text-primary/30 mx-auto mb-4" />
@@ -262,7 +306,7 @@ export default function ProfilePage() {
                                                                 {item.product_name} × {item.quantity}
                                                             </span>
                                                             <span className="font-medium">
-                                                                {formatINR(item.price + item.tax + item.shipping_cost)}
+                                                                {formatINR((item.price + item.tax + item.shipping_cost) * item.quantity)}
                                                             </span>
                                                         </div>
                                                     ))}
@@ -284,6 +328,7 @@ export default function ProfilePage() {
                                                         Track Order
                                                     </Link>
                                                 </div>
+                                                <div className="mt-4 flex flex-wrap gap-3 border-t pt-4 text-sm"><button type="button" disabled title="Reorder is not available" className="rounded-lg border px-3 py-2 opacity-50">Reorder</button><button type="button" disabled title="PDF invoice is not available" className="rounded-lg border px-3 py-2 opacity-50">Invoice</button><Link href="/contact" className="rounded-lg border px-3 py-2">Ask about this order</Link></div>
                                             </div>
                                         ))
                                     )}
@@ -328,7 +373,7 @@ export default function ProfilePage() {
                                                             {item.product.name}
                                                         </Link>
                                                         <p className="text-lg font-bold text-primary">
-                                                            {formatINR(item.product.unit_price)}
+                                                            {formatINR(item.product.sale_price)}
                                                         </p>
                                                         <div className="flex items-center gap-2 mt-2">
                                                             <Link
@@ -336,7 +381,7 @@ export default function ProfilePage() {
                                                                 className="flex items-center gap-1 text-sm bg-primary text-white px-3 py-1 rounded-lg hover:bg-primary/90"
                                                             >
                                                                 <ShoppingCart className="w-4 h-4" />
-                                                                Add to Cart
+                                                                View Product
                                                             </Link>
                                                             <button
                                                                 onClick={() => handleRemoveFromWishlist(item.product.slug)}
@@ -366,7 +411,6 @@ export default function ProfilePage() {
                                     )}
 
                                     {/* Profile Settings */}
-                                    <AddressManager />
                                     <div className="bg-white rounded-xl p-6 shadow-sm">
                                         <h2 className="text-lg font-bold text-primary mb-4">Profile Information</h2>
                                         <form onSubmit={handleUpdateProfile} className="space-y-4">

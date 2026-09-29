@@ -126,6 +126,7 @@
                 </div>
                 <div class="card-body">
                     <span>{{ translate('Carrier Wise Shipping Cost calculation: Shipping cost calculate in addition with carrier. In each carrier you can set free shipping cost or can set weight range or price range shipping cost. To configure carrier wise shipping cost go to ') }} <a href="{{ route('carriers.index') }}">{{ translate('Shipping Carriers') }}</a>.</span>
+                    <p class="mt-3 mb-0">For storefront checkout, set DTDC and ST Courier weight or price ranges and INR prices in <a href="{{ route('carriers.index') }}">Shipping Carriers</a>, enable each carrier, then select Carrier Wise Shipping in <a href="{{ route('shipping_configuration.shipping_method') }}">Shipping Method</a>. The checkout only offers carriers with a rate for the destination zone.</p>
                 </div>
             </div>
         </div>

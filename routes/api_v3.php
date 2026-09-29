@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\V3\ContactController;
 use App\Http\Controllers\Api\V3\ReviewController;
 use App\Http\Controllers\Api\V3\CheckoutController;
 use App\Http\Controllers\Api\V3\PageController as StorefrontPageController;
+use App\Http\Controllers\Api\V3\BlogController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -87,6 +88,8 @@ Route::post('contact',                       [ContactController::class, 'store']
 // Settings / Config
 Route::get('settings',                       [SettingsController::class, 'index'])->name('api.v3.settings.index');
 Route::get('pages/{slug}',                   [StorefrontPageController::class, 'show'])->where('slug', '[A-Za-z0-9-]+')->name('api.v3.pages.show');
+Route::get('blogs',                          [BlogController::class, 'index'])->name('api.v3.blogs.index');
+Route::get('blogs/{slug}',                   [BlogController::class, 'show'])->where('slug', '[A-Za-z0-9-]+')->name('api.v3.blogs.show');
 Route::get('checkout/payment-config',        [CheckoutController::class, 'paymentConfig'])->name('api.v3.checkout.payment_config');
 Route::post('checkout/razorpay/webhook',      [CheckoutController::class, 'razorpayWebhook'])->name('api.v3.checkout.razorpay.webhook');
 Route::get('currencies',                     [SettingsController::class, 'currencies'])->name('api.v3.currencies');

@@ -1,138 +1,137 @@
+"use client";
+
 import Link from "next/link";
-import { Crown, Mail, Phone, MapPin, Shield, FileText } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import type { StoreSettings } from "@/lib/storeContent";
+import { getProducts } from "@/lib/api";
+import type { Product } from "@/types";
 
 export default function Footer({ settings }: { settings: StoreSettings | null }) {
+    const currentYear = new Date().getFullYear();
+    const [products, setProducts] = useState<Product[]>([]);
+    useEffect(() => { void getProducts().then(setProducts).catch(() => {}); }, []);
+
     return (
-        <footer className="border-t border-white/10 bg-primary-700 text-background-cream">
-            <div className="container mx-auto px-4 py-14">
-                <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
-                    {/* Brand */}
-                    <div>
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="w-10 h-10 bg-accent rounded-md flex items-center justify-center">
-                                {settings?.store_logo ? <img src={settings.store_logo} alt="" className="h-9 w-9 object-contain" /> : <Crown className="w-6 h-6 text-primary" />}
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="font-display font-bold text-xl">{settings?.store_name || "Wafer King"}</span>
-                                <span className="text-[10px] text-white/60 -mt-1 tracking-wider uppercase">
-                                    {settings?.store_motto || "Black rice wafers"}
-                                </span>
-                            </div>
-                        </div>
-                        <p className="text-background-cream/70 text-sm leading-relaxed">
-                            Black rice wafers with Hibiscus, Avarampoo, Vallarai and Makhana. Made in Erode, Tamil Nadu.
+        <footer className="w-full bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-space-xl pb-space-lg text-on-surface border-t border-surface-container-high/60">
+            <div className="max-w-7xl mx-auto px-gutter-sm md:px-gutter grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl pb-space-xl">
+                {/* Column 1: Brand & Origin */}
+                <div className="flex flex-col gap-space-sm">
+                    <div className="flex items-center gap-space-xs">
+                        <Image
+                            src="/images/logo.svg"
+                            alt={settings?.store_name || "WaferKing Logo"}
+                            width={240}
+                            height={60}
+                            unoptimized
+                            className="h-10 w-auto max-w-[190px] object-contain"
+                        />
+                    </div>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                        Explore WaferKing products, read their details, and find the right pack for your pantry.
+                    </p>
+                    {settings?.fssai_license && <div className="flex items-center gap-space-xs pt-space-xs">
+                        <span className="inline-flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-accent-50 text-accent-700 font-label-sm text-label-sm font-semibold">
+                            <span className="material-symbols-outlined text-[16px]">verified</span>
+                            FSSAI Lic. #{settings.fssai_license}
+                        </span>
+                    </div>}
+                    {settings?.contact_phone && (
+                        <p className="text-xs text-on-surface-variant">
+                            Care: <a href={`tel:${settings.contact_phone}`} className="text-primary font-medium hover:underline">{settings.contact_phone}</a>
                         </p>
-                    </div>
-
-                    {/* Legal */}
-                    <div>
-                        <h2 className="font-display font-bold text-lg mb-6 text-accent flex items-center gap-2">
-                            <FileText className="w-5 h-5" />
-                            Legal
-                        </h2>
-                        <ul className="space-y-3">
-                            <li>
-                                <Link href="/legal/privacy-policy" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    Privacy Policy
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/legal/terms-of-service" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    Terms of Service
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/legal/refund-policy" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    Refund Policy
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/legal/return-policy" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    Return Policy
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/legal/shipping-policy" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    Shipping Policy
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {/* Quick Links */}
-                    <div>
-                        <h2 className="font-display font-bold text-lg mb-6 text-accent">
-                            Quick Links
-                        </h2>
-                        <ul className="space-y-3">
-                            <li>
-                                <Link href="/" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    Shop
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/about" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    About Us
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/faq" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    FAQ
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/contact" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    Contact Us
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/track" className="text-white/70 hover:text-accent transition-colors text-sm">
-                                    Track Order
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-
-                    {/* Contact Info */}
-                    <div>
-                        <h2 className="font-display font-bold text-lg mb-6 text-accent">
-                            Contact Us
-                        </h2>
-                        <ul className="space-y-4 text-white/70">
-                            <li className="flex items-start gap-3">
-                                <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                                <span className="text-sm">
-                                    <strong>WAFER KING SNACKS</strong><br />
-                                    Gain Industrial Centre, No: 257/2-C,<br />
-                                    Sembampalayam, Nasiyanur Road,<br />
-                                    Erode - 638107, Tamilnadu, India
-                                </span>
-                            </li>
-                            <li className="flex items-center gap-3">
-                                <Shield className="w-5 h-5 flex-shrink-0" />
-                                <span className="text-sm">
-                                    <strong>GST No:</strong> 33GROPK4273E1ZM
-                                </span>
-                            </li>
-                            <li className="flex items-center gap-3">
-                                <Phone className="w-5 h-5 flex-shrink-0" />
-                                <a href="tel:+919788090895" className="text-sm hover:text-accent transition-colors">
-                                    +91 9788090895
-                                </a>
-                            </li>
-                            <li className="flex items-center gap-3">
-                                <Mail className="w-5 h-5 flex-shrink-0" />
-                                <a href="mailto:support@waferking.com" className="text-sm hover:text-accent transition-colors">
-                                    support@waferking.com
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    )}
                 </div>
 
-                <div className="border-t border-white/10 mt-8 pt-8 text-center text-white/50 text-sm">
-                    <p>&copy; {new Date().getFullYear()} {settings?.store_name || "Wafer King"}. All rights reserved.</p>
+                {/* Column 2: The Collection */}
+                <div className="flex flex-col gap-space-sm">
+                    <h4 className="font-label-lg text-label-lg text-primary uppercase tracking-wider font-semibold">
+                        The Collection
+                    </h4>
+                    <ul className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+                        {products.slice(0, 5).map(product => <li key={product.id}>
+                            <Link className="hover:text-on-surface transition-colors" href={`/product/${product.slug}`}>{product.name}</Link>
+                        </li>)}
+                        {products.length === 0 && <li><Link href="/#flavours" className="hover:text-on-surface">Browse the collection</Link></li>}
+                    </ul>
+                </div>
+
+                {/* Column 3: Customer Care */}
+                <div className="flex flex-col gap-space-sm">
+                    <h4 className="font-label-lg text-label-lg text-primary uppercase tracking-wider font-semibold">
+                        Customer Care
+                    </h4>
+                    <ul className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+                        <li>
+                            <Link className="hover:text-on-surface transition-colors" href="/track">
+                                Track Your Consignment
+                            </Link>
+                        </li>
+                        <li>
+                            <Link className="hover:text-on-surface transition-colors" href="/legal/shipping-policy">
+                                Shipping Policy
+                            </Link>
+                        </li>
+                        <li>
+                            <Link className="hover:text-on-surface transition-colors" href="/legal/return-policy">
+                                Returns Policy
+                            </Link>
+                        </li>
+                        <li>
+                            <Link className="hover:text-on-surface transition-colors" href="/contact">
+                                Contact Us
+                            </Link>
+                        </li>
+                        <li>
+                            <Link className="hover:text-on-surface transition-colors" href="/faq">
+                                Frequently Asked Questions
+                            </Link>
+                        </li>
+                        <li><Link className="hover:text-on-surface transition-colors" href="/blog">Blog</Link></li>
+                    </ul>
+                </div>
+
+                {/* Column 4: Artisan Pantry Club */}
+                <div className="flex flex-col gap-space-sm">
+                    <h4 className="font-label-lg text-label-lg text-primary uppercase tracking-wider font-semibold">
+                        Artisan Pantry Club
+                    </h4>
+                    <p className="font-body-sm text-body-sm text-on-surface-variant">
+                        Newsletter signups are currently unavailable.
+                    </p>
+                    <form className="flex flex-col sm:flex-row gap-space-xs pt-space-xs" onSubmit={(e) => e.preventDefault()}>
+                        <input
+                            className="flex-1 bg-background-cream px-space-md py-space-xs rounded-lg font-body-sm text-body-sm text-primary placeholder-primary-50 focus:outline-none focus:ring-2 focus:ring-accent-700/20 border border-surface-container-high"
+                            placeholder="Enter your email"
+                            type="email"
+                            disabled
+                        />
+                        <button
+                            className="px-space-md py-space-xs rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg opacity-50"
+                            type="submit"
+                            disabled
+                        >
+                            Join
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {/* Bottom Disclaimer & Copyright */}
+            <div className="border-t border-surface-container max-w-7xl mx-auto px-gutter-sm md:px-gutter pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-on-surface-variant">
+                <p>
+                    © {currentYear} {settings?.store_name || "WaferKing"}.
+                </p>
+                <div className="flex flex-wrap items-center gap-space-sm">
+                    <span>Final taxes and shipping are shown at checkout</span>
+                    <span>•</span>
+                    <Link className="hover:text-on-surface transition-colors" href="/legal/privacy-policy">
+                        Privacy Policy
+                    </Link>
+                    <span>•</span>
+                    <Link className="hover:text-on-surface transition-colors" href="/legal/terms-of-service">
+                        Terms of Service
+                    </Link>
                 </div>
             </div>
         </footer>

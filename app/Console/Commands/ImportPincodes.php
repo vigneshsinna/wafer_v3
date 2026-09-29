@@ -111,7 +111,6 @@ class ImportPincodes extends Command
 
         if (! $this->option('no-truncate')) {
             $this->info('Clearing existing pincodes ...');
-            DB::table('pincodes')->truncate();
         }
 
         $columns = ['pincode', 'office_name', 'office_type', 'district', 'state', 'circle', 'region', 'division', 'delivery', 'latitude', 'longitude'];
@@ -119,6 +118,11 @@ class ImportPincodes extends Command
         $count = 0;
         $chunk = 2000;
 
+        DB::beginTransaction();
+        try {
+            if (! $this->option('no-truncate')) {
+                DB::table('pincodes')->delete();
+            }
         while (($row = fgetcsv($handle)) !== false) {
             $rec = [];
             foreach ($columns as $col) {
@@ -148,6 +152,12 @@ class ImportPincodes extends Command
         }
         if ($batch) {
             Pincode::insert($batch);
+        }
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            fclose($handle);
+            throw $e;
         }
         fclose($handle);
 

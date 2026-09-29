@@ -1,0 +1,800 @@
+# Stitch Screen: Product Detail — Avarampoo Wafers 55g
+
+> **Stitch Project ID**: `8109637399058163454`  
+> **Screen ID**: `bdb1510bd7be4eba894a08417c6f47ea`  
+> **Resource Name**: `projects/8109637399058163454/screens/bdb1510bd7be4eba894a08417c6f47ea`  
+> **Device**: DESKTOP  
+> **Canvas Dimensions**: 2560px × 6056px  
+> **Content Type**: `text/html`  
+> **Screenshot Preview**: [View High-Res Design Screenshot](https://lh3.googleusercontent.com/aida/AEtjO1WArYGjuoes8Pj3GLYLv0ZP4sMmFaR48vxCKJScQNrcLyGCxWVk5sx9Ed9yuGt-MHp9bBSbyT3sguZi-kln4HUrcdDkFDbBjbxQLX0sjMemEcp1Vkm0COynZHTNhzC1o1RGEt9oXjTIRAoYnd-c8hqY5WN_R5gGnUxiuR4tYmb8cMbsh9z8UnLScY0epkT_Nc2aiuPTWAP3xwtl2kxwTmgdJbhLSNqjLznjqZYT0fzMWlYIJEiudbymtUE)  
+
+---
+
+## 1. Screen Overview & UI Structure
+
+![Product Detail — Avarampoo Wafers 55g](https://lh3.googleusercontent.com/aida/AEtjO1WArYGjuoes8Pj3GLYLv0ZP4sMmFaR48vxCKJScQNrcLyGCxWVk5sx9Ed9yuGt-MHp9bBSbyT3sguZi-kln4HUrcdDkFDbBjbxQLX0sjMemEcp1Vkm0COynZHTNhzC1o1RGEt9oXjTIRAoYnd-c8hqY5WN_R5gGnUxiuR4tYmb8cMbsh9z8UnLScY0epkT_Nc2aiuPTWAP3xwtl2kxwTmgdJbhLSNqjLznjqZYT0fzMWlYIJEiudbymtUE)
+
+- **Screen Title**: Product Detail — Avarampoo Wafers 55g
+- **Target Route in Storefront**: `storefront/src/app/product/[slug]/page.tsx` (`/product/[slug]`)
+
+---
+
+## 2. Key UI Elements & Layout Architecture
+
+
+### Layout Sections:
+1. **Breadcrumbs**: Home > Shop > Wafers > Avarampoo Black Rice Wafers 55g
+2. **Product Gallery (Left 50%)**:
+   - Main High-Res pack image with interactive zoom & rounded organic frame
+   - Thumbnail strip (Front pack, Ingredients label, Nutritional facts, Crunch texture)
+3. **Product Information & Buy Box (Right 50%)**:
+   - Eyebrow: *"100% ORGANIC KARUPPU KAVUNI"*
+   - Product Title: *"Avarampoo Black Rice Wafers"*
+   - Rating: ★★★★★ (4.9 / 5 from 48 verified buyers)
+   - Price: ₹80 per 55g pack (Inclusive of all taxes)
+   - Real-time stock status badge: *"Freshly Packed in Erode — In Stock"*
+   - Quantity Stepper: [-] [ 1 ] [+]
+   - Action Buttons:
+     - Primary: "Add to Cart — ₹80"
+     - Secondary: "Buy Now with 1-Click"
+   - Feature Highlights: Zero Palm Oil, Gluten Free, 110 kcal per serving
+4. **Tabbed Detailed Specifications**:
+   - **Ingredients**: Black Rice (Karuppu Kavuni), Avarampoo Petal Extract, Cold Pressed Sesame Oil, Rock Salt, Cumin.
+   - **Nutritional Table**: Energy, Protein, Carbohydrates, Dietary Fiber, Iron, Antioxidants.
+   - **Storage & Shelf Life**: 6 months in cool dry environment.
+5. **Verified Customer Reviews Section**:
+   - Rating distribution bar chart
+   - User reviews with verified purchase tags
+   - "Write a Review" form
+
+
+---
+
+## 3. Stitch Raw Source Code
+
+```html
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"tertiary-fixed":"#ffddb6","outline-variant":"#d3c3c0","error":"#ba1a1a","inverse-on-surface":"#f4f0ea","secondary-fixed-dim":"#9dd3aa","secondary-container":"#b6edc2","surface-container-highest":"#e6e2dc","primary-700":"#2C1B10","inverse-primary":"#e3beb8","on-surface":"#1c1c18","outline":"#827472","background":"#fdf9f3","on-background":"#1c1c18","surface-variant":"#e6e2dc","surface-tint":"#745853","on-tertiary-fixed-variant":"#604011","on-secondary":"#ffffff","surface-container-lowest":"#ffffff","on-tertiary-container":"#b68c57","surface-container-low":"#f7f3ed","accent-700":"#754A22","primary":"#271310","state-error":"#DC2626","on-error":"#ffffff","primary-fixed-dim":"#e3beb8","surface-bright":"#fdf9f3","on-secondary-fixed-variant":"#1e5031","surface":"#fdf9f3","primary-300":"#61492E","background-cream":"#FFFDF9","on-primary":"#ffffff","on-tertiary":"#ffffff","on-primary-fixed-variant":"#5b403c","surface-container-high":"#ebe8e2","on-error-container":"#93000a","state-success":"#16A34A","inverse-surface":"#31302d","primary-fixed":"#ffdad4","tertiary":"#251400","error-container":"#ffdad6","secondary":"#376847","primary-50":"#8B7355","on-primary-container":"#ae8d87","primary-container":"#3e2723","on-tertiary-fixed":"#2a1800","on-secondary-fixed":"#00210e","surface-container":"#f1ede7","on-primary-fixed":"#2b1613","on-secondary-container":"#3b6d4b","on-surface-variant":"#504442","surface-dim":"#dddad4","secondary-fixed":"#b9efc5","background-warm":"#F1E7DA","tertiary-container":"#412700","tertiary-fixed-dim":"#edbe84","accent-50":"#FAF1E6"},"borderRadius":{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},"spacing":{"space-xs":"0.25rem","space-lg":"1.5rem","margin":"2rem","space-md":"1rem","space-xl":"2.5rem","gutter-sm":"1rem","margin-mobile":"1rem","gutter":"1.5rem","space-sm":"0.5rem"},"fontFamily":{"headline-lg":["Outfit"],"label-md":["Inter"],"body-md":["Inter"],"headline-xl":["Outfit"],"body-sm":["Inter"],"headline-xl-mobile":["Outfit"],"headline-sm":["Outfit"],"headline-lg-mobile":["Outfit"],"label-lg":["Inter"],"headline-md":["Outfit"],"body-lg":["Inter"],"label-sm":["Inter"]},"fontSize":{"headline-lg":["36px",{"lineHeight":"44px","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"600"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"headline-xl":["48px",{"lineHeight":"56px","fontWeight":"700"}],"body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],"headline-xl-mobile":["32px",{"lineHeight":"40px","fontWeight":"700"}],"headline-sm":["20px",{"lineHeight":"28px","fontWeight":"600"}],"headline-lg-mobile":["26px",{"lineHeight":"34px","fontWeight":"600"}],"label-lg":["14px",{"lineHeight":"20px","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"32px","fontWeight":"600"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","fontWeight":"500"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="bg-tertiary-container text-tertiary-fixed-dim text-center py-space-xs px-margin-mobile md:px-margin font-label-sm text-label-sm tracking-wide flex items-center justify-center gap-space-xs"><span class="material-symbols-outlined text-[14px] text-tertiary-fixed-dim">local_shipping</span><span>Free Shipping across India on orders over ₹499 | Handcrafted in Erode, Tamil Nadu</span></div><div class="h-20 bg-surface/90 backdrop-blur-xl"><div class="max-w-7xl mx-auto h-full px-gutter-sm md:px-gutter flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><img alt="WaferKing Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VKEDdlq-eMyp5fq9B0nouVtYvr429cZ6uM40eA7ubKtZiEqY0H1PoxVLaW_8RT2elpiWL4I8zjHT0n4EU0BV3EmapvGdSwT1vDKxunDQc0NzUd6hwlXIWKWfgQ4zQwtTDCrZPrNN86BXmphhtxeze2nq19zANzkDXFVcIKHF5v6fSz8s-nRYPuByyLRJQ3F7dZOao-VP65wGluutayM6oyl_epTmxll79DVpOAWOPgwU1_Syd3l5BgQ3M"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">WaferKing</span><span class="font-label-sm text-label-sm text-primary-50 tracking-wider uppercase -mt-1 hidden sm:inline-block">Artisan Black Rice</span></div></div><nav class="hidden lg:flex items-center gap-space-sm" data-active-classes="bg-primary-container text-on-primary font-label-lg rounded-lg"><a class="px-space-sm py-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="shop" href="#">Shop</a><a class="px-space-sm py-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="our-story" href="#">Our Story</a><a aria-current="page" class="px-space-sm py-space-xs transition-colors bg-primary-container text-on-primary font-label-lg rounded-lg" data-path="flavours" href="#">Flavours</a><a class="px-space-sm py-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="track-order" href="#">Track Order</a><a class="px-space-sm py-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="faq" href="#">FAQ</a><a class="px-space-sm py-space-xs font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="contact" href="#">Contact</a></nav><div class="flex items-center gap-space-sm"><button class="p-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined">search</span></button><button class="flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-primary-container text-on-primary hover:bg-primary-700 transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">shopping_bag</span><span class="font-label-lg text-label-lg">Cart (3)</span></button><div class="pl-space-xs flex items-center"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGHXkE-e44qdo0CNRvlg_ShnYK6_55-K2vQjZUcOSAN4KmgEMFkHp4OTQnAQewTLTwHSTyJcuKes-JxYAoCF0vULixh9t7oLD2L6UJHLInmds5cW7YZJry6I9VUbePKJQoCoslD53rUr_55ijjSmqkA_sBMG2xkRnopVa_IT3BFuXzkmNHRWzAcuaDS09_ImfNmakJ9NkDlS7JLLfxWkUzc57UaRFXO2DnJWleC_5NzDpn6RSfjvh3"/></div></div></div></div></header><main class="w-full pt-20 bg-background"><div class="flex flex-col w-full">
+<!-- Top Botanical Notice / Breadcrumb Ribbon -->
+<section class="w-full bg-surface-container-low py-space-sm">
+<div class="max-w-7xl mx-auto px-gutter-sm md:px-gutter flex flex-wrap items-center justify-between gap-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<nav aria-label="Breadcrumb" class="flex items-center gap-space-xs font-label-md text-label-md">
+<a class="hover:text-primary transition-colors" data-path="home" href="#">Home</a>
+<span class="text-outline-variant font-normal">/</span>
+<a class="hover:text-primary transition-colors" data-path="flavours" href="#">Flavours</a>
+<span class="text-outline-variant font-normal">/</span>
+<span class="text-primary font-semibold">Avarampoo Black Rice Wafers (55g)</span>
+</nav>
+<div class="inline-flex items-center gap-space-xs font-label-sm text-label-sm text-secondary bg-secondary-container/30 px-space-sm py-0.5 rounded-full">
+<span class="inline-block w-2 h-2 rounded-full bg-state-success animate-pulse"></span>
+<span>Batch #KK-284 Handcrafted This Morning in Erode</span>
+</div>
+</div>
+</section>
+<!-- MAIN PRODUCT SECTION: Split Grid -->
+<section class="w-full py-space-xl md:py-space-xl">
+<div class="max-w-7xl mx-auto px-gutter-sm md:px-gutter">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- Left Column: Media Gallery (7 Cols Desktop) -->
+<div class="lg:col-span-7 flex flex-col gap-space-md">
+<!-- Main Hero Image Frame -->
+<div class="relative w-full aspect-[4/3] md:aspect-[16/11] bg-surface-container rounded-xl overflow-hidden shadow-sm group">
+<img alt="WaferKing Avarampoo Black Rice Wafers Packaging" class="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105" data-alt="Editorial studio photograph of WaferKing Avarampoo Black Rice Wafers packaged inside a tactile matte textured pouch with gold foil botanical senna flower embossing. Deep royal purple and cacao grains alongside raw golden yellow Avarampoo flower petals scattered on natural handmade warm ivory linen under warm directional kitchen daylight." id="main-product-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUqBrgK4jAzdsJ4ytbWcoDqlNURL3gbTcjERSU7-06wweUwDUERjV_CTDLJ1qUjNaTtGEpysOIUN1-UvIP0_B_XLEKd-2_vIqWwMv9WDhQuZwvF-2fmlqzt7ZVNKUr1X-4eAYYYbNMBdll4QwOJrPnOQiT-nHuMEBPOOl4C1FPHNxibT-5RWY7n088fE_GERwQq1OfUFdB3KgZysKnNK5kGLTVgXYIBpKlYYa7cT2pEoK_l33iPmji"/>
+<!-- Badges Layer -->
+<div class="absolute top-space-md left-space-md flex flex-wrap gap-space-xs pointer-events-none">
+<span class="px-space-sm py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm uppercase tracking-wider shadow-sm">
+                Best Seller
+              </span>
+<span class="px-space-sm py-1 rounded-full bg-secondary text-on-secondary font-label-sm text-label-sm font-semibold tracking-wide shadow-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">eco</span> 100% Gluten-Free
+              </span>
+</div>
+<div class="absolute bottom-space-md left-space-md">
+<span class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-background-cream/95 backdrop-blur-md text-primary font-label-sm text-label-sm shadow-sm">
+<span class="w-2 h-2 rounded-full bg-state-success"></span>
+                In Stock in Erode Warehouse
+              </span>
+</div>
+<!-- Zoom Indicator -->
+<div class="absolute bottom-space-md right-space-md w-9 h-9 rounded-full bg-surface-container-lowest/80 backdrop-blur flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[18px]">zoom_in</span>
+</div>
+</div>
+<!-- Thumbnails Row -->
+<div class="grid grid-cols-4 gap-space-sm" id="thumb-container">
+<button class="thumb-btn group relative rounded-lg overflow-hidden aspect-square bg-surface-container-high ring-2 ring-accent-700 transition-all" onclick="selectThumb(0, 'pouch-front')" type="button">
+<img alt="Front Pouch View" class="w-full h-full object-cover object-center" data-alt="Front view photograph of the artisan 55g pouch for WaferKing Avarampoo Black Rice Wafers with gold detailing, royal dark violet hues, and Tamil script heritage insignia." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdlLdDdhAYXnTERRPoVZ_lJV-rHHRVo_R9bLgCrkUOoMwsTyJimHxZJUWSQPi1FprYoYDkvXD6ZMDFEDW1ExoObDIXDe5MEz1jiwEVqJFyPUIji1z8DvJWozaaS28tx78w4cBF3WTRhBwnLgaGDUOsoPsVerrFB2zYx0SotSOS5r6xjyjL4BZRvpIYCP2m0Q1HZCyd6Q1jzRBSAz0Ulx_TK5wb9WlB7p_yyfpwx0iODD6zyKkO0KEJ"/>
+<span class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors"></span>
+</button>
+<button class="thumb-btn group relative rounded-lg overflow-hidden aspect-square bg-surface-container-high ring-0 ring-transparent hover:ring-2 hover:ring-outline-variant transition-all" onclick="selectThumb(1, 'pouch-back')" type="button">
+<img alt="Nutritional Panel Back View" class="w-full h-full object-cover object-center" data-alt="Detailed back panel of snack pouch displaying clean nutritional facts label, certified FSSAI licence marker, clean ingredient list with Kaveri delta sourcing notes on organic craft paper." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQdg11WFIU4WqG__BDfYxjduSu6ud8gU0Y_uDiOGgviPhwDjhBycajdA-Ee5DfMCs6W4X87k4bsIlCH2hnSfBkojF1MXxynS_rS4flsxDoGZC0BVHe0WKMoRsSHaS9Y31J-SPAsOdIaXjFQRR5WzsZXFdChE-S6FRrgQ5KlozX9u45flHLQHFuktxYdPaNZ5-aSPlzzWLhmpijkelD_S_eXOltBcI3tbp0ARwP5RBJ2cCvTNkKkoN7"/>
+<span class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors"></span>
+</button>
+<button class="thumb-btn group relative rounded-lg overflow-hidden aspect-square bg-surface-container-high ring-0 ring-transparent hover:ring-2 hover:ring-outline-variant transition-all" onclick="selectThumb(2, 'wafer-macro')" type="button">
+<img alt="Wafer Crunch Texture" class="w-full h-full object-cover object-center" data-alt="Macro close-up shot of thin artisan black rice wafer snapped open revealing visible flecks of sun-dried yellow Avarampoo flower petals and airy crunchy micro-air pockets." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-9CV1ErVYypDXX8UQO7skeO9TzSglMrIs3qVgdhY2uFS7n3blmt5RcjRObQ2WPe_C2p2UWBc6OmcLzJMMl7PrZIGJ1Ek1A22lqO3x1IW-ZaAW9njr_OBlZGLIIT48lcQs5SFPwtZuZrGsTkVQxXpgvEU3XexZZhNPLE9i4NuusiRudvEhe0iMgcyR_385pFnRDQAgn9lMf4lSuxpSc_ZGdoLkT87HFhZmGWuQlbhVnTeZF5EqBaX7"/>
+<span class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors"></span>
+</button>
+<button class="thumb-btn group relative rounded-lg overflow-hidden aspect-square bg-surface-container-high ring-0 ring-transparent hover:ring-2 hover:ring-outline-variant transition-all" onclick="selectThumb(3, 'raw-grain')" type="button">
+<img alt="Raw Karuppu Kavuni Rice Grains" class="w-full h-full object-cover object-center" data-alt="Rustic terracotta bowl overflowing with uncooked raw heirloom Karuppu Kavuni deep violet-black rice grains alongside fresh golden Senna auriculata wild Avarampoo flowers." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChMoocEki0lCUqfabTRAPx2yN3WPOGrj9FLr35omKm4htIHJ0rbriTT_vUG1vRN4-e0K6hFQjnYdR9k_dSJ_ouP2iZYQsb2pJXTwhWWm3UFZMpOV7BiBbz2mAILcCBMF8ZAnkJbGT1jr1ht4SpmpXc5exUtnEDrRU_CL4a0-nhiFNQPI-_xarfS0q5xI-setI5bav1fbBJPH4b31fQyIKsB9-6toG8SNb06YDdIbRRATNA_pmQikwP"/>
+<span class="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors"></span>
+</button>
+</div>
+<!-- Micro Heritage Banner -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex items-center justify-between gap-space-md mt-space-xs">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-accent-50 text-accent-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">agriculture</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-primary">Direct Kaveri Delta Harvest</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sourced directly from 14 family seed-keeper collectives in Bhavani &amp; Gobichettipalayam.</span>
+</div>
+</div>
+<div class="hidden sm:flex flex-col items-end shrink-0">
+<span class="font-label-md text-label-md uppercase tracking-wider text-accent-700">Heritage Variety</span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Karuppu Kavuni 100%</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Buy Box & Details (5 Cols Desktop) -->
+<div class="lg:col-span-5 flex flex-col gap-space-md">
+<!-- Category Eyebrow & Badges -->
+<div class="flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-accent-700 tracking-widest uppercase font-semibold">
+                100% Heirloom Tamil Nadu Black Rice
+              </span>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-secondary font-medium">
+<span class="material-symbols-outlined text-[16px]">verified</span> Lab Tested Anthocyanin
+              </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight font-bold">
+              Avarampoo Golden Crisp Black Rice Wafers
+            </h1>
+</div>
+<!-- Rating & Social Proof -->
+<div class="flex items-center gap-space-sm font-label-md text-label-md pb-space-xs">
+<div class="flex items-center text-accent-700">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+<span class="font-bold text-primary">4.9</span>
+<span class="text-outline-variant">•</span>
+<a class="text-on-surface-variant hover:text-primary underline transition-colors" href="#reviews-breakdown">48 Verified Buyer Reviews</a>
+<span class="text-outline-variant">•</span>
+<a class="text-accent-700 hover:text-primary-700 font-semibold transition-colors" href="#reviews-breakdown">Write a Review</a>
+</div>
+<!-- Price Display -->
+<div class="bg-background-cream rounded-xl p-space-md shadow-sm flex flex-col gap-1">
+<div class="flex items-baseline gap-space-sm flex-wrap">
+<span class="font-headline-lg text-headline-lg font-bold text-primary" id="price-display">₹80</span>
+<span class="line-through text-on-surface-variant text-body-lg" id="original-price">₹95</span>
+<span class="bg-accent-50 text-accent-700 px-2 py-0.5 rounded font-label-sm text-label-sm font-bold tracking-wide uppercase" id="discount-pill">
+                Save 15%
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Inclusive of all taxes (12% GST included) • Net Qty: 55g
+            </p>
+</div>
+<!-- Pack Selector Form -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-lg text-label-lg text-primary">Select Packaging Size</span>
+<span class="font-label-sm text-label-sm text-secondary font-medium">Free dipping salt pouch with Box of 6</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-xs" id="pack-selector">
+<!-- Single -->
+<button class="pack-pill active-pack text-left p-space-sm rounded-lg bg-surface-container-high transition-all" onclick="selectPack(1, 80, 95, '15%')" type="button">
+<div class="font-label-md text-label-md text-primary font-bold">Single Pack</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">55g • ₹80</div>
+<div class="font-label-sm text-label-sm text-accent-700 font-medium mt-1">Trial Pack</div>
+</button>
+<!-- Pack of 3 -->
+<button class="pack-pill text-left p-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high transition-all relative" onclick="selectPack(3, 225, 285, '21%')" type="button">
+<span class="absolute top-1 right-1.5 px-1.5 py-0.2 rounded bg-secondary text-on-secondary text-[10px] font-bold uppercase">Popular</span>
+<div class="font-label-md text-label-md text-primary font-bold">Pack of 3</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">165g • ₹225</div>
+<div class="font-label-sm text-label-sm text-secondary font-semibold mt-1">Save 21%</div>
+</button>
+<!-- Box of 6 -->
+<button class="pack-pill text-left p-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high transition-all relative" onclick="selectPack(6, 420, 570, '26%')" type="button">
+<span class="absolute top-1 right-1.5 px-1.5 py-0.2 rounded bg-tertiary-fixed-dim text-on-tertiary-fixed text-[10px] font-bold uppercase">Free Ship</span>
+<div class="font-label-md text-label-md text-primary font-bold">Box of 6</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">330g • ₹420</div>
+<div class="font-label-sm text-label-sm text-accent-700 font-semibold mt-1">Free Delivery</div>
+</button>
+</div>
+</div>
+<!-- Quantity Stepper & Stock Warning -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary">Quantity</span>
+<span class="font-label-sm text-label-sm text-state-error flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[16px]">alarm</span>
+                Only 18 packs left from today's fresh batch
+              </span>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="inline-flex items-center bg-surface-container-high rounded-lg p-1">
+<button aria-label="Decrease quantity" class="w-10 h-10 rounded flex items-center justify-center text-primary hover:bg-surface-container-lowest transition-colors font-bold text-lg select-none" onclick="decrementQty()" type="button">
+                  −
+                </button>
+<input class="w-12 text-center bg-transparent font-headline-sm text-headline-sm text-primary font-bold focus:outline-none select-none" id="qty-input" readonly="" type="text" value="2"/>
+<button aria-label="Increase quantity" class="w-10 h-10 rounded flex items-center justify-center text-primary hover:bg-surface-container-lowest transition-colors font-bold text-lg select-none" onclick="incrementQty()" type="button">
+                  +
+                </button>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                Total weight: <span class="text-primary font-semibold" id="weight-indicator">110g</span> (Air-tight nitrogen flushed)
+              </div>
+</div>
+</div>
+<!-- Action CTAs -->
+<div class="flex flex-col sm:flex-row gap-space-sm pt-space-xs">
+<button class="flex-1 py-space-sm px-space-md rounded-lg bg-primary-container text-on-primary hover:bg-primary-700 font-label-lg text-label-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-space-xs" id="cart-cta" type="button">
+<span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+<span id="cart-button-text">Add to Cart — ₹160</span>
+</button>
+<button class="py-space-sm px-space-lg rounded-lg bg-tertiary-fixed-dim text-on-tertiary-fixed hover:bg-tertiary-fixed font-label-lg text-label-lg transition-all active:scale-[0.98] flex items-center justify-center gap-space-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+<span>Buy Now via Instant Checkout</span>
+</button>
+</div>
+<!-- Delivery PIN Code Check -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-xs text-primary font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px] text-accent-700">local_shipping</span>
+<span>Check Express Pincode Dispatch</span>
+</div>
+<div class="flex gap-space-xs">
+<input class="flex-1 bg-surface-container-lowest px-space-md py-space-xs rounded-lg font-body-sm text-body-sm text-primary placeholder-primary-50 focus:outline-none focus:ring-2 focus:ring-accent-700/20" id="pincode-input" maxlength="6" placeholder="Enter 6-digit PIN code" type="text"/>
+<button class="px-space-md py-space-xs rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-700 transition-colors" onclick="checkPincode()" type="button">
+                Check
+              </button>
+</div>
+<div class="font-body-sm text-body-sm text-secondary flex items-center gap-1.5 pt-0.5" id="pincode-result">
+<span class="material-symbols-outlined text-[16px] text-state-success">schedule</span>
+<span>Express 2-Day Delivery to Tamil Nadu &amp; Bangalore • Standard 3-4 Days Pan-India</span>
+</div>
+</div>
+<!-- Micro assurances -->
+<div class="grid grid-cols-3 gap-space-xs pt-space-xs text-center font-label-sm text-label-sm text-on-surface-variant">
+<div class="p-space-xs rounded bg-surface-container flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-[20px] text-primary">bakery_dining</span>
+<span>Slow Stone Ground</span>
+</div>
+<div class="p-space-xs rounded bg-surface-container flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-[20px] text-primary">oil_barrel</span>
+<span>Cold Pressed Oil Only</span>
+</div>
+<div class="p-space-xs rounded bg-surface-container flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-[20px] text-primary">history_edu</span>
+<span>No Palm Oil / Preservatives</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ACCORDION PANELS / PRODUCT TABS -->
+<section class="w-full bg-surface-container-low py-space-xl">
+<div class="max-w-5xl mx-auto px-gutter-sm md:px-gutter">
+<div class="text-center max-w-2xl mx-auto mb-space-lg">
+<span class="font-label-md text-label-md text-accent-700 tracking-wider uppercase font-semibold">Artisan Transparency</span>
+<h2 class="font-headline-md text-headline-md text-primary mt-1">Grounded Heritage &amp; Craft Details</h2>
+</div>
+<!-- Tab Buttons Desktop / Fluid Switcher -->
+<div class="flex items-center justify-center gap-space-xs mb-space-md border-b-0">
+<button class="tab-trigger px-space-md py-space-xs rounded-full bg-primary-container text-on-primary font-label-md text-label-md transition-all" id="tab-ingredients" onclick="openTab('panel-ingredients')" type="button">
+          Ingredients &amp; Nutrition
+        </button>
+<button class="tab-trigger px-space-md py-space-xs rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md transition-all hover:text-primary" id="tab-tasting" onclick="openTab('panel-tasting')" type="button">
+          Tasting &amp; Flavour Notes
+        </button>
+<button class="tab-trigger px-space-md py-space-xs rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md transition-all hover:text-primary" id="tab-storage" onclick="openTab('panel-storage')" type="button">
+          Storage &amp; Shelf Life
+        </button>
+</div>
+<!-- Panel 1: Ingredients & Nutritive Value -->
+<div class="tab-content block bg-surface-container-lowest rounded-xl p-space-lg shadow-sm" id="panel-ingredients">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-lg">
+<div class="md:col-span-6 flex flex-col gap-space-md">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">Farm-Traceable Ingredients</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">
+                Zero refined flours, zero artificial fillers. Every ingredient is sourced directly from sustainable organic certified cultivators across the Western Ghats and Kaveri basin.
+              </p>
+</div>
+<div class="space-y-space-xs">
+<div class="flex justify-between items-center p-space-sm rounded-lg bg-surface-container">
+<span class="font-label-lg text-label-lg text-primary">Pure Karuppu Kavuni Black Rice</span>
+<span class="font-label-md text-label-md text-accent-700 font-bold bg-accent-50 px-2 py-0.5 rounded">72%</span>
+</div>
+<div class="flex justify-between items-center p-space-sm rounded-lg bg-surface-container">
+<span class="font-label-lg text-label-lg text-primary">Dried Organic Avarampoo Petals</span>
+<span class="font-label-md text-label-md text-accent-700 font-bold bg-accent-50 px-2 py-0.5 rounded">12%</span>
+</div>
+<div class="flex justify-between items-center p-space-sm rounded-lg bg-surface-container">
+<span class="font-label-lg text-label-lg text-primary">Cold Pressed Wood-Churned Groundnut Oil</span>
+<span class="font-label-md text-label-md text-accent-700 font-bold bg-accent-50 px-2 py-0.5 rounded">8%</span>
+</div>
+<div class="flex justify-between items-center p-space-sm rounded-lg bg-surface-container">
+<span class="font-label-lg text-label-lg text-primary">Hand-Roasted Cumin &amp; Hing (Asafoetida)</span>
+<span class="font-label-md text-label-md text-accent-700 font-bold bg-accent-50 px-2 py-0.5 rounded">5%</span>
+</div>
+<div class="flex justify-between items-center p-space-sm rounded-lg bg-surface-container">
+<span class="font-label-lg text-label-lg text-primary">Himalayan Pink Rock Salt</span>
+<span class="font-label-md text-label-md text-accent-700 font-bold bg-accent-50 px-2 py-0.5 rounded">3%</span>
+</div>
+</div>
+</div>
+<!-- Nutritional Table -->
+<div class="md:col-span-6 bg-surface-container-low rounded-xl p-space-md flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-space-sm">
+<span class="font-label-lg text-label-lg text-primary font-bold">Nutritional Profile</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Per 30g Serving</span>
+</div>
+<div class="grid grid-cols-2 gap-space-xs font-body-sm text-body-sm">
+<div class="bg-surface-container-lowest p-space-sm rounded flex justify-between items-center">
+<span class="text-on-surface-variant">Energy</span>
+<span class="font-semibold text-primary">110 kcal</span>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded flex justify-between items-center">
+<span class="text-on-surface-variant">Protein</span>
+<span class="font-semibold text-primary">3.2 g</span>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded flex justify-between items-center">
+<span class="text-on-surface-variant">Dietary Fiber</span>
+<span class="font-semibold text-secondary">4.8 g</span>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded flex justify-between items-center">
+<span class="text-on-surface-variant">Iron</span>
+<span class="font-semibold text-primary">2.4 mg</span>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded flex justify-between items-center">
+<span class="text-on-surface-variant">Carbohydrates</span>
+<span class="font-semibold text-primary">18 g</span>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded flex justify-between items-center">
+<span class="text-on-surface-variant">Total Sugars</span>
+<span class="font-semibold text-secondary">0.0 g</span>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded flex justify-between items-center">
+<span class="text-on-surface-variant">Trans Fats</span>
+<span class="font-semibold text-secondary">0.0 g</span>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded flex justify-between items-center">
+<span class="text-on-surface-variant">Anthocyanins</span>
+<span class="font-semibold text-accent-700">142 mg</span>
+</div>
+</div>
+</div>
+<div class="mt-space-md p-space-sm bg-accent-50/60 rounded-lg flex items-center gap-space-xs text-accent-700 font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Independently certified by NABL accredited food testing laboratory.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Panel 2: Tasting & Flavour Notes -->
+<div class="tab-content hidden bg-surface-container-lowest rounded-xl p-space-lg shadow-sm" id="panel-tasting">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<div class="bg-surface-container p-space-md rounded-xl flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-accent-700 uppercase tracking-widest font-semibold">Stage 1 • Aroma</span>
+<h4 class="font-headline-sm text-headline-sm text-primary">Delicate Wild Flora</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              A serene floral aroma of hand-foraged wild senna petals, reminiscent of sun-baked Kongu hillocks and fresh morning dew.
+            </p>
+</div>
+<div class="bg-surface-container p-space-md rounded-xl flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-accent-700 uppercase tracking-widest font-semibold">Stage 2 • Palate</span>
+<h4 class="font-headline-sm text-headline-sm text-primary">Nutty Earthen Depth</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              The deep roasted body of heirloom Karuppu Kavuni grain releases warm hazelnut and toasted sesame undertones on the crunch.
+            </p>
+</div>
+<div class="bg-surface-container p-space-md rounded-xl flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-accent-700 uppercase tracking-widest font-semibold">Stage 3 • Finish</span>
+<h4 class="font-headline-sm text-headline-sm text-primary">Savory Mineral Crisp</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              A clean mineral lift from hand-crushed Himalayan rock salt, grounded by pungent whole cumin seeds and gentle asafoetida warmth.
+            </p>
+</div>
+</div>
+</div>
+<!-- Panel 3: Storage & Shelf Life -->
+<div class="tab-content hidden bg-surface-container-lowest rounded-xl p-space-lg shadow-sm" id="panel-storage">
+<div class="flex flex-col md:flex-row gap-space-lg items-center">
+<div class="w-16 h-16 rounded-full bg-accent-50 text-accent-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[32px]">shelves</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<h4 class="font-headline-sm text-headline-sm text-primary">Natural Preservation &amp; Care</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Best before <strong>6 months</strong> from the manufacture date printed on the foil crimp. WaferKing snacks contain no artificial chemical stabilizers, moisture absorbers, or synthetic preservatives.
+            </p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+              Once unsealed, fold down the craft zip-lock pouch or transfer remaining wafers to an airtight ceramic jar away from direct sunlight and ambient cooking steam to sustain the signature shatter-crisp crunch.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- VERIFIED CUSTOMER REVIEWS BREAKDOWN -->
+<section class="w-full py-space-xl" id="reviews-breakdown">
+<div class="max-w-7xl mx-auto px-gutter-sm md:px-gutter">
+<!-- Section Title -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-xl">
+<div>
+<span class="font-label-md text-label-md text-accent-700 tracking-wider uppercase font-semibold">Community Ratings</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-1">Verified Buyer Experiences</h2>
+</div>
+<button class="self-start md:self-auto px-space-md py-space-xs rounded-lg bg-surface-container-high text-primary hover:bg-surface-container-highest font-label-lg text-label-lg transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]">rate_review</span>
+<span>Write a Product Review</span>
+</button>
+</div>
+<!-- Rating Overview Bento Card -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl bg-surface-container-low rounded-xl p-space-lg mb-space-xl">
+<!-- Score Column -->
+<div class="lg:col-span-4 flex flex-col justify-center items-center text-center p-space-md bg-surface-container-lowest rounded-xl shadow-sm">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">4.9</span>
+<div class="flex items-center text-accent-700 my-1">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant font-medium">Based on 48 verified orders</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold mt-1">98% of customers recommend this crisp</span>
+</div>
+<!-- Rating Progress Bars Column -->
+<div class="lg:col-span-8 flex flex-col justify-center gap-space-xs">
+<!-- 5 Stars -->
+<div class="flex items-center gap-space-sm font-label-sm text-label-sm">
+<span class="w-14 text-primary font-semibold">5 Stars</span>
+<div class="flex-1 h-3 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-accent-700 rounded-full" style="width: 88%;"></div>
+</div>
+<span class="w-10 text-right text-on-surface-variant font-medium">88%</span>
+</div>
+<!-- 4 Stars -->
+<div class="flex items-center gap-space-sm font-label-sm text-label-sm">
+<span class="w-14 text-primary font-semibold">4 Stars</span>
+<div class="flex-1 h-3 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-accent-700 rounded-full" style="width: 10%;"></div>
+</div>
+<span class="w-10 text-right text-on-surface-variant font-medium">10%</span>
+</div>
+<!-- 3 Stars -->
+<div class="flex items-center gap-space-sm font-label-sm text-label-sm">
+<span class="w-14 text-primary font-semibold">3 Stars</span>
+<div class="flex-1 h-3 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-accent-700 rounded-full" style="width: 2%;"></div>
+</div>
+<span class="w-10 text-right text-on-surface-variant font-medium">2%</span>
+</div>
+<!-- 2 Stars -->
+<div class="flex items-center gap-space-sm font-label-sm text-label-sm">
+<span class="w-14 text-primary font-semibold">2 Stars</span>
+<div class="flex-1 h-3 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-accent-700 rounded-full" style="width: 0%;"></div>
+</div>
+<span class="w-10 text-right text-on-surface-variant font-medium">0%</span>
+</div>
+<!-- 1 Star -->
+<div class="flex items-center gap-space-sm font-label-sm text-label-sm">
+<span class="w-14 text-primary font-semibold">1 Star</span>
+<div class="flex-1 h-3 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-accent-700 rounded-full" style="width: 0%;"></div>
+</div>
+<span class="w-10 text-right text-on-surface-variant font-medium">0%</span>
+</div>
+</div>
+</div>
+<!-- Verified Review Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Review 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center text-accent-700">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 days ago</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Unbelievable light crunch</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              “You can distinctly smell the Avarampoo flower petals as soon as you tear open the craft bag. Unlike regular oil-soaked store chips, these leave no greasy residue at all on the fingers. Pair remarkably well with rasam rice or afternoon chai.”
+            </p>
+<!-- Reviewer Photo Attachment -->
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container mt-1">
+<img alt="Review photo 1" class="w-full h-full object-cover" data-alt="Customer photo of WaferKing black rice wafers held by hand next to a cup of south Indian filter coffee on a wooden kitchen desk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEqynw4f318aj4T4uFsBUdQW4MxbPMdlpe3PhFOUOHcWd0f3H_JUMWRgWA52FtnI3_Xw3crT-MtthkzkDSm_EFq1t6Ijfrcd8qg9hH3m-OckI3F2hvGY2kZy--jl2mIN3OyVPuV6SytRyQ6CUJvhZiPl_q_5qkkLxxybQDunuv7lsLjkwyMdWiMKqPwbtKzRC16yswzYR2nTxQNmXKwSFE6XwpgyMqpqUwzHpllKjKYT8GY_EQt5iv"/>
+</div>
+</div>
+<div class="flex items-center gap-space-xs pt-space-xs border-t-0">
+<div class="w-7 h-7 rounded-full bg-accent-50 text-accent-700 font-bold font-label-sm text-label-sm flex items-center justify-center">
+              DR
+            </div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary font-semibold">Dr. Revathy S.</span>
+<span class="font-label-sm text-[11px] text-secondary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">verified</span> Verified Buyer (Coimbatore)
+              </span>
+</div>
+</div>
+</div>
+<!-- Review 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center text-accent-700">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">1 week ago</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Heirloom nutrition that tastes royal</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              “My diabetic parents love having Karuppu Kavuni rice in traditional porridge form, but this snack brings the same antioxidant goodness in such an effortless snacking format. Zero sugar and real cold-pressed groundnut oil makes a massive difference.”
+            </p>
+<!-- Reviewer Photo Attachment -->
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container mt-1">
+<img alt="Review photo 2" class="w-full h-full object-cover" data-alt="Customer photo of open WaferKing Avarampoo wafer pack showing crispy dark purple crisps on a brass thali plate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLE1f982PShSbmiv21MH8kiqhYQXQzZSMwMCsMrq2lJaciLIgVh1p8j8AtJixHt9kYZtd9r2tYklhqVzP_zQT0N_b3_r7SIbpfybbX5S__Fb4LRPn8FCN9m2MqThi-6cIL2PCLamCG7oK2zI2gMDn5LJfyc8t0jUSGk4BDrH1t5rF-FQuoKwULjmtEE9ryJoKz_9jtbk9p7VtKHyI3oMHcxshWc_GpSF5n4nBA3ujG1iHbe6lnxHL8"/>
+</div>
+</div>
+<div class="flex items-center gap-space-xs pt-space-xs">
+<div class="w-7 h-7 rounded-full bg-accent-50 text-accent-700 font-bold font-label-sm text-label-sm flex items-center justify-center">
+              KV
+            </div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary font-semibold">Karthik V.</span>
+<span class="font-label-sm text-[11px] text-secondary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">verified</span> Verified Buyer (Bengaluru)
+              </span>
+</div>
+</div>
+</div>
+<!-- Review 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center text-accent-700">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 weeks ago</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Superfast 2-day delivery</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              “Ordered the Box of 6 to Chennai and it arrived in 48 hours without a single wafer crumbled inside the packaging! Crispiness is 10/10. Definitely subscribing to the monthly delivery club.”
+            </p>
+<div class="w-16 h-16 rounded-lg overflow-hidden bg-surface-container mt-1">
+<img alt="Review photo 3" class="w-full h-full object-cover" data-alt="Customer photo of delivered unboxing package with 6 WaferKing snack pouches neatly nestled in biodegradable wood wool padding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa8K9I8uvdis87eI5Uf4tCxRYCkxH4jWnGuHbdRBaZ41KzCRadYAI6UEJCYZL7PpV_T6QX3wxFYu91wEPZcSAXDRlQQQ21ffptvvdFm6CDmLzOBVFVWiQfrNK_GPB4ZpQQZxHvjDJq6fdFrZAExjBBYjW3GK3oJa3OmLCNE6UhJG04pPioJm87lBp3AuVKJAUfFg4qdJvSLU34jTvrugXF4m_qQkrbfHzoVqbT-4UHanjF0ZESrWll"/>
+</div>
+</div>
+<div class="flex items-center gap-space-xs pt-space-xs">
+<div class="w-7 h-7 rounded-full bg-accent-50 text-accent-700 font-bold font-label-sm text-label-sm flex items-center justify-center">
+              AM
+            </div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary font-semibold">Ananya Murali</span>
+<span class="font-label-sm text-[11px] text-secondary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">verified</span> Verified Buyer (Chennai)
+              </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FREQUENTLY BOUGHT TOGETHER / CROSS-SELL -->
+<section class="w-full bg-surface-container-low py-space-xl">
+<div class="max-w-7xl mx-auto px-gutter-sm md:px-gutter">
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm pb-space-lg">
+<div>
+<span class="font-label-md text-label-md text-accent-700 uppercase tracking-wider font-semibold">Artisan Pairings</span>
+<h3 class="font-headline-md text-headline-md text-primary mt-1">Complete Your Heirloom Crunch Set</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Complement the floral senna notes with sweet-tart hibiscus and mineral popped makhana.</p>
+</div>
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-accent-50 text-accent-700 font-label-md text-label-md font-semibold">
+<span class="material-symbols-outlined text-[18px]">loyalty</span>
+<span>Bundle &amp; Save 18% Today</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md items-center">
+<!-- Product Trio Display (8 Cols) -->
+<div class="lg:col-span-8 flex flex-col sm:flex-row items-center gap-space-md">
+<!-- Current Product -->
+<div class="flex-1 bg-surface-container-low rounded-xl p-space-sm flex items-center gap-space-sm w-full">
+<div class="w-16 h-16 rounded-lg bg-surface-container overflow-hidden shrink-0">
+<img alt="Avarampoo Pack" class="w-full h-full object-cover" data-alt="Pack of WaferKing Avarampoo Black Rice Wafers pouch on neutral backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuCCysKIawCuAoVMx8YLCEr8sVNN4lJBvOAun1TE8wtD6bkfnMFhlM71_0NcvrHkAbCvVBjiAk-BZs4FhUwxXaHg30lPblQC7CrW_Rcnfq2zCcZ2vQgPZJepI0T8AyjSx9JcV9hmFPU8oO6Z0mdIfG7R2CKZyp5SBd4femSnZ7TnaU2RBWFaHyhal4pdvayIbJENJ9QdZQsld1l323njVk2tj6QD1KD5flY8Qzxw_xk1-exQdVsWI-"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-secondary font-medium uppercase">This Item</span>
+<span class="font-label-lg text-label-lg text-primary truncate font-bold">Avarampoo Black Rice</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">₹80 (55g)</span>
+</div>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold shrink-0">
+              +
+            </div>
+<!-- Complement 1: Hibiscus Wafer -->
+<div class="flex-1 bg-surface-container-low rounded-xl p-space-sm flex items-center gap-space-sm w-full">
+<div class="w-16 h-16 rounded-lg bg-surface-container overflow-hidden shrink-0">
+<img alt="Hibiscus Wafer Pack" class="w-full h-full object-cover" data-alt="WaferKing Hibiscus Petal Crunch black rice crisp pouch featuring deep magenta botanical rose mallow flower illustrations." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfN70HyY-SkUDgxPtWa9qHbvE6YzJfGAa58FK4-pg6YjZrF91ns5dfD3dlKsHDWHfCxtqlbV_S7jlnKzf38dMDDRc_Cn5uhDGgyM1Eo1cmT_5PzOdea_L_hVbGy2JZmZ27cRFEbvCXjjJRsu77UUAB7cy3hAkc7By8o6wYlhF8r1IyzqALxyTV9SGxiwCnJdxhQKQfN77N7KbvhQeW490OJIKWiZBlwdizb8A2JQhki_eEjSgsjQgl"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-accent-700 font-medium uppercase">Tangy Floral</span>
+<span class="font-label-lg text-label-lg text-primary truncate font-bold">Hibiscus Petal Crunch</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">₹80 (55g)</span>
+</div>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-bold shrink-0">
+              +
+            </div>
+<!-- Complement 2: Makhana Crunch -->
+<div class="flex-1 bg-surface-container-low rounded-xl p-space-sm flex items-center gap-space-sm w-full">
+<div class="w-16 h-16 rounded-lg bg-surface-container overflow-hidden shrink-0">
+<img alt="Makhana Crunch Pack" class="w-full h-full object-cover" data-alt="WaferKing Roasted Foxnut Makhana crunch snack bag in warm ochre golden hue packaging." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOPPju1BlAqe1CUoFgJzVxTHUUNmISzOqP01MWBzLxMA8ddSrgH4nE8jAU36cD9B6_Be042CrQU2MfDlTUHQrq96jg-XMFzUR5HJsqy3cQdOYDEsrMj2OJiv6NqudHSooCNlmu_Op6VS-NFZ9oU70LmPeiD6eNCFdhTpg05CkUID92M9cMx4uh0R4uZgtR2PHCIcy-TyrbhB8-HFFliFNjE_n52MUlo133DdglTy-TXrbQa2g1gvQ4"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-accent-700 font-medium uppercase">Slow Roasted</span>
+<span class="font-label-lg text-label-lg text-primary truncate font-bold">Makhana Crunch Crisps</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">₹90 (40g)</span>
+</div>
+</div>
+</div>
+<!-- Bundle Action Box (4 Cols) -->
+<div class="lg:col-span-4 bg-surface-container p-space-md rounded-xl flex flex-col justify-between gap-space-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Combined Regular Price: <span class="line-through">₹250</span></span>
+<div class="flex items-baseline gap-space-xs mt-0.5">
+<span class="font-headline-md text-headline-md font-bold text-primary">₹205</span>
+<span class="bg-secondary text-on-secondary px-2 py-0.5 rounded text-label-sm font-bold uppercase">Bundle Discount</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary font-medium mt-1">Saves ₹45 immediately + Qualifying for express pack!</span>
+</div>
+<button class="w-full py-space-sm px-space-md rounded-lg bg-primary-container text-on-primary hover:bg-primary-700 font-label-lg text-label-lg transition-all active:scale-[0.98] flex items-center justify-center gap-space-xs shadow-md" type="button">
+<span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+<span>Add Trio Bundle to Cart — ₹205</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Dynamic Pack & Price Calculation State
+  let currentPackQty = 1;
+  let currentPricePerUnit = 80;
+  let currentStepperVal = 2;
+
+  function updateTotals() {
+    const totalPrice = currentPricePerUnit * currentStepperVal;
+    const baseWeight = 55 * currentPackQty * currentStepperVal;
+    
+    const priceDisplay = document.getElementById('price-display');
+    const weightIndicator = document.getElementById('weight-indicator');
+    const cartButtonText = document.getElementById('cart-button-text');
+
+    if (priceDisplay) priceDisplay.textContent = '₹' + totalPrice;
+    if (weightIndicator) weightIndicator.textContent = baseWeight + 'g';
+    if (cartButtonText) cartButtonText.textContent = 'Add to Cart — ₹' + totalPrice;
+  }
+
+  function selectPack(packQty, price, originalPrice, savePct) {
+    currentPackQty = packQty;
+    currentPricePerUnit = price;
+    
+    // Update Pack pill styling
+    const pills = document.querySelectorAll('.pack-pill');
+    pills.forEach(p => {
+      p.classList.remove('bg-surface-container-high', 'ring-2', 'ring-accent-700');
+      p.classList.add('bg-surface-container');
+    });
+
+    event.currentTarget.classList.remove('bg-surface-container');
+    event.currentTarget.classList.add('bg-surface-container-high', 'ring-2', 'ring-accent-700');
+
+    // Update original strike price & discount badge
+    const origElem = document.getElementById('original-price');
+    const discElem = document.getElementById('discount-pill');
+    if (origElem) origElem.textContent = '₹' + (originalPrice * currentStepperVal);
+    if (discElem) discElem.textContent = 'SAVE ' + savePct;
+
+    updateTotals();
+  }
+
+  function incrementQty() {
+    const input = document.getElementById('qty-input');
+    if (input) {
+      currentStepperVal = parseInt(input.value, 10) + 1;
+      input.value = currentStepperVal;
+      updateTotals();
+    }
+  }
+
+  function decrementQty() {
+    const input = document.getElementById('qty-input');
+    if (input && currentStepperVal > 1) {
+      currentStepperVal = parseInt(input.value, 10) - 1;
+      input.value = currentStepperVal;
+      updateTotals();
+    }
+  }
+
+  function selectThumb(index, type) {
+    const thumbs = document.querySelectorAll('.thumb-btn');
+    thumbs.forEach(t => {
+      t.classList.remove('ring-2', 'ring-accent-700');
+      t.classList.add('ring-0', 'ring-transparent');
+    });
+    if (thumbs[index]) {
+      thumbs[index].classList.remove('ring-0', 'ring-transparent');
+      thumbs[index].classList.add('ring-2', 'ring-accent-700');
+    }
+  }
+
+  function openTab(tabId) {
+    // Hide all tabs
+    const contents = document.querySelectorAll('.tab-content');
+    contents.forEach(c => c.classList.add('hidden'));
+
+    // Deactivate trigger styles
+    const triggers = document.querySelectorAll('.tab-trigger');
+    triggers.forEach(t => {
+      t.classList.remove('bg-primary-container', 'text-on-primary');
+      t.classList.add('bg-surface-container', 'text-on-surface-variant');
+    });
+
+    // Activate selected
+    const activeContent = document.getElementById(tabId);
+    if (activeContent) activeContent.classList.remove('hidden');
+
+    const activeTrigger = document.getElementById(tabId.replace('panel-', 'tab-'));
+    if (activeTrigger) {
+      activeTrigger.classList.remove('bg-surface-container', 'text-on-surface-variant');
+      activeTrigger.classList.add('bg-primary-container', 'text-on-primary');
+    }
+  }
+
+  function checkPincode() {
+    const input = document.getElementById('pincode-input');
+    const result = document.getElementById('pincode-result');
+    if (input && result) {
+      const code = input.value.trim();
+      if (code.length === 6 && /^\d+$/.test(code)) {
+        if (code.startsWith('6') || code.startsWith('56')) {
+          result.innerHTML = '<span class="material-symbols-outlined text-[16px] text-state-success">check_circle</span> <span class="text-secondary font-semibold">Verified: 24 to 48 Hour Fast Express Dispatch Available to ' + code + '</span>';
+        } else {
+          result.innerHTML = '<span class="material-symbols-outlined text-[16px] text-secondary">local_shipping</span> <span>Confirmed: Standard Domestic BlueDart Air Delivery within 3-4 Business Days to ' + code + '</span>';
+        }
+      } else {
+        result.innerHTML = '<span class="material-symbols-outlined text-[16px] text-state-error">error</span> <span class="text-state-error font-medium">Please enter a valid 6-digit Indian PIN code.</span>';
+      }
+    }
+  }
+</script></main><footer class="w-full bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-space-xl pb-space-lg text-on-surface"><div class="max-w-7xl mx-auto px-gutter-sm md:px-gutter grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl pb-space-xl"><div class="flex flex-col gap-space-sm"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary font-bold">WaferKing</span></div><p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">Handcrafted with heirloom Karuppu Kavuni traditional black rice in the Kaveri delta plains of Erode, Tamil Nadu. Clean wellness, slow stone-ground nutrition, and exquisite crunch.</p><div class="flex items-center gap-space-xs pt-space-xs"><span class="inline-flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-accent-50 text-accent-700 font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px]">verified</span>FSSAI Lic. #12423008000492</span></div></div><div class="flex flex-col gap-space-sm"><h4 class="font-label-lg text-label-lg text-primary uppercase tracking-wider">The Collection</h4><ul class="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant"><li><a class="hover:text-on-surface transition-colors" data-path="shop" href="#">Avarampoo Black Rice Wafers</a></li><li><a class="hover:text-on-surface transition-colors" data-path="shop" href="#">Hibiscus Petal Crunch Wafers</a></li><li><a class="hover:text-on-surface transition-colors" data-path="shop" href="#">Makhana Crunch Roasted Crisps</a></li><li><a class="hover:text-on-surface transition-colors" data-path="shop" href="#">Vallarai Herbal Infused Crisp</a></li><li><a class="hover:text-on-surface transition-colors" data-path="shop" href="#">The Royal Heritage Sampler Box</a></li></ul></div><div class="flex flex-col gap-space-sm"><h4 class="font-label-lg text-label-lg text-primary uppercase tracking-wider">Customer Care</h4><ul class="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant"><li><a class="hover:text-on-surface transition-colors" data-path="track-order" href="#">Track Your Consignment</a></li><li><a class="hover:text-on-surface transition-colors" data-path="shipping-policy" href="#">Shipping &amp; Domestic Express</a></li><li><a class="hover:text-on-surface transition-colors" data-path="returns-and-refund" href="#">Returns &amp; Freshness Guarantee</a></li><li><a class="hover:text-on-surface transition-colors" data-path="contact" href="#">Contact Our Kitchen Team</a></li><li><a class="hover:text-on-surface transition-colors" data-path="faq" href="#">Frequently Asked Questions</a></li></ul></div><div class="flex flex-col gap-space-sm"><h4 class="font-label-lg text-label-lg text-primary uppercase tracking-wider">Artisan Pantry Club</h4><p class="font-body-sm text-body-sm text-on-surface-variant">Receive 10% off your initial sampler box, botanical harvest updates, and seasonal specials.</p><form class="flex flex-col sm:flex-row gap-space-xs pt-space-xs" onsubmit="return false;"><input class="flex-1 bg-background-cream px-space-md py-space-xs rounded-lg font-body-sm text-body-sm text-primary placeholder-primary-50 focus:outline-none" placeholder="Enter your email" type="email"/><button class="px-space-md py-space-xs rounded-lg bg-primary-container text-on-primary hover:bg-primary-700 font-label-lg text-label-lg transition-colors" type="submit">Join</button></form><div class="flex items-center gap-space-md pt-space-sm text-on-surface-variant"><div class="flex items-center gap-space-xs font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px] text-secondary">lock</span><span>256-Bit SSL Secured</span></div><div class="flex items-center gap-space-xs font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px] text-secondary">shield</span><span>Razorpay Verified</span></div></div></div></div><div class="max-w-7xl mx-auto px-gutter-sm md:px-gutter pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-on-surface-variant"><p>© 2026 WaferKing Foods Private Limited. Handcrafted in Erode, Tamil Nadu, India.</p><p class="flex items-center gap-space-sm"><span>All Prices Inclusive of Applicable GST</span><span>•</span><a class="hover:text-on-surface transition-colors" data-path="privacy-policy" href="#">Privacy Policy</a><span>•</span><a class="hover:text-on-surface transition-colors" data-path="terms-of-service" href="#">Terms of Service</a></p></div></footer></body></html>
+```

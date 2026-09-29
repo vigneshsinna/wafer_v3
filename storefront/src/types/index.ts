@@ -24,7 +24,9 @@ export interface Product {
     name: string;
     slug: string;
     description: string;
+    description_text: string;
     unit_price: number;
+    sale_price: number;
     discount: number;
     discount_type: string | null;
     thumbnail_url: string | null;
@@ -34,8 +36,14 @@ export interface Product {
     stock_status: "in_stock" | "out_of_stock";
     min_qty: number;
     unit: string | null;
+    tags: string[];
     category: { id: number; name: string; slug: string } | null;
     brand: { id: number; name: string; slug: string } | null;
+    compare_at_price: number;
+    flavour_profile?: string;
+    rating_average?: number;
+    reviews_count?: number;
+    short_description?: string;
 }
 
 export interface User {
@@ -73,6 +81,7 @@ export interface LocationOption { id: number; name: string }
 
 export interface Address {
     id: number;
+    recipient_name: string | null;
     address: string;
     country: string | null;
     country_id: number;
@@ -85,7 +94,7 @@ export interface Address {
     set_default: boolean;
 }
 
-export type AddressInput = Pick<Address, "address" | "country_id" | "state_id" | "city_id" | "postal_code" | "phone">;
+export type AddressInput = Pick<Address, "address" | "country_id" | "state_id" | "city_id" | "postal_code" | "phone"> & { recipient_name?: string };
 
 export interface CartSummary {
     sub_total: number;
@@ -96,7 +105,11 @@ export interface CartSummary {
     total_items: number;
 }
 
-export interface CheckoutSummary extends CartSummary { address_id: number }
+export interface CheckoutSummary extends CartSummary {
+    address_id: number;
+    carrier_id: number | null;
+    shipping_options: { id: number; name: string; transit_time: string; cost: number }[];
+}
 
 export interface Cart {
     items: CartItem[];
@@ -109,6 +122,7 @@ export interface OrderItem {
     id: number;
     product_id: number;
     product_name: string | null;
+    thumbnail_url?: string | null;
     price: number;
     tax: number;
     shipping_cost: number;
@@ -129,6 +143,9 @@ export interface Order {
     payment_status: string;
     delivery_status: string;
     grand_total: number;
+    shipping_address?: { name?: string; address?: string; city?: string; state?: string; postal_code?: string; phone?: string } | null;
+    payment_type?: string | null;
+    shipping_type?: string | null;
     created_at: string;
     updated_at?: string;
     items: OrderItem[];

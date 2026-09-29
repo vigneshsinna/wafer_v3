@@ -133,39 +133,27 @@ const legalContent: Record<string, { title: string; content: React.ReactNode }> 
         content: (
             <div className="space-y-4">
                 <p>
-                    Wafer King Snacks delivers premium snacks across India.
+                    Delivery options and charges are shown during checkout for your saved address.
                 </p>
 
                 <h3>1. Processing Time</h3>
                 <p>
-                    All orders are processed within 1-2 business days. Orders are not shipped or delivered on weekends or holidays.
+                    Processing times can vary. Contact our team if you need an update on an order.
                 </p>
 
                 <h3>2. Free Shipping</h3>
                 <p>
-                    We offer free shipping based on your location and order value:
-                </p>
-                <ul className="list-disc pl-5">
-                    <li><strong>Tamil Nadu:</strong> Free shipping on orders of ₹499 or more</li>
-                    <li><strong>Rest of India:</strong> Free shipping on orders of ₹699 or more</li>
-                </ul>
-                <p>
-                    For orders below these thresholds, shipping charges will be calculated and displayed at checkout.
+                    Shipping charges are calculated for your address at checkout.
                 </p>
 
                 <h3>3. Delivery Estimates</h3>
                 <p>
-                    Standard delivery typically takes:
+                    Delivery timing depends on the destination and carrier.
                 </p>
-                <ul className="list-disc pl-5">
-                    <li>Tamil Nadu: 2-3 business days</li>
-                    <li>Rest of South India: 3-5 business days</li>
-                    <li>North India: 5-7 business days</li>
-                </ul>
 
                 <h3>4. Shipment Tracking</h3>
                 <p>
-                    You will receive a Shipment Confirmation email containing your tracking number(s) once your order has shipped. You can track your order on our website under the "Track Order" section.
+                    Enter your order reference on the Track Order page to see its latest recorded status.
                 </p>
             </div>
         ),

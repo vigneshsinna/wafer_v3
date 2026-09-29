@@ -26,6 +26,24 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  */
 class ProductCatalogService
 {
+    /** Prices for the catalogue card, including the product's configured taxes. */
+    public function displayPrices(Product $product): array
+    {
+        $base = (float) $product->unit_price;
+        $sale = $this->applyDiscount($product, $base);
+        $withTax = function (float $price) use ($product): float {
+            $taxTotal = 0;
+            foreach ($product->taxes as $tax) {
+                $taxTotal += $tax->tax_type === 'percent'
+                    ? ($price * $tax->tax) / 100
+                    : $tax->tax;
+            }
+            return round($price + $taxTotal, 2);
+        };
+
+        return ['sale' => $withTax($sale), 'compare_at' => $withTax($base)];
+    }
+
     /**
      * List products with optional filters, sorting, and pagination.
      */

@@ -1,0 +1,532 @@
+# Stitch Design Document
+
+Stitch project: `8109637399058163454`  
+Screen: `2724663489659353011`  
+Canvas: 2560 × 1768  
+Storefront: `Design reference`
+
+## Exact Stitch source
+
+~~~~md
+# WaferKing Storefront — Frontend Design System & Architecture Specification
+
+> **Version**: 3.0  
+> **Target Application**: Next.js 14+ Headless Storefront (`storefront/`) & Laravel API v3 Integration  
+> **Brand**: WaferKing (Clean Artisan Black Rice Wafers — Erode, Tamil Nadu)  
+> **Document Purpose**: Complete, page-by-page UI/UX design, design system tokens, component hierarchy, responsive layouts, client-side state models, and API interactions.
+
+---
+
+## Table of Contents
+1. [Brand Identity & Core Principles](#1-brand-identity--core-principles)
+2. [Global Design System Tokens](#2-global-design-system-tokens)
+   - [Color Palette](#color-palette)
+   - [Typography](#typography)
+   - [Elevations & Shadows](#elevations--shadows)
+   - [Borders, Radii & Spacing](#borders-radii--spacing)
+   - [Animations & Micro-interactions](#animations--micro-interactions)
+3. [Global Layout & Shell Elements](#3-global-layout--shell-elements)
+   - [Sticky Header & Navigation](#sticky-header--navigation)
+   - [Slide-over Cart Drawer](#slide-over-cart-drawer)
+   - [Footer Architecture](#footer-architecture)
+4. [Page-by-Page Specifications](#4-page-by-page-specifications)
+   - [1. Homepage (`/`)](#1-homepage-)
+   - [2. Product Detail Page (`/product/[slug]`)](#2-product-detail-page-productslug)
+   - [3. Checkout Page (`/checkout`)](#3-checkout-page-checkout)
+   - [4. Order Success & Payment Confirmation (`/success`)](#4-order-success--payment-confirmation-success)
+   - [5. Order Tracking (`/track` & `/track/[orderId]`)](#5-order-tracking-track--trackorderid)
+   - [6. User Authentication: Login (`/login`)](#6-user-authentication-login-login)
+   - [7. User Registration (`/register`)](#7-user-registration-register)
+   - [8. Password Recovery Flow (`/forgot-password` & `/reset-password`)](#8-password-recovery-flow-forgot-password--reset-password)
+   - [9. Customer Profile & Address Book (`/profile`)](#9-customer-profile--address-book-profile)
+   - [10. Brand Story & About Us (`/about`)](#10-brand-story--about-us-about)
+   - [11. Contact & Customer Support (`/contact`)](#11-contact--customer-support-contact)
+   - [12. FAQ (`/faq`)](#12-faq-faq)
+   - [13. CMS Legal & Policy Pages (`/legal/[slug]` & `/pages/[slug]`)](#13-cms-legal--policy-pages-legalslug--pagesslug)
+5. [Common UI Component Library](#5-common-ui-component-library)
+6. [State Management & API Data Contract](#6-state-management--api-data-contract)
+7. [Accessibility, Performance & SEO Guidelines](#7-accessibility-performance--seo-guidelines)
+
+---
+
+## 1. Brand Identity & Core Principles
+
+WaferKing is an artisan wellness snack brand specializing in nutrient-dense **Black Rice Wafers** crafted in Erode, Tamil Nadu. The design aesthetic is **Warm Organic Luxury**: earthy, modern, clean, and grounded in authentic South Indian heritage.
+
+### Core Visual Principles
+1. **Artisan Craftsmanship**: Earthy cacao browns (`#3E2723`), warm harvest golds (`#C39861`), and rich cream backdrops (`#FFFDF9` / `#FBF7F1`).
+2. **Clutter-Free Clarity**: Generous whitespace, clean vertical rhythms, distinct typography contrasts, and zero unnecessary visual noise.
+3. **Frictionless Commerce**: Instant add-to-cart, slide-over drawer, pre-calculated INR pricing inclusive of GST, one-page checkout, and Razorpay standard modal integration.
+4. **Resilience & Graceful Fallbacks**: Every page supports skeleton loading, graceful offline/API degradation, and server/client fallback content for legal and CMS pages.
+
+---
+
+## 2. Global Design System Tokens
+
+### Color Palette
+
+| Token Name | Hex Code | Purpose & Usage |
+|---|---|---|
+| `primary` (DEFAULT) | `#3E2723` | Main headings, dark brand buttons, high-contrast borders |
+| `primary-50` | `#8B7355` | Subtle text accents, muted highlights |
+| `primary-300` | `#61492E` | Secondary body text, icons |
+| `primary-700` | `#2C1B10` | Dark button hover states, footer base |
+| `accent` (DEFAULT) | `#C39861` | Golden highlights, badges, primary action focus |
+| `accent-50` | `#FAF1E6` | Soft pill backgrounds, notification tints |
+| `accent-700` | `#754A22` | Focus rings, link hovers, active tab highlights |
+| `secondary` | `#4A7C59` | Organic botanical green, success badges, trust checkmarks |
+| `background` (DEFAULT) | `#FBF7F1` | Page viewport background |
+| `background-cream` | `#FFFDF9` | Card surfaces, modal sheets, elevated panels |
+| `background-warm` | `#F1E7DA` | Section contrasts, subtle dividers, pill containers |
+| `state-error` | `#DC2626` | Form validation errors, stock alerts |
+| `state-success` | `#16A34A` | Order confirmed, payment verified, address saved |
+
+### Typography
+
+- **Display & Headings**: `Outfit`, Google Fonts (`weights: 400, 500, 600, 700, 800`)  
+  *Characteristics*: Geometric yet organic curved letterforms, bold personality, warm luxury tone.
+- **Body & Controls**: `Inter`, Google Fonts (`weights: 400, 500, 600, 700`)  
+  *Characteristics*: Highly legible at 11px–16px, balanced tabular figures for currency and weights.
+
+#### Typographic Hierarchy
+- **H1 (Hero / Page Title)**: `text-4xl md:text-5xl lg:text-6xl`, font-bold, tracking-tight, leading-none.
+- **H2 (Section Header)**: `text-2xl md:text-3xl lg:text-4xl`, font-bold, tracking-normal.
+- **H3 (Card Header / Subsection)**: `text-lg md:text-xl font-semibold`.
+- **Eyebrow (Micro-label)**: `text-xs font-bold uppercase tracking-[0.2em] text-accent-700`.
+- **Body Regular**: `text-base text-primary/80 leading-relaxed`.
+- **Body Small**: `text-sm text-primary/70`.
+- **Caption / Legal**: `text-xs text-primary/60`.
+
+### Elevations & Shadows
+- `shadow-warm`: `0 4px 14px 0 rgba(62, 39, 35, 0.08)` (Card elevation, soft pill buttons)
+- `shadow-warm-lg`: `0 10px 40px 0 rgba(62, 39, 35, 0.14)` (Flyout menus, Cart drawer, Modals)
+- `shadow-gold`: `0 4px 14px 0 rgba(212, 175, 55, 0.25)` (CTA focus, prominent add-to-cart)
+
+### Borders, Radii & Spacing
+- **Border Radius**:
+  - `rounded-md`: `6px` — form inputs, standard action buttons.
+  - `rounded-lg`: `12px` — product cards, info banners, profile tiles.
+  - `rounded-full`: Pills, badges, quantity steppers, avatar tags.
+- **Border Colors**: `border-primary/10` (default subtle line), `border-primary/25` (interactive form field).
+- **Container Grid**: `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`.
+
+### Animations & Micro-interactions
+- `fade-in`: 200ms ease-out opacity transition on drawer and modal mount.
+- `slide-in-right`: 300ms cubic-bezier(0.16, 1, 0.3, 1) for the Cart Drawer.
+- `scale-hover`: `hover:scale-[1.02]` on product cards with duration 250ms.
+- `skeleton-pulse`: Smooth pulsating shimmer for loading catalog cards and order rows.
+
+---
+
+## 3. Global Layout & Shell Elements
+
+```
++-------------------------------------------------------------------------------+
+|  TOP ANNOUNCEMENT BAR (Free Shipping across India over ₹499 | Erode Made)     |
++-------------------------------------------------------------------------------+
+|  [ BRAND LOGO ]        Shop  About  Flavours  FAQ  Contact    [Search] [User] [Cart (3)] |
++-------------------------------------------------------------------------------+
+|                                                                               |
+|                                 PAGE VIEWPORT                                 |
+|                                                                               |
++-------------------------------------------------------------------------------+
+|  FOOTER (Brand Mission | Quick Links | Policies | Newsletter | FSSAI & Origin)|
++-------------------------------------------------------------------------------+
+```
+
+### Sticky Header & Navigation (`Header.tsx`)
+- **Top Utility Banner**: High-contrast slim strip (`bg-primary text-accent-50 text-xs font-medium py-1.5 px-4 text-center`).
+- **Main Bar**: Sticky top (`backdrop-blur-md bg-background/90 border-b border-primary/10`).
+  - **Left**: WaferKing Brand Logo (Text wordmark with leaf motif or official SVG asset).
+  - **Center Desktop**: Links (`Shop`, `Our Story`, `Flavours`, `FAQ`, `Track Order`, `Contact`).
+  - **Right Controls**:
+    - Order Tracking icon/link.
+    - User Account avatar or Login link with dynamic state (logged in vs guest).
+    - Cart Trigger Button with gold counter pill displaying live cart item count.
+  - **Mobile Menu Trigger**: Hamburger toggle opening an accordion navigation drawer.
+
+### Slide-over Cart Drawer (`CartDrawer.tsx`)
+- Triggered by clicking the Cart button from any page without navigating away.
+- **Header**: Item count + close button (`✕`).
+- **Body**: Scrollable list of cart items:
+  - Product thumbnail (55g pack image).
+  - Product name, flavour subtitle, pack size.
+  - Interactive Quantity Stepper (`-` `qty` `+`) with auto-sync to `useCartStore`.
+  - Item subtotal formatted in INR (`₹`).
+  - Single-click remove button (`Trash2` icon).
+- **Free Shipping Progress Bar**: Visual progress indicator showing amount remaining for free shipping threshold.
+- **Footer**:
+  - Subtotal and estimated tax breakdown.
+  - Prominent "Proceed to Checkout" button leading straight to `/checkout`.
+  - "Continue Shopping" text button closing drawer.
+
+### Footer Architecture (`Footer.tsx`)
+- **4-Column Responsive Layout**:
+  - **Col 1 (Brand Story)**: WaferKing origin in Erode, commitment to pure black rice, FSSAI compliance disclaimer.
+  - **Col 2 (Shop & Explore)**: Links to Avarampoo, Hibiscus, Makhana, Vallarai, and combos.
+  - **Col 3 (Help & Support)**: Track Order, Shipping Policy, Return/Refund, Contact Us, FAQ.
+  - **Col 4 (Legal & Certification)**: Terms & Conditions, Privacy Policy, Company registration details, secure Razorpay SSL badge.
+- **Bottom Bar**: Copyright notice, made-in-India badge, GST transparency note.
+
+---
+
+## 4. Page-by-Page Specifications
+
+---
+
+### 1. Homepage (`/`)
+*Route: `storefront/src/app/page.tsx`*
+
+#### Visual Wireframe & Sections
+```
+[ HERO SECTION: High-impact typography, hero wafer pack render, "Taste Erode's Black Rice" CTA ]
+[ VALUE TICKER: 100% Whole Grain Black Rice | Zero Palm Oil | Gluten-Free | 55g Artisan Packs ]
+[ THE FLAVOUR COLLECTION: 4-Column Responsive Grid of Products with Instant Add to Cart ]
+[ WHY BLACK RICE: Visual split section highlighting anthocyanin antioxidants and nutrition ]
+[ HOW WE MAKE IT: 3-Step Clean Manufacturing Process in Erode ]
+[ CUSTOMER REVIEWS: Star rating carousel with verified buyer testimonials ]
+[ NEWSLETTER & PROMISE: "Get 10% off your first sampler box" ]
+```
+
+#### Detailed Element Specifications
+1. **Hero Section (`Hero.tsx`)**:
+   - Split layout: Left column contains eyebrow tag (`"TRADITIONAL GRAINS, MODERN CRUNCH"`), bold H1 (`"Artisan Black Rice Wafers"`), supporting paragraph, primary CTA (`"Explore Flavours"` scrolling to `#products`), and secondary CTA (`"Our Story"`).
+   - Right column: High-resolution hero pack visual with floating badges (`"Only 110 kcal"`, `"Rich in Antioxidants"`).
+2. **Trust Ribbon**:
+   - 3-part banner with icons: `Leaf` (Black Rice), `Package` (55g Fresh Packs), `MapPin` (Crafted in Erode).
+3. **Flavour Showcase Grid (`ProductGrid.tsx`)**:
+   - Renders active products from `/api/v3/products`.
+   - Cards display high-res pack visual, flavour tags, star rating, net weight, price with strike-through MRP, and direct "Add to Cart" button.
+4. **Health & Craft Story**:
+   - Visual grid comparing standard refined potato/corn chips vs WaferKing Black Rice wafers.
+
+---
+
+### 2. Product Detail Page (`/product/[slug]`)
+*Route: `storefront/src/app/product/[slug]/page.tsx`*
+
+#### Visual Wireframe & Sections
+```
++-----------------------------------+-----------------------------------------+
+|                                   |  EYEBROW: 100% Natural Black Rice       |
+|   LARGE PRODUCT GALLERY           |  H1: Avarampoo Black Rice Wafers        |
+|   - Main interactive pack image   |  STAR RATING & (48 Customer Reviews)    |
+|   - Thumbnails selector           |  PRICE: ₹80  (MRP ₹95 - 15% OFF)        |
+|   - Nutrition label zoom          |  TAX INCLUSIVE | 55g Pack               |
+|                                   |  -------------------------------------  |
+|                                   |  QUANTITY STEPPER: [-] [ 2 ] [+]        |
+|                                   |  [ ADD TO CART - ₹160 ]  [ BUY NOW ]    |
+|                                   |  -------------------------------------  |
+|                                   |  ACCORDION 1: Ingredients & Nutrition   |
+|                                   |  ACCORDION 2: Flavour Profile & Notes   |
+|                                   |  ACCORDION 3: Shipping & Shelf Life     |
++-----------------------------------+-----------------------------------------+
+[ SECTION: Customer Verified Reviews & Submission Form (`ProductReviews.tsx`) ]
+[ SECTION: Frequently Bought Together / Cross-Sell Carousel ]
+```
+
+#### Detailed Element Specifications
+- **Gallery**: Main dynamic image container with aspect-square framing, border outline, and interactive thumbnail reel.
+- **Buy Box**:
+  - Real-time stock status indicator (In Stock vs Low Stock warning).
+  - Quantity selector with limits validation (1–20 units).
+  - Primary button: "Add to Cart" (triggers slide-over drawer).
+  - Secondary button: "Buy Now" (direct to `/checkout`).
+- **Ingredients & Nutritive Value**:
+  - Clean table listing: Energy (kcal), Protein (g), Carbohydrates (g), Dietary Fiber (g), Iron (mg), Sodium (mg).
+- **Reviews Component (`ProductReviews.tsx`)**:
+  - Aggregate rating summary card with star distribution bars (5★ to 1★).
+  - Customer review list with verified badges and dates.
+  - "Write a Review" form with interactive star rating selector and comment box.
+
+---
+
+### 3. Checkout Page (`/checkout`)
+*Route: `storefront/src/app/checkout/page.tsx`*
+
+#### Visual Wireframe & Sections
+```
++---------------------------------------------+------------------------------------+
+| STEP 1: CONTACT INFORMATION                 | ORDER SUMMARY                      |
+| [Email / Phone Number]                      | - 2x Avarampoo Wafer 55g   ₹160    |
+|                                             | - 1x Hibiscus Wafer 55g    ₹80     |
+| STEP 2: SHIPPING ADDRESS (India Only)       | ---------------------------------- |
+| [Full Name]        [Phone Number]           | Subtotal                   ₹240    |
+| [Street Address / House No]                 | Shipping (Free over ₹499)  ₹49     |
+| [Landmark / Area]                           | GST (12% Included)         ₹28.8   |
+| [City: Erode]      [State: Tamil Nadu]      | ---------------------------------- |
+| [PIN Code: 638001]                          | TOTAL TO PAY               ₹289    |
+|                                             |                                    |
+| STEP 3: PAYMENT METHOD                      | [PROCEED TO PAY VIA RAZORPAY]      |
+| (•) Online Payment (UPI, Cards, NetBanking) |                                    |
+| ( ) Cash on Delivery (COD)                  | 🔒 256-bit Encrypted SSL Checkout  |
++---------------------------------------------+------------------------------------+
+```
+
+#### Detailed Element Specifications
+- **Contact & Shipping Step**:
+  - Saved Address Selector (auto-filled if authenticated).
+  - PIN code validation: checks valid Indian 6-digit postal code.
+  - State & City dropdowns with smart autofill for Tamil Nadu & Indian regions.
+- **Payment Method Selection**:
+  - **Razorpay Standard**: Supports Google Pay, PhonePe, Paytm, Credit/Debit cards, Net Banking.
+  - **Cash on Delivery (COD)**: Available for serviceable locations.
+- **Order Summary Card**:
+  - Compact product thumbnail list with quantities and prices.
+  - Coupon / Promo Code redemption input field with instant validation feedback.
+  - Clear total breakdown with zero hidden fees.
+
+---
+
+### 4. Order Success & Payment Confirmation (`/success`)
+*Route: `storefront/src/app/success/page.tsx`*
+
+#### Visual Wireframe & Sections
+```
++-------------------------------------------------------------------------------+
+|                       [ GREEN CHECKMARK ICON ]                                |
+|                        THANK YOU FOR YOUR ORDER!                              |
+|                   Order #WK-2026-9821 has been placed.                        |
+|        A confirmation message has been sent to customer@email.com             |
++-------------------------------------------------------------------------------+
+| ORDER DETAILS                                                                 |
+| Delivery Address: 12 Bazaar Street, Erode 638001, Tamil Nadu                  |
+| Estimated Delivery: 2-4 Business Days                                         |
+| Payment Mode: Paid via UPI (Razorpay ID: pay_N92xLa92)                        |
++-------------------------------------------------------------------------------+
+| [ TRACK THIS ORDER ]                             [ CONTINUE SHOPPING ]        |
++-------------------------------------------------------------------------------+
+```
+
+#### Detailed Element Specifications
+- **Confirmation Badge**: Soft green pulsing circle with checkmark.
+- **Order Snapshot**: Order ID, tracking token, shipping timeline, and PDF invoice download link.
+- **Action Group**: Primary button to `/track/[orderId]`, secondary button to `/`.
+
+---
+
+### 5. Order Tracking (`/track` & `/track/[orderId]`)
+*Routes: `storefront/src/app/track/page.tsx` & `storefront/src/app/track/[orderId]/page.tsx`*
+
+#### Visual Wireframe & Sections
+```
+[ SEARCH FORM: Enter Order Number (e.g., WK-8492) and Phone Number ]
+---------------------------------------------------------------------------------
+[ TIMELINE PROGRESS STEPPER: ]
+  (✓) Order Placed   ----->   (✓) Packed in Erode   ----->   (•) In Transit   ----->   ( ) Delivered
+  28 Sep, 10:30 AM             28 Sep, 04:15 PM               29 Sep, Expected          30 Sep, Expected
+
+[ PACKAGE & CARRIER DETAILS ]
+  Courier Partner: Delhivery / BlueDart
+  Tracking Waybill AWB: DEL-8392019482
+  Delivery Address: Erode, Tamil Nadu
+```
+
+#### Detailed Element Specifications
+- **Input Form**: Clean card with Order Code and Phone verification to prevent unauthorized order peeking.
+- **Progress Stepper (`TrackingResult.tsx`)**:
+  - Horizontal on desktop, vertical on mobile.
+  - Color coded: Accent Gold for completed steps, Primary Brown for active step, Muted Grey for future steps.
+- **Live Status Badges**: `Pending`, `Confirmed`, `On Delivery`, `Delivered`, `Cancelled`.
+
+---
+
+### 6. User Authentication: Login (`/login`)
+*Route: `storefront/src/app/login/page.tsx`*
+
+#### Visual Wireframe & Sections
+```
++-------------------------------------------------------------------------------+
+|                                [ WAFERKING ]                                  |
+|                            Welcome back to crunch                             |
+|                                                                               |
+| [ Email or Phone Number                                                   ]   |
+| [ Password                                                              [👁] ]  |
+|                                                                               |
+| [ ] Remember me                          [ Forgot your password? ]            |
+|                                                                               |
+| [                       SIGN IN TO YOUR ACCOUNT                           ]   |
+|                                                                               |
+| Don't have an account? [Create one now]                                       |
++-------------------------------------------------------------------------------+
+```
+
+#### Detailed Element Specifications
+- **Dual Identifier Input**: Supports email or mobile phone login.
+- **Password Mask Toggle**: Eye icon to inspect entered characters.
+- **Feedback & Validation**: Inline error toasts for invalid credentials or unverified accounts.
+- **Redirect Handler**: Seamlessly redirects back to checkout if the user was directed from an active cart.
+
+---
+
+### 7. User Registration (`/register`)
+*Route: `storefront/src/app/register/page.tsx`*
+
+#### Detailed Element Specifications
+- Form fields: Full Name, Email Address, Phone Number (prefixed with `+91`), Password, Confirm Password.
+- Terms & Privacy checkmark linking to `/legal/terms-and-conditions` and `/legal/privacy-policy`.
+- Instant client-side validation for password strength (minimum 8 characters).
+- Account creation calls `/api/v3/auth/register`, caches token in `useAuthStore`, and initializes profile.
+
+---
+
+### 8. Password Recovery Flow (`/forgot-password` & `/reset-password`)
+*Routes: `storefront/src/app/forgot-password/page.tsx` & `storefront/src/app/reset-password/page.tsx`*
+
+#### Detailed Element Specifications
+- **Forgot Password**:
+  - Input field for registered email.
+  - Dispatches OTP/Reset link via Laravel notification service.
+  - Success message banner: "Instructions sent! Check your inbox".
+- **Reset Password**:
+  - Secure token verification, new password field, confirm password field.
+  - Automatic redirect to `/login` upon successful update.
+
+---
+
+### 9. Customer Profile & Address Book (`/profile`)
+*Route: `storefront/src/app/profile/page.tsx`*
+
+#### Visual Wireframe & Sections
+```
++-------------------------+-----------------------------------------------------+
+| [ AVATAR & NAME ]       | TAB: PROFILE SETTINGS                               |
+| Vignesh S.              | Name, Email, Mobile (+91), Update Password          |
+| Member since Sept 2026  +-----------------------------------------------------+
+|                         | TAB: SAVED ADDRESSES (`AddressManager.tsx`)         |
+| NAV TABS:               | [ + Add New Delivery Address ]                      |
+| • My Orders             | --------------------------------------------------- |
+| • Address Book          | [Default] Home: 14 Perundurai Rd, Erode - 638011    |
+| • Account Details       | Office: 84 Anna Salai, Chennai - 600002             |
+| • Logout                +-----------------------------------------------------+
+|                         | TAB: ORDER HISTORY                                  |
+|                         | #WK-9012 — 3 Items — ₹240 — [Delivered] [Reorder]   |
++-------------------------+-----------------------------------------------------+
+```
+
+#### Detailed Element Specifications
+- **Address Management (`AddressManager.tsx`)**:
+  - Modal form for adding/editing addresses (Street, City, State, PIN, Landmark, Phone).
+  - Set default shipping address toggle.
+  - Delete confirmation modal.
+- **Order History**:
+  - Filterable by date and status.
+  - One-click "Reorder" action adding same items directly to cart.
+
+---
+
+### 10. Brand Story & About Us (`/about`)
+*Route: `storefront/src/app/about/page.tsx`*
+
+#### Detailed Element Specifications
+- **Hero Banner**: "Rooted in Tamil Soil, Crafted for Everyday Wellness".
+- **Origin Story**: Why black rice (Karuppu Kavuni) matters in traditional South Indian agriculture.
+- **The Erode Kitchen**: Visual showcase of local sourcing, low-oil crisping technology, and zero preservatives.
+- **Founders' Note**: Clean signature quote block with brand values.
+
+---
+
+### 11. Contact & Customer Support (`/contact`)
+*Route: `storefront/src/app/contact/page.tsx`*
+
+#### Detailed Element Specifications
+- **Split Layout**:
+  - Left Column: Direct phone helpline, WhatsApp business link, email support (`support@waferking.in`), factory address in Erode.
+  - Right Column: Interactive contact form (Name, Email, Phone, Order ID optional, Message query, Category: Order issue, Wholesale inquiry, General feedback).
+- Submits directly to `/api/v3/contact` with toast notification feedback.
+
+---
+
+### 12. FAQ (`/faq`)
+*Route: `storefront/src/app/faq/page.tsx`*
+
+#### Detailed Element Specifications
+- Category filter pills: `All`, `Ingredients & Health`, `Orders & Shipping`, `Packaging & Shelf Life`.
+- Smooth accessible Accordions (`ChevronDown` toggle) answering:
+  - Is black rice gluten-free?
+  - What is the shelf life of the 55g pack? (6 months from manufacture)
+  - How long does delivery take across India? (2-3 days in South India, 4-6 days rest of India)
+  - What payment methods are accepted?
+
+---
+
+### 13. CMS Legal & Policy Pages (`/legal/[slug]` & `/pages/[slug]`)
+*Routes: `storefront/src/app/legal/[slug]/page.tsx` & `storefront/src/app/pages/[slug]/page.tsx`*
+
+#### Detailed Element Specifications
+- **Dynamic Content Loader**: Fetches live content from `/api/v3/pages/{slug}`.
+- **Built-in Fallbacks**: Pre-seeded fallback copy for:
+  - `privacy-policy`: User data protection, payment security, cookie transparency.
+  - `terms-and-conditions`: Store usage, pricing policies, jurisdiction (Erode, TN).
+  - `shipping-policy`: Rates, courier partners, dispatch timelines.
+  - `return-policy`: Perishable food items guarantee, replacement for transit damage.
+- Clean typography wrapper `.legal-content` with structured headings, numbered lists, and readable line lengths.
+
+---
+
+## 5. Common UI Component Library
+
+| Component | Path | Purpose |
+|---|---|---|
+| `Button.tsx` | `@/components/ui/Button` | Primary, Accent, Outline, and Ghost button variants with loading spinner support |
+| `Input.tsx` | `@/components/ui/Input` | Form input with floating label or crisp eyebrow, error state, and helper text |
+| `ProductCard.tsx` | `@/components/products/ProductCard` | Reusable product card with image hover zoom, price tag, and quick-add CTA |
+| `ProductGrid.tsx` | `@/components/products/ProductGrid` | Responsive 1 to 4 column flex-grid with skeleton state |
+| `ProductReviews.tsx`| `@/components/products/ProductReviews`| Review breakdown, star rating distribution, and submission form |
+| `CartDrawer.tsx` | `@/components/cart/CartDrawer` | Slide-over drawer with item steppers and subtotal calculations |
+| `AddressManager.tsx`| `@/components/profile/AddressManager` | CRUD manager for saved delivery addresses |
+| `TrackingResult.tsx`| `@/components/tracking/TrackingResult`| Visual multi-stage shipping progress stepper |
+
+---
+
+## 6. State Management & API Data Contract
+
+### Zustand Stores
+1. **`useCartStore` (`@/store/cartStore.ts`)**:
+   - `items: CartItem[]`
+   - `addItem(product, quantity)`
+   - `removeItem(productId)`
+   - `updateQuantity(productId, quantity)`
+   - `clearCart()`
+   - `subtotal`: auto-calculated
+   - Persistent storage via `localStorage` (`waferking_cart_v3`).
+
+2. **`useAuthStore` (`@/store/authStore.ts`)**:
+   - `token: string | null`
+   - `user: UserProfile | null`
+   - `login(token, user)`
+   - `logout()`
+   - Persistent storage via `localStorage` (`waferking_auth_v3`).
+
+### REST API Endpoints (Laravel API v3)
+- `GET /api/v3/products` — Retrieve all active wafer products.
+- `GET /api/v3/products/{slug}` — Single product details with specs & reviews.
+- `GET /api/v3/settings` — Store name, motto, logo, payment keys.
+- `GET /api/v3/pages/{slug}` — Legal and content page data.
+- `POST /api/v3/checkout/purchase` — Initialize order & create Razorpay order ID.
+- `POST /api/v3/checkout/verify` — Verify Razorpay HMAC signature & finalize order.
+- `GET /api/v3/track/{orderId}` — Live shipment tracking timeline.
+- `POST /api/v3/reviews` — Submit verified customer review.
+- `POST /api/v3/contact` — Submit customer message.
+
+---
+
+## 7. Accessibility, Performance & SEO Guidelines
+
+1. **Accessibility (WCAG 2.1 AA)**:
+   - High contrast ratios: `#3E2723` on `#FFFDF9` exceeds `11.5:1`.
+   - Focus indicators: Clear gold outline `:focus-visible` on all interactive links, buttons, and inputs.
+   - Screen reader attributes: `aria-expanded` on drawer/accordions, `aria-live="polite"` on cart updates.
+2. **Performance Optimizations**:
+   - Next.js Image Component (`next/image`) for WebP automatic format conversion and blur placeholders.
+   - Lazy load below-the-fold review widgets and FAQ accordions.
+   - Core Web Vitals target: LCP < 1.8s, FID < 100ms, CLS = 0.
+3. **SEO Best Practices**:
+   - Dynamic meta titles and descriptions for every product (`Avarampoo Black Rice Wafers — WaferKing`).
+   - JSON-LD Structured Data: `Product`, `Offer`, `BreadcrumbList`, and `Organization` schemas.
+   - Canonical links and OpenGraph / Twitter preview card meta tags.
+
+---
+*Authored by Antigravity Design & Engineering | WaferKing Headless Platform*
+
+~~~~

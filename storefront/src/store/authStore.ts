@@ -11,7 +11,7 @@ interface AuthState {
     isLoading: boolean;
     error: string | null;
     login: (email: string, password: string) => Promise<void>;
-    register: (data: { name: string; email: string; password: string; password_confirmation: string }) => Promise<void>;
+    register: (data: { name: string; email: string; phone?: string; password: string; password_confirmation: string }) => Promise<void>;
     logout: () => Promise<void>;
     fetchProfile: () => Promise<void>;
 }
@@ -49,10 +49,15 @@ export const useAuthStore = create<AuthState>()(
             logout: async () => {
                 try {
                     if (get().token) await api.logout();
-                } catch {
-                    // Local token is cleared even when the network fails.
+                } catch (e) {
+                    console.warn("Logout error:", e);
                 } finally {
-                    set({ token: null, user: null, isAuthenticated: false, isLoading: false });
+                    set({ token: null, user: null, isAuthenticated: false, isLoading: false, error: null });
+                    if (typeof window !== "undefined") {
+                        try {
+                            localStorage.removeItem("auth-storage");
+                        } catch {}
+                    }
                     useCartStore.getState().resetToGuestCart();
                 }
             },

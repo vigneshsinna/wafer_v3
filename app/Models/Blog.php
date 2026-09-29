@@ -11,6 +11,11 @@ class Blog extends Model
     use PreventDemoModeChanges;
 
     use SoftDeletes;
+
+    public function scopePublished($query)
+    {
+        return $query->where('status', 1);
+    }
     
     public function category() {
         return $this->belongsTo(BlogCategory::class, 'category_id');

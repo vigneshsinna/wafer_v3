@@ -122,24 +122,29 @@ interface AuthResponse { access_token: string; token_type: string; user: User }
 export async function register(userData: {
     name: string;
     email: string;
+    phone?: string;
     password: string;
     password_confirmation: string;
 }): Promise<AuthResponse> {
     return fetchApi<AuthResponse>("/auth/register", {
         method: "POST",
-        body: JSON.stringify({ name: userData.name, email_or_phone: userData.email, password: userData.password, password_confirmation: userData.password_confirmation, register_by: "email" }),
+        body: JSON.stringify({ name: userData.name, email_or_phone: userData.email, phone: userData.phone || undefined, password: userData.password, password_confirmation: userData.password_confirmation, register_by: "email" }),
     });
 }
 
-export async function login(email: string, password: string): Promise<AuthResponse> {
+export async function login(identifier: string, password: string): Promise<AuthResponse> {
     return fetchApi<AuthResponse>("/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email, password, login_by: "email" }),
+        body: JSON.stringify({ email: identifier, password, login_by: identifier.includes("@") ? "email" : "phone" }),
     });
 }
 
 export async function logout(): Promise<void> {
-    await fetchApi<null>("/auth/logout", { method: "DELETE" });
+    try {
+        await fetchApi<null>("/auth/logout", { method: "DELETE" });
+    } catch (e) {
+        console.warn("Server logout request ignored:", e);
+    }
 }
 
 export async function forgotPassword(email: string): Promise<null> {
@@ -188,15 +193,16 @@ export const saveAddress = (data: AddressInput, id?: number) => fetchApi<Address
     { method: id ? "PATCH" : "POST", body: JSON.stringify(data) }
 );
 export const deleteAddress = (id: number) => fetchApi<null>(`/user/addresses/${id}`, { method: "DELETE" });
-export const getCheckoutSummary = (addressId: number) => fetchApi<CheckoutSummary>("/checkout/summary", {
-    method: "POST", body: JSON.stringify({ address_id: addressId }),
+export const getCheckoutSummary = (addressId: number, carrierId?: number) => fetchApi<CheckoutSummary>("/checkout/summary", {
+    method: "POST", body: JSON.stringify({ address_id: addressId, carrier_id: carrierId }),
 });
 export const getPaymentConfig = () => fetchApi<{ available: boolean; method: string }>("/checkout/payment-config");
-export const getPublicPage = (slug: string) => fetchApi<{ slug: string; title: string; content: string }>(`/pages/${encodeURIComponent(slug)}`);
-export const startRazorpayPayment = (addressId: number) => fetchApi<{
+export interface PublicPage { slug: string; title: string; content: string; faq_sections?: { title: string; questions: { question: string; answer: string }[] }[] | null }
+export const getPublicPage = (slug: string) => fetchApi<PublicPage>(`/pages/${encodeURIComponent(slug)}`);
+export const startRazorpayPayment = (addressId: number, carrierId?: number) => fetchApi<{
     attempt_id: number; razorpay_order_id: string; key: string; amount: number; currency: string;
     name: string; email: string; phone: string;
-}>("/checkout/razorpay/start", { method: "POST", body: JSON.stringify({ address_id: addressId }) });
+}>("/checkout/razorpay/start", { method: "POST", body: JSON.stringify({ address_id: addressId, carrier_id: carrierId }) });
 export const confirmRazorpayPayment = (data: {
     razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string;
 }) => fetchApi<{ order_code: string }>("/checkout/razorpay/confirm", { method: "POST", body: JSON.stringify(data) });
