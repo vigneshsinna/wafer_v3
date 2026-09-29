@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getStorePage } from "@/lib/storeContent";
 import { getProducts } from "@/lib/api";
+import { isOptimizableImage } from "@/lib/images";
 
 export default async function AboutPage() {
     const [page, products] = await Promise.all([getStorePage("about"), getProducts().catch(() => [])]);
@@ -24,7 +25,7 @@ export default async function AboutPage() {
                     </div>
                     <div className="relative lg:col-span-5">
                         <div className="relative h-[460px] overflow-hidden rounded-2xl border border-surface-container-high bg-background-warm shadow-xl">
-                            {storyImages[0]?.thumbnail_url ? <Image src={storyImages[0].thumbnail_url} alt={storyImages[0].name} fill priority unoptimized className="object-cover" /> : <span className="material-symbols-outlined flex h-full items-center justify-center text-[72px] text-primary-50">inventory_2</span>}
+                            {storyImages[0]?.thumbnail_url ? <Image src={storyImages[0].thumbnail_url} alt={storyImages[0].name} fill priority unoptimized={!isOptimizableImage(storyImages[0].thumbnail_url)} sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover" /> : <span className="material-symbols-outlined flex h-full items-center justify-center text-[72px] text-primary-50">inventory_2</span>}
                             <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-primary/80 via-primary/20 to-transparent p-space-lg text-on-primary">
                                 <span className="text-label-sm uppercase tracking-wider text-tertiary-fixed-dim">Our collection</span>
                                 <p className="font-headline-sm text-headline-sm font-semibold">The story behind every wafer</p>
@@ -41,7 +42,7 @@ export default async function AboutPage() {
             <section className="bg-surface py-space-xl md:py-24">
                 <div className="mx-auto grid max-w-7xl items-center gap-space-xl px-gutter-sm md:px-gutter lg:grid-cols-12">
                     <div className="order-2 space-y-space-md lg:order-1 lg:col-span-5">
-                        <div className="relative h-72 overflow-hidden rounded-2xl bg-surface-container shadow-md">{storyImages[1]?.thumbnail_url ? <Image src={storyImages[1].thumbnail_url} alt={storyImages[1].name} fill unoptimized className="object-cover" /> : <span className="material-symbols-outlined flex h-full items-center justify-center text-[72px] text-primary-50">inventory_2</span>}</div>
+                        <div className="relative h-72 overflow-hidden rounded-2xl bg-surface-container shadow-md">{storyImages[1]?.thumbnail_url ? <Image src={storyImages[1].thumbnail_url} alt={storyImages[1].name} fill unoptimized={!isOptimizableImage(storyImages[1].thumbnail_url)} sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover" /> : <span className="material-symbols-outlined flex h-full items-center justify-center text-[72px] text-primary-50">inventory_2</span>}</div>
                         <div className="grid grid-cols-2 gap-space-md">
                             <div className="rounded-xl border border-surface-container-high bg-background-cream p-space-md shadow-sm"><span className="material-symbols-outlined text-[32px] text-accent-700">menu_book</span><h3 className="mt-2 font-semibold text-primary">Our story</h3><p className="text-body-sm text-on-surface-variant">Read about the brand and its products.</p></div>
                             <div className="rounded-xl border border-surface-container-high bg-background-cream p-space-md shadow-sm"><span className="material-symbols-outlined text-[32px] text-secondary">nutrition</span><h3 className="mt-2 font-semibold text-primary">Product facts</h3><p className="text-body-sm text-on-surface-variant">Check each pack for ingredients and nutrition.</p></div>

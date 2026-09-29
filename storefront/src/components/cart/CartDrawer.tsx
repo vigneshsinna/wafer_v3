@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { formatINR } from "@/lib/money";
+import { isOptimizableImage } from "@/lib/images";
 
 export default function CartDrawer() {
     const { cart, isOpen, closeCart, updateItem, removeItem, isLoading, error } = useCartStore();
@@ -102,7 +103,8 @@ export default function CartDrawer() {
                                                         src={item.thumbnail_url}
                                                         alt={item.product_name}
                                                         fill
-                                                        unoptimized
+                                                        unoptimized={!isOptimizableImage(item.thumbnail_url)}
+                                                        sizes="80px"
                                                         className="object-cover"
                                                     /> : <span className="flex h-full items-center justify-center text-primary-50"><span className="material-symbols-outlined">inventory_2</span></span>}
                                                 </div>

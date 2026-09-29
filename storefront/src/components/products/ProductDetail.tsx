@@ -1,18 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { addToWishlist } from "@/lib/api";
+import { addToWishlist, getProducts } from "@/lib/api";
 import { formatINR } from "@/lib/money";
+import { isOptimizableImage } from "@/lib/images";
 import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
 import type { Product } from "@/types";
 import ProductCard from "./ProductCard";
 import ProductReviews from "./ProductReviews";
 
-export default function ProductDetail({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
+export default function ProductDetail({ product }: { product: Product }) {
     const router = useRouter();
     const { addItem, openCart } = useCartStore();
     const authenticated = useAuthStore(state => state.isAuthenticated);
@@ -22,6 +23,15 @@ export default function ProductDetail({ product, relatedProducts }: { product: P
     const [tab, setTab] = useState<"ingredients" | "tasting" | "storage">("ingredients");
     const [message, setMessage] = useState("");
     const [busy, setBusy] = useState(false);
+    const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+
+    useEffect(() => {
+        let active = true;
+        void getProducts().then(products => {
+            if (active) setRelatedProducts(products.filter(item => item.slug !== product.slug).slice(0, 3));
+        }).catch(() => {});
+        return () => { active = false; };
+    }, [product.slug]);
     const available = product.stock_status === "in_stock";
     const packOptions = [1, 3, 6].map(count => count * Math.max(product.min_qty, 1));
     const savings = product.compare_at_price > product.sale_price
@@ -60,10 +70,10 @@ export default function ProductDetail({ product, relatedProducts }: { product: P
         <section className="mx-auto grid max-w-7xl gap-space-xl px-gutter-sm py-space-xl md:px-gutter lg:grid-cols-12">
             <div className="space-y-space-md lg:col-span-7">
                 <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-surface-container shadow-sm">
-                    {images.length ? <Image src={images[imageIndex]} alt={product.name} fill priority unoptimized sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" /> : <span className="material-symbols-outlined text-8xl text-outline">inventory_2</span>}
+                    {images.length ? <Image src={images[imageIndex]} alt={product.name} fill priority unoptimized={!isOptimizableImage(images[imageIndex])} sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" /> : <span className="material-symbols-outlined text-8xl text-outline">inventory_2</span>}
                     <span className="absolute bottom-4 left-4 rounded-full bg-background-cream/95 px-4 py-1 text-sm font-semibold text-primary">{available ? "In Stock" : "Out of Stock"}</span>
                 </div>
-                {images.length > 1 && <div className="grid grid-cols-4 gap-space-sm">{images.map((image, index) => <button type="button" key={image} aria-label={`Show image ${index + 1}`} aria-pressed={imageIndex === index} onClick={() => setImageIndex(index)} className={`relative aspect-square overflow-hidden rounded-lg bg-surface-container ${index === imageIndex ? "ring-2 ring-accent-700" : ""}`}><Image src={image} alt="" fill unoptimized sizes="120px" className="object-cover" /></button>)}</div>}
+                {images.length > 1 && <div className="grid grid-cols-4 gap-space-sm">{images.map((image, index) => <button type="button" key={image} aria-label={`Show image ${index + 1}`} aria-pressed={imageIndex === index} onClick={() => setImageIndex(index)} className={`relative aspect-square overflow-hidden rounded-lg bg-surface-container ${index === imageIndex ? "ring-2 ring-accent-700" : ""}`}><Image src={image} alt="" fill unoptimized={!isOptimizableImage(image)} sizes="120px" className="object-cover" /></button>)}</div>}
                 <div className="flex items-start gap-space-sm rounded-xl bg-surface-container-low p-space-md text-on-surface-variant"><span className="material-symbols-outlined text-accent-700">agriculture</span><p>Explore the product details and label before adding this item to your box.</p></div>
             </div>
             <div className="space-y-space-md lg:col-span-5">

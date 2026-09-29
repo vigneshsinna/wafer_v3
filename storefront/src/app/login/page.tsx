@@ -21,7 +21,7 @@ function LoginContent() {
             await login(identifier.trim(), password);
             const next = searchParams.get("next");
             const target = next?.startsWith("/") && !next.startsWith("//") ? next : "/profile";
-            window.location.href = target;
+            router.replace(target);
         } catch (cause) {
             setError(cause instanceof Error ? cause.message : "Sign in failed.");
         }

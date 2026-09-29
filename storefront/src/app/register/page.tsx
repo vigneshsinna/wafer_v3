@@ -18,7 +18,7 @@ export default function RegisterPage() {
         if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
         try {
             await register({ name: form.name, email: form.email, phone: form.phone || undefined, password: form.password, password_confirmation: form.confirm });
-            window.location.href = "/profile";
+            router.replace("/profile");
         } catch (cause) {
             setError(cause instanceof Error ? cause.message : "Registration failed.");
         }

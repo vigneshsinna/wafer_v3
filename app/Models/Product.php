@@ -16,6 +16,13 @@ class Product extends Model
 
     protected $with = ['product_translations', 'taxes', 'thumbnail'];
 
+    public function scopeWithStorefrontData($query)
+    {
+        return $query->with(['main_category', 'brand'])
+            ->withCount(['reviews as approved_reviews_count' => fn ($reviews) => $reviews->where('status', 1)])
+            ->withSum('stocks as stock_quantity', 'qty');
+    }
+
     public function getTranslation($field = '', $lang = false)
     {
         $lang = $lang == false ? App::getLocale() : $lang;

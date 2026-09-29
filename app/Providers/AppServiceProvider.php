@@ -26,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
    */
   public function register()
   {
-    //
+      if (class_exists(\Illuminate\Foundation\Console\ServeCommand::class)) {
+          \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables = array_unique(array_merge(
+              \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables,
+              ['TEMP', 'TMP', 'SystemDrive', 'USERPROFILE']
+          ));
+      }
   }
 }

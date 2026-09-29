@@ -49,7 +49,7 @@ class ProductCatalogService
      */
     public function listProducts(array $filters = [], string $sort = 'newest', int $perPage = 20): LengthAwarePaginator
     {
-        $query = Product::query()->where('published', 1);
+        $query = Product::query()->withStorefrontData()->where('published', 1);
 
         // Physical vs digital filter
         if (isset($filters['digital']) && $filters['digital']) {
@@ -107,7 +107,7 @@ class ProductCatalogService
      */
     public function getBySlug(string $slug): Product
     {
-        return Product::where('slug', $slug)->where('published', 1)->firstOrFail();
+        return Product::withStorefrontData()->where('slug', $slug)->where('published', 1)->firstOrFail();
     }
 
     /**
@@ -177,7 +177,7 @@ class ProductCatalogService
      */
     public function search(string $query, array $filters = [], string $sort = 'relevance', int $perPage = 20): LengthAwarePaginator
     {
-        $products = Product::query()->where('published', 1);
+        $products = Product::query()->withStorefrontData()->where('published', 1);
 
         if (isset($filters['digital']) && $filters['digital']) {
             $products->digital();
@@ -240,7 +240,7 @@ class ProductCatalogService
      */
     public function getFeatured(int $limit = 20): Collection
     {
-        return filter_products(Product::where('featured', 1)->physical())->latest()->limit($limit)->get();
+        return filter_products(Product::withStorefrontData()->where('featured', 1)->physical())->latest()->limit($limit)->get();
     }
 
     /**
@@ -248,7 +248,7 @@ class ProductCatalogService
      */
     public function getBestSellers(int $limit = 20): Collection
     {
-        return filter_products(Product::orderBy('num_of_sale', 'desc')->physical())->limit($limit)->get();
+        return filter_products(Product::withStorefrontData()->orderBy('num_of_sale', 'desc')->physical())->limit($limit)->get();
     }
 
     /**
@@ -256,7 +256,7 @@ class ProductCatalogService
      */
     public function getTodaysDeals(int $limit = 20): Collection
     {
-        return filter_products(Product::where('todays_deal', 1)->physical())->latest()->limit($limit)->get();
+        return filter_products(Product::withStorefrontData()->where('todays_deal', 1)->physical())->latest()->limit($limit)->get();
     }
 
     /**
@@ -265,7 +265,7 @@ class ProductCatalogService
     public function getByCategory(string $categorySlug, int $perPage = 20): LengthAwarePaginator
     {
         $category = Category::where('slug', $categorySlug)->firstOrFail();
-        $products = $category->products();
+        $products = $category->products()->withStorefrontData();
 
         return filter_products($products)->latest()->paginate($perPage);
     }
@@ -276,7 +276,7 @@ class ProductCatalogService
     public function getByBrand(string $brandSlug, int $perPage = 20): LengthAwarePaginator
     {
         $brand = Brand::where('slug', $brandSlug)->firstOrFail();
-        $products = Product::where('brand_id', $brand->id)->physical();
+        $products = Product::withStorefrontData()->where('brand_id', $brand->id)->physical();
 
         return filter_products($products)->latest()->paginate($perPage);
     }

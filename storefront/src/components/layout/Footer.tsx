@@ -2,15 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import type { StoreSettings } from "@/lib/storeContent";
-import { getProducts } from "@/lib/api";
-import type { Product } from "@/types";
 
 export default function Footer({ settings }: { settings: StoreSettings | null }) {
     const currentYear = new Date().getFullYear();
-    const [products, setProducts] = useState<Product[]>([]);
-    useEffect(() => { void getProducts().then(setProducts).catch(() => {}); }, []);
 
     return (
         <footer className="w-full bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-space-xl pb-space-lg text-on-surface border-t border-surface-container-high/60">
@@ -49,10 +44,7 @@ export default function Footer({ settings }: { settings: StoreSettings | null })
                         The Collection
                     </h4>
                     <ul className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
-                        {products.slice(0, 5).map(product => <li key={product.id}>
-                            <Link className="hover:text-on-surface transition-colors" href={`/product/${product.slug}`}>{product.name}</Link>
-                        </li>)}
-                        {products.length === 0 && <li><Link href="/#flavours" className="hover:text-on-surface">Browse the collection</Link></li>}
+                        <li><Link href="/#flavours" className="hover:text-on-surface">Browse the collection</Link></li>
                     </ul>
                 </div>
 

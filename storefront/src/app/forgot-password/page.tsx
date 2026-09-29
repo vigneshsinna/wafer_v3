@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Mail, Loader2, ArrowLeft, CheckCircle } from "lucide-react";
 import { forgotPassword } from "@/lib/api";
 
@@ -31,9 +30,7 @@ export default function ForgotPasswordPage() {
         return (
             <>
                     <div className="min-h-screen pt-20 bg-background flex items-center justify-center">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
+                    <div
                         className="max-w-md w-full mx-4 bg-white rounded-xl p-8 shadow-sm text-center"
                     >
                         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -46,7 +43,7 @@ export default function ForgotPasswordPage() {
                         <Link href="/login" className="text-primary hover:underline">
                             Back to Login
                         </Link>
-                    </motion.div>
+                    </div>
                 </div>
                 </>
         );
@@ -55,9 +52,7 @@ export default function ForgotPasswordPage() {
     return (
         <>
             <div className="min-h-screen pt-20 bg-background flex items-center justify-center">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                <div
                     className="max-w-md w-full mx-4"
                 >
                     <div className="bg-white rounded-xl p-8 shadow-sm">
@@ -111,7 +106,7 @@ export default function ForgotPasswordPage() {
                             </button>
                         </form>
                     </div>
-                </motion.div>
+                </div>
             </div>
         </>
     );

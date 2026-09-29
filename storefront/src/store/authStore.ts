@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>()(
                 try {
                     const result = await api.login(email, password);
                     set({ token: result.access_token, user: result.user, isAuthenticated: true, isLoading: false });
-                    await useCartStore.getState().mergeGuestCart();
+                    void useCartStore.getState().mergeGuestCart();
                 } catch (error) {
                     set({ error: error instanceof Error ? error.message : "Login failed", isLoading: false });
                     throw error;
@@ -40,33 +40,28 @@ export const useAuthStore = create<AuthState>()(
                 try {
                     const result = await api.register(data);
                     set({ token: result.access_token, user: result.user, isAuthenticated: true, isLoading: false });
-                    await useCartStore.getState().mergeGuestCart();
+                    void useCartStore.getState().mergeGuestCart();
                 } catch (error) {
                     set({ error: error instanceof Error ? error.message : "Registration failed", isLoading: false });
                     throw error;
                 }
             },
             logout: async () => {
-                try {
-                    if (get().token) await api.logout();
-                } catch (e) {
-                    console.warn("Logout error:", e);
-                } finally {
-                    set({ token: null, user: null, isAuthenticated: false, isLoading: false, error: null });
-                    if (typeof window !== "undefined") {
-                        try {
-                            localStorage.removeItem("auth-storage");
-                        } catch {}
-                    }
-                    useCartStore.getState().resetToGuestCart();
-                }
+                const token = get().token;
+                set({ token: null, user: null, isAuthenticated: false, isLoading: false, error: null });
+                if (typeof window !== "undefined") localStorage.removeItem("auth-storage");
+                useCartStore.getState().resetToGuestCart();
+                if (token) void api.logout(token);
             },
             fetchProfile: async () => {
-                if (!get().token) return;
+                const token = get().token;
+                if (!token) return;
                 try {
                     const user = await api.getProfile();
+                    if (get().token !== token) return;
                     set({ user, isAuthenticated: true, isLoading: false });
                 } catch {
+                    if (get().token !== token) return;
                     set({ token: null, user: null, isAuthenticated: false, isLoading: false });
                     useCartStore.getState().resetToGuestCart();
                 }

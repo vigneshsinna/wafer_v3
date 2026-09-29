@@ -32,13 +32,9 @@ export default function Header({ settings }: { settings: StoreSettings | null })
     const [menuOpen, setMenuOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
     const userDropdownRef = useRef<HTMLDivElement>(null);
-    const { cart, openCart, fetchCart } = useCartStore();
+    const { cart, openCart } = useCartStore();
     const { isAuthenticated, user, logout } = useAuthStore();
     const announcement = settings?.announcement_text || settings?.store_motto;
-
-    useEffect(() => {
-        fetchCart();
-    }, [fetchCart]);
 
     useEffect(() => {
         setMenuOpen(false);
@@ -66,12 +62,10 @@ export default function Header({ settings }: { settings: StoreSettings | null })
         };
     }, [userDropdownOpen]);
 
-    const handleLogout = async () => {
+    const handleLogout = () => {
         setUserDropdownOpen(false);
-        try {
-            await logout();
-        } catch {}
-        window.location.href = "/";
+        void logout();
+        router.replace("/");
     };
 
     const isLinkActive = (href: string, pathKey: string) => {
@@ -356,7 +350,8 @@ export default function Header({ settings }: { settings: StoreSettings | null })
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        logout().finally(() => { setMenuOpen(false); window.location.href = "/"; });
+                                        setMenuOpen(false);
+                                        handleLogout();
                                     }}
                                     className="px-3 py-2 text-left rounded-lg text-sm font-medium text-error hover:bg-error-container/20 flex items-center gap-2"
                                 >

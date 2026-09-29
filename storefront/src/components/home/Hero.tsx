@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/types";
 
-export default function Hero({ products, loading }: { products: Product[]; loading: boolean }) {
+export default function Hero({ products }: { products: Product[] }) {
     const available = products.filter(product => product.stock_status === "in_stock").length;
     return (
         <section className="relative w-full overflow-hidden bg-background py-space-xl lg:py-24">
@@ -57,11 +57,11 @@ export default function Hero({ products, loading }: { products: Product[]; loadi
                         {/* Key Stats Ribbon */}
                         <div className="grid grid-cols-3 gap-space-md pt-space-lg mt-space-md w-full bg-surface-container-low p-space-md rounded-xl">
                             <div className="flex flex-col">
-                                <span className="font-headline-sm text-headline-sm text-primary font-bold">{loading ? "…" : products.length}</span>
+                                <span className="font-headline-sm text-headline-sm text-primary font-bold">{products.length}</span>
                                 <span className="font-label-sm text-label-sm text-on-surface-variant">Botanical Flavours</span>
                             </div>
                             <div className="flex flex-col border-l border-surface-container-high pl-space-md">
-                                <span className="font-headline-sm text-headline-sm text-primary font-bold">{loading ? "…" : available}</span>
+                                <span className="font-headline-sm text-headline-sm text-primary font-bold">{available}</span>
                                 <span className="font-label-sm text-label-sm text-on-surface-variant">Available Now</span>
                             </div>
                             <div className="flex flex-col border-l border-surface-container-high pl-space-md">
@@ -88,14 +88,14 @@ export default function Hero({ products, loading }: { products: Product[]; loadi
                                 style={{ animationDuration: "4s" }}
                             >
                                 <span className="material-symbols-outlined text-[16px] text-accent-700">bolt</span>
-                                <span>{loading ? "Explore Flavours" : `${products.length} Flavours`}</span>
+                                <span>{products.length} Flavours</span>
                             </div>
 
                             <div className="absolute bottom-6 -left-3 sm:-left-6 bg-surface-container-lowest text-primary px-space-md py-space-xs rounded-xl shadow-lg flex items-center gap-space-xs font-label-md text-label-md border border-surface-container-high/60">
                                 <span className="w-2.5 h-2.5 rounded-full bg-secondary shrink-0" />
                                 <div>
                                     <p className="font-label-sm text-label-sm text-on-surface-variant">Shop the collection</p>
-                                    <p className="font-semibold text-primary">{loading ? "Loading collection" : `${available} products available`}</p>
+                                    <p className="font-semibold text-primary">{available} products available</p>
                                 </div>
                             </div>
 

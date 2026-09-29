@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Product } from "@/types";
 import { useCartStore } from "@/store/cartStore";
 import { formatINR } from "@/lib/money";
+import { isOptimizableImage } from "@/lib/images";
 
 interface ProductCardProps {
     product: Product;
@@ -43,7 +44,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         src={product.thumbnail_url}
                         alt={product.name}
                         fill
-                        unoptimized
+                        unoptimized={!isOptimizableImage(product.thumbnail_url)}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     /> : <span className="flex h-full items-center justify-center text-primary-50"><span className="material-symbols-outlined text-[64px]">inventory_2</span></span>}

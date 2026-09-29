@@ -19,6 +19,13 @@ require __DIR__.'/vendor/autoload.php';
 
 $app = require_once __DIR__.'/bootstrap/app.php';
 
+if (class_exists(\Illuminate\Foundation\Console\ServeCommand::class)) {
+    \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables = array_unique(array_merge(
+        \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables,
+        ['TEMP', 'TMP', 'SystemDrive', 'USERPROFILE']
+    ));
+}
+
 /*
 |--------------------------------------------------------------------------
 | Run The Artisan Application

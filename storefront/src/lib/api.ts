@@ -43,7 +43,7 @@ export async function fetchApi<T>(
         headers,
     });
     const envelope: ApiEnvelope<T> | null = await response.json().catch(() => null);
-    if (response.status === 401 && typeof window !== "undefined") {
+    if (response.status === 401 && token && typeof window !== "undefined" && storedToken() === token) {
         localStorage.removeItem("auth-storage");
         window.dispatchEvent(new Event("waferking:unauthorized"));
     }
@@ -67,11 +67,11 @@ export async function getProducts(params?: {
     if (params?.sort_by) searchParams.set("sort", params.sort_by);
     
     const query = searchParams.toString();
-    return fetchApi<Product[]>(`/products${query ? `?${query}` : ""}`);
+    return fetchApi<Product[]>(`/products${query ? `?${query}` : ""}`, typeof window === "undefined" ? { next: { revalidate: 60 } } as RequestInit : {});
 }
 
 export async function getProduct(slug: string): Promise<Product> {
-    return fetchApi<Product>(`/products/${encodeURIComponent(slug)}`);
+    return fetchApi<Product>(`/products/${encodeURIComponent(slug)}`, typeof window === "undefined" ? { next: { revalidate: 60 } } as RequestInit : {});
 }
 
 // Cart API
@@ -139,9 +139,13 @@ export async function login(identifier: string, password: string): Promise<AuthR
     });
 }
 
-export async function logout(): Promise<void> {
+export async function logout(token: string): Promise<void> {
     try {
-        await fetchApi<null>("/auth/logout", { method: "DELETE" });
+        await fetch(`${getApiUrl()}/auth/logout`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+            keepalive: true,
+        });
     } catch (e) {
         console.warn("Server logout request ignored:", e);
     }

@@ -45,6 +45,62 @@ class V3StorefrontSafetyTest extends TestCase
         self::assertArrayNotHasKey('purchase_price', $data);
     }
 
+    public function test_product_resource_uses_catalogue_aggregates(): void
+    {
+        $product = new class extends Product {
+            public function getTranslation($field = '', $lang = false)
+            {
+                return $this->$field;
+            }
+        };
+        $product->forceFill([
+            'approved_reviews_count' => 3,
+            'stock_quantity' => 5,
+        ]);
+        $product->setRelation('main_category', null);
+        $product->setRelation('brand', null);
+        $product->setRelation('taxes', new Collection());
+
+        $data = (new ProductResource($product))->toArray(null);
+
+        self::assertSame(3, $data['rating_count']);
+        self::assertSame('in_stock', $data['stock_status']);
+        self::assertFalse($product->relationLoaded('reviews'));
+        self::assertFalse($product->relationLoaded('stocks'));
+
+        $product->forceFill(['stock_quantity' => null]);
+        self::assertSame('out_of_stock', (new ProductResource($product))->toArray(null)['stock_status']);
+        self::assertFalse($product->relationLoaded('stocks'));
+    }
+
+    public function test_product_collection_batches_extra_gallery_uploads(): void
+    {
+        $db = new Capsule();
+        $db->addConnection(['driver' => 'sqlite', 'database' => ':memory:']);
+        $db->setAsGlobal();
+        $db->bootEloquent();
+        $db->schema()->create('uploads', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('file_name');
+            $table->timestamp('deleted_at')->nullable();
+        });
+        $db->table('uploads')->insert([
+            ['id' => 2, 'file_name' => 'uploads/all/extra-2.png'],
+            ['id' => 3, 'file_name' => 'uploads/all/extra-3.png'],
+        ]);
+        $products = [
+            (new Product())->forceFill(['thumbnail_img' => 1, 'photos' => '1,2']),
+            (new Product())->forceFill(['thumbnail_img' => 1, 'photos' => '1,3']),
+        ];
+
+        $db->connection()->enableQueryLog();
+        ProductResource::collection($products);
+
+        self::assertCount(1, $db->connection()->getQueryLog());
+        self::assertCount(2, $products[0]->getRelation('gallery_uploads'));
+        self::assertSame($products[0]->getRelation('gallery_uploads'), $products[1]->getRelation('gallery_uploads'));
+    }
+
     public function test_catalogue_prices_apply_discount_and_product_tax(): void
     {
         $product = new Product();

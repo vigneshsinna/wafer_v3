@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { formatINR } from "@/lib/money";
+import { isOptimizableImage } from "@/lib/images";
 import AddressManager from "@/components/profile/AddressManager";
 import {
     confirmRazorpayPayment,
@@ -500,7 +501,8 @@ export default function CheckoutPage() {
                                                             src={item.thumbnail_url}
                                                             alt={item.product_name}
                                                             fill
-                                                            unoptimized
+                                                            unoptimized={!isOptimizableImage(item.thumbnail_url)}
+                                                            sizes="64px"
                                                             className="object-cover"
                                                         /> : <span className="material-symbols-outlined text-primary-50">inventory_2</span>}
                                                     </div>

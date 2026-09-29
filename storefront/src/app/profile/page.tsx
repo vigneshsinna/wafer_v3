@@ -5,15 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import {
-    getUserProfile,
     updateUserProfile,
     changePassword,
     getUserOrders,
     getUserWishlist,
-    getAddresses,
     removeFromWishlist
 } from "@/lib/api";
-import type { UserProfile, Order, WishlistItem, Address } from "@/types";
+import type { Order, WishlistItem, Address } from "@/types";
 import { formatINR } from "@/lib/money";
 import AddressManager from "@/components/profile/AddressManager";
 import {
@@ -42,22 +40,21 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function ProfilePage() {
     const router = useRouter();
-    const { token, fetchProfile, logout } = useAuthStore();
-    const handleSignOut = async () => {
-        try {
-            await logout();
-        } catch {}
-        window.location.href = "/";
+    const { token, user: profile, logout } = useAuthStore();
+    const handleSignOut = () => {
+        void logout();
+        router.replace("/");
     };
     const [hydrated, setHydrated] = useState(false);
 
     const [activeTab, setActiveTab] = useState<Tab>("addresses");
-    const [loading, setLoading] = useState(true);
     const [loadError, setLoadError] = useState("");
-    const [profile, setProfile] = useState<UserProfile | null>(null);
     const [orders, setOrders] = useState<Order[]>([]);
     const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
     const [addresses, setAddresses] = useState<Address[]>([]);
+    const [ordersLoaded, setOrdersLoaded] = useState(false);
+    const [wishlistLoaded, setWishlistLoaded] = useState(false);
+    const [tabLoading, setTabLoading] = useState<Tab | null>(null);
 
     // Settings form
     const [settingsForm, setSettingsForm] = useState({
@@ -81,8 +78,6 @@ export default function ProfilePage() {
         return useAuthStore.persist.onFinishHydration(() => setHydrated(true));
     }, []);
 
-    useEffect(() => { if (hydrated && token) void fetchProfile(); }, [hydrated, token, fetchProfile]);
-
     useEffect(() => {
         if (!hydrated) return;
         if (!token) {
@@ -90,33 +85,27 @@ export default function ProfilePage() {
             return;
         }
 
-        void fetchData();
     }, [hydrated, token, router]);
 
-    async function fetchData() {
-        setLoading(true);
-        try {
-            const [profileData, ordersData, wishlistData, addressesData] = await Promise.all([
-                getUserProfile(),
-                getUserOrders(),
-                getUserWishlist(),
-                getAddresses(),
-            ]);
-            setProfile(profileData);
-            setOrders(ordersData);
-            setWishlist(wishlistData);
-            setAddresses(addressesData);
-            setSettingsForm({
-                name: profileData.name,
-                email: profileData.email || "",
-                phone: profileData.phone || ""
-            });
-        } catch (error) {
-            setLoadError(error instanceof Error ? error.message : "Could not load your account.");
-        } finally {
-            setLoading(false);
+    useEffect(() => {
+        if (profile) setSettingsForm({ name: profile.name, email: profile.email || "", phone: profile.phone || "" });
+    }, [profile]);
+
+    useEffect(() => {
+        if (!profile || !token) return;
+        if (activeTab === "orders" && !ordersLoaded) {
+            setOrdersLoaded(true);
+            setTabLoading("orders");
+            void getUserOrders().then(setOrders).catch(error => setLoadError(error instanceof Error ? error.message : "Could not load orders."))
+                .finally(() => setTabLoading(current => current === "orders" ? null : current));
         }
-    }
+        if (activeTab === "wishlist" && !wishlistLoaded) {
+            setWishlistLoaded(true);
+            setTabLoading("wishlist");
+            void getUserWishlist().then(setWishlist).catch(error => setLoadError(error instanceof Error ? error.message : "Could not load wishlist."))
+                .finally(() => setTabLoading(current => current === "wishlist" ? null : current));
+        }
+    }, [activeTab, profile, token, ordersLoaded, wishlistLoaded]);
 
     async function handleUpdateProfile(e: React.FormEvent) {
         e.preventDefault();
@@ -128,7 +117,7 @@ export default function ProfilePage() {
                 name: settingsForm.name,
                 phone: settingsForm.phone || undefined
             });
-            setProfile(current => current ? { ...current, ...updated } : current);
+            useAuthStore.setState(state => ({ user: state.user ? { ...state.user, ...updated } : updated }));
             setMessage({ type: "success", text: "Profile updated successfully!" });
         } catch (error) {
             setMessage({ type: "error", text: "Failed to update profile" });
@@ -180,7 +169,7 @@ export default function ProfilePage() {
         { id: "settings" as Tab, label: "Account Settings & Security", icon: Settings }
     ];
 
-    if (loading) {
+    if (!hydrated) {
         return (
             <>
                     <div className="min-h-screen pt-24 pb-12 bg-background">
@@ -268,7 +257,9 @@ export default function ProfilePage() {
                             {activeTab === "addresses" && <AddressManager onChange={setAddresses} />}
                             {activeTab === "payment" && <div className="rounded-xl bg-background-cream p-space-lg shadow-sm"><h2 className="font-headline-md text-primary">Saved Payment Methods</h2><p className="mt-3 text-on-surface-variant">Saved cards are not available. Choose a payment method securely at checkout.</p><Link href="/checkout" className="mt-4 inline-block font-semibold text-accent-700 underline">Go to checkout</Link></div>}
                             {/* Orders Tab */}
-                            {activeTab === "orders" && (
+                            {loadError && <p role="alert" className="mb-4 text-error">{loadError}</p>}
+                            {tabLoading === activeTab && <p role="status">Loading {activeTab}…</p>}
+                            {activeTab === "orders" && tabLoading !== "orders" && (
                                 <div className="space-y-4">
                                     <h2 className="font-headline-md text-primary">Recent Orders</h2>
                                     {orders.length === 0 ? (
@@ -336,7 +327,7 @@ export default function ProfilePage() {
                             )}
 
                             {/* Wishlist Tab */}
-                            {activeTab === "wishlist" && (
+                            {activeTab === "wishlist" && tabLoading !== "wishlist" && (
                                 <div>
                                     {wishlist.length === 0 ? (
                                         <div className="bg-white rounded-xl p-12 text-center shadow-sm">

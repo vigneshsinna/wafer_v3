@@ -36,7 +36,7 @@ export interface StoreBlogPage {
 async function getPublicContent<T>(path: string): Promise<T | null> {
     const base = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v3").replace(/\/$/, "");
     try {
-        const response = await fetch(`${base}${path}`, { cache: "no-store" });
+        const response = await fetch(`${base}${path}`, { next: { revalidate: 60 } });
         if (!response.ok) return null;
         const envelope = await response.json();
         return envelope.success ? envelope.data as T : null;

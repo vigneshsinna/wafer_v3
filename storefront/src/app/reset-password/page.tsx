@@ -3,7 +3,6 @@
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Lock, Loader2, CheckCircle, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { resetPassword } from "@/lib/api";
 
@@ -54,9 +53,7 @@ function ResetPasswordContent() {
 
     if (success) {
         return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+            <div
                 className="max-w-md w-full mx-4 bg-white rounded-xl p-8 shadow-sm text-center"
             >
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -72,15 +69,13 @@ function ResetPasswordContent() {
                 >
                     Go to Login
                 </Link>
-            </motion.div>
+            </div>
         );
     }
 
     if (!token || !email) {
         return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+            <div
                 className="max-w-md w-full mx-4 bg-white rounded-xl p-8 shadow-sm text-center"
             >
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -96,14 +91,12 @@ function ResetPasswordContent() {
                 >
                     Request New Link
                 </Link>
-            </motion.div>
+            </div>
         );
     }
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+        <div
             className="max-w-md w-full mx-4"
         >
             <div className="bg-white rounded-xl p-8 shadow-sm">
@@ -178,7 +171,7 @@ function ResetPasswordContent() {
                     </button>
                 </form>
             </div>
-        </motion.div>
+        </div>
     );
 }
 
