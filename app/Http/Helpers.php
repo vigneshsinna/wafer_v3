@@ -673,17 +673,6 @@ if (!function_exists('home_price')) {
     }
 }
 
-//Shows Bad Results in Seller Hompapage Retruns
-if (!function_exists('seller_homepage_urls')) {
-    function seller_homepage_urls($slug)
-    {
-        if ($slug == "bad" && env('DEMO_MODE') != 'On') {
-            return false;
-        }
-        return true;
-    }
-}
-
 //Shows Price on page based on low to high with discount
 if (!function_exists('home_discounted_price')) {
     function home_discounted_price($product, $formatted = true)
@@ -746,16 +735,6 @@ if (!function_exists('home_discounted_price')) {
         } else {
             return $lowest_price . ' - ' . $highest_price;
         }
-    }
-}
-
-//Generates Fromatted DateTime
-if (!function_exists('TimeDateFormatter')) {
-    function TimeDateFormatter()
-    {
-        date_default_timezone_set('UTC');
-        $timestamp = time();
-        return pow(substr($timestamp, -10, 9),2);
     }
 }
 

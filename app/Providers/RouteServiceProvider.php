@@ -92,13 +92,12 @@ class RouteServiceProvider extends ServiceProvider
     
     // V3 Headless API Routes
     $this->mapApiV3Routes();
-    $this->mapApiV3AdminRoutes();
+    // V3 Admin API stays disabled until its permissions and input validation are complete.
 
     $this->mapWebRoutes();
 
     // $this->mapInstallRoutes();
 
-    // $this->mapUpdateRoutes();
   }
 
   /**
@@ -271,20 +270,6 @@ class RouteServiceProvider extends ServiceProvider
   }
 
   /**
-   * Define the "updating" routes for the application.
-   *
-   * These routes all receive session state, CSRF protection, etc.
-   *
-   * @return void
-   */
-  protected function mapUpdateRoutes()
-  {
-    Route::middleware('web')
-       ->namespace($this->namespace)
-       ->group(base_path('routes/update.php'));
-  }
-
-  /**
    * Define the "installation" routes for the application.
    *
    * These routes all receive session state, CSRF protection, etc.
@@ -421,10 +406,6 @@ class RouteServiceProvider extends ServiceProvider
                 ->by(optional($request->user())->id ?: $request->ip());
         });
 
-        RateLimiter::for('v3_admin', function (Request $request) {
-            return Limit::perMinute(config('headless.rate_limits.admin', 300))
-                ->by(optional($request->user())->id ?: $request->ip());
-        });
     }
 
   /**
@@ -536,14 +517,4 @@ class RouteServiceProvider extends ServiceProvider
        ->group(base_path('routes/api_v3.php'));
   }
 
-  /**
-   * V3 Headless Admin API routes.
-   * Prefix: /api/v3/admin
-   */
-  protected function mapApiV3AdminRoutes()
-  {
-    Route::prefix('api/v3/admin')
-       ->middleware(['api_v3', 'auth:sanctum', 'admin'])
-       ->group(base_path('routes/api_v3_admin.php'));
-  }
 }

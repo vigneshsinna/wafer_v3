@@ -2,7 +2,7 @@
     <table class="table mb-0" id="aiz-data-table">
         <thead>
             <tr>
-                @if (auth()->user()->can('can_set_category_based_refund_days'))
+                @if (auth()->check() && auth()->user()->can('can_set_category_based_refund_days'))
                     <th>
                         <div class="form-group">
                             <div class="aiz-checkbox-inline">
@@ -47,7 +47,7 @@
                             <button type="button"
                                 class="toggle-plus-minus-btn border-0 bg-blue fs-14 fw-500 text-white p-0 align-items-center justify-content-center">+</button>
                         </div>
-                        @if (auth()->user()->can('can_set_category_based_refund_days'))
+                        @if (auth()->check() && auth()->user()->can('can_set_category_based_refund_days'))
                             <div class="form-group d-inline-block mb-2">
                                 <label class="aiz-checkbox">
                                     <input type="checkbox" class="check-one" name="id[]"value="{{ $category->id }}">

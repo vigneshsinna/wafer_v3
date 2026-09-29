@@ -78,4 +78,22 @@ class ProductBulkUploadController extends Controller
 
         return back();
     }
+
+    public function import_product($type = null)
+    {
+        $filePath = public_path('download/product_bulk_demo.xlsx');
+        if (file_exists($filePath)) {
+            return response()->download($filePath);
+        }
+        return back();
+    }
+
+    public function import_vendor_product($id = null)
+    {
+        $filePath = public_path('download/product_bulk_demo.xlsx');
+        if (file_exists($filePath)) {
+            return response()->download($filePath);
+        }
+        return back();
+    }
 }

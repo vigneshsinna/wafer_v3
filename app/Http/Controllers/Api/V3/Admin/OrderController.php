@@ -39,7 +39,7 @@ class OrderController extends Controller
         
         try {
             $order = $this->service->updateDeliveryStatus($id, $request->status);
-            return $this->resourceResponse(new OrderResource($order));
+            return $this->resourceResponse($order, OrderResource::class);
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 422);
         }
@@ -51,7 +51,7 @@ class OrderController extends Controller
         
         try {
             $order = $this->service->updatePaymentStatus($id, $request->status);
-            return $this->resourceResponse(new OrderResource($order));
+            return $this->resourceResponse($order, OrderResource::class);
         } catch (\Exception $e) {
             return $this->errorResponse($e->getMessage(), 422);
         }

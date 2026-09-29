@@ -165,9 +165,11 @@ class SslcommerzController extends Controller
             $tran_id = $request->input('tran_id');
 
             #Check order status in order tabel against the transaction id or order id.
-            $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
+            $combined_order_id = $request->session()->get('combined_order_id') ?? $request->input('value_b');
+            $combined_order = $combined_order_id ? CombinedOrder::find($combined_order_id) : null;
+            $order = $combined_order ? $combined_order->orders->first() : null;
 
-            if ($order->payment_status == 'Pending') {
+            if ($order && $order->payment_status == 'Pending') {
                 $sslc = new SSLCommerz();
                 $validation = $sslc->orderValidate($tran_id, $order->grand_total, 'BDT', $request->all());
                 if ($validation == TRUE) {

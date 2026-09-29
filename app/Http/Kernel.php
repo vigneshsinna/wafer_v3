@@ -61,7 +61,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\EnsureSystemKey::class,
         ],
 
-        // V3 Headless API — used by routes/api_v3.php and routes/api_v3_admin.php
+        // V3 storefront API middleware
         'api_v3' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:v3_public',

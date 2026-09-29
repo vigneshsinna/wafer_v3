@@ -401,4 +401,15 @@ class AddonController extends Controller
         flash(translate('Tax data for all products has been deleted.'))->warning();
     }
 
+    public function destroy($id)
+    {
+        $addon = Addon::find($id);
+        if ($addon) {
+            $addon->delete();
+            Cache::forget('addons');
+            flash(translate('Addon has been deleted successfully'))->success();
+        }
+        return redirect()->route('addons.index');
+    }
+
 }

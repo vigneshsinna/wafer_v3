@@ -17,9 +17,16 @@ class V3AddressTest extends TestCase
         $db->addConnection(['driver' => 'sqlite', 'database' => ':memory:']);
         $db->setAsGlobal();
         $db->bootEloquent();
+        $db->schema()->create('countries', function (Blueprint $table) {
+            $table->increments('id');
+        });
+        $db->schema()->create('states', function (Blueprint $table) {
+            $table->increments('id');
+        });
         $db->schema()->create('addresses', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
+            $table->string('recipient_name')->nullable();
             $table->string('address');
             $table->integer('country_id');
             $table->integer('state_id');

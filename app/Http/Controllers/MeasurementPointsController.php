@@ -26,6 +26,16 @@ class MeasurementPointsController extends Controller
         return view('backend.product.measurementPoints.index', compact('measurementPoints'));
     }
 
+    public function create()
+    {
+        return redirect()->route('measurement-points.index');
+    }
+
+    public function edit(MeasurementPoint $measurementPoint)
+    {
+        return redirect()->route('measurement-points.index');
+    }
+
     /**
      * Store a newly created resource in storage.
      *

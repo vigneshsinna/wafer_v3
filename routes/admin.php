@@ -59,14 +59,11 @@ use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\TopBannerController;
-use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\WarrantyController;
 use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\ZoneController;
 use App\Http\Controllers\Cybersource\CybersourceSettingController;
 use App\Http\Controllers\ElementController;
-use App\Http\Controllers\FinalUpdateController;
-use App\Http\Controllers\NewUpdateController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\ShippingBoxSizeController;
 use App\Http\Controllers\ShippingSystemController;
@@ -81,15 +78,6 @@ use App\Http\Controllers\ShippingSystemController;
   | contains the "web" middleware group. Now create something great!
   |
  */
-//Update Routes
-Route::controller(UpdateController::class)->group(function () {
-    Route::post('/update', 'step0')->name('update');
-    Route::get('/update/step1', 'step1')->name('update.step1');
-    Route::get('/update/step2', 'step2')->name('update.step2');
-    Route::get('/update/step3', 'step3')->name('update.step3');
-    Route::post('/purchase_code', 'purchase_code')->name('update.code');
-});
-
 Route::get('/admin', [AdminController::class, 'admin_dashboard'])->name('admin.dashboard')->middleware(['auth', 'admin', 'prevent-back-history', 'licensed']);
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-back-history', 'licensed']], function () {
 
@@ -708,7 +696,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     Route::post('/states/status', [StateController::class, 'updateStatus'])->name('states.status');
 
     // Carriers
-    Route::resource('carriers', CarrierController::class);
+    Route::resource('carriers', CarrierController::class)->except(['show']);
     Route::controller(CarrierController::class)->group(function () {
         Route::get('/carriers/destroy/{id}', 'destroy')->name('carriers.destroy');
         Route::post('/carriers/update_status', 'updateStatus')->name('carriers.update_status');
@@ -716,10 +704,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
 
 
     // Zones
-    Route::resource('zones', ZoneController::class);
+    Route::resource('zones', ZoneController::class)->except(['show']);
     Route::get('/zones/destroy/{id}', [ZoneController::class, 'destroy'])->name('zones.destroy');
 
-    Route::resource('cities', CityController::class);
+    Route::resource('cities', CityController::class)->except(['show']);
     Route::controller(CityController::class)->group(function () {
         Route::get('/cities/edit/{id}', 'edit')->name('cities.edit');
         Route::get('/cities/destroy/{id}', 'destroy')->name('cities.destroy');
@@ -729,7 +717,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     });
 
     //Areas
-    Route::resource('areas', AreaController::class);
+    Route::resource('areas', AreaController::class)->except(['show']);
     Route::controller(AreaController::class)->group(function () {
         Route::get('/areas/edit/{id}', 'edit')->name('areas.edit');
         Route::get('/areas/destroy/{id}', 'destroy')->name('areas.destroy');
@@ -740,14 +728,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/get-states', 'getStates')->name('admin.get-state');
      });
 
-    Route::view('/system/update', 'backend.system.update')->name('system_update');
     Route::view('/system/server-status', 'backend.system.server_status')->name('system_server');
     Route::view('/system/import-demo-data', 'backend.system.import_demo_data')->name('import_demo_data');
 
     Route::post('/import-data', [BusinessSettingsController::class, 'import_data'])->name('import_data');
 
     // uploaded files
-    Route::resource('/uploaded-files', AizUploadController::class);
+    Route::resource('/uploaded-files', AizUploadController::class)->only(['index', 'create', 'destroy']);
     Route::controller(AizUploadController::class)->group(function () {
         Route::any('/uploaded-files/file-info', 'file_info')->name('uploaded-files.info');
         Route::get('/uploaded-files/destroy/{id}', 'destroy')->name('uploaded-files.destroy');
@@ -793,11 +780,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     //Custom Visitors Setup
     Route::view('/custom-product-visitors', 'backend.marketing.custom_product_visitors')->name('custom_product_visitors');
 
-    //Update Process
-    Route::controller(NewUpdateController::class)->group(function () {
-        Route::post('/update', 'step0')->name('new_update');
-    });
-
     Route::controller(PickupController::class)->group(function () {
         Route::get('/pickup-address-list', 'index')->name('pickup_address.index');
         Route::get('/pickup-address-create', 'create')->name('pickup_address.create');
@@ -828,10 +810,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/steadfast-configuration', 'steadfast_configuration')->name('steadfast_configuration');
         Route::get('/pathao-configuration', 'pathao_configuration')->name('pathao_configuration');
         Route::get('/redx-configuration', 'redx_configuration')->name('redx_configuration');    
-    });
-
-    Route::controller(FinalUpdateController::class)->group(function () {
-        Route::post('/update', 'step0')->name('final_update');
     });
 
     Route::controller(AnalyticsController::class)->group(function () {
@@ -908,5 +886,3 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     
 
 });
-
-Route::get('/system/sitemap-item-add/{item}', [AdminController::class, 'SitemapItems'])->name('sitemap_item_add');

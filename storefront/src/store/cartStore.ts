@@ -96,7 +96,7 @@ export const useCartStore = create<CartState>()(
                             product_name: product.name,
                             thumbnail_url: product.thumbnail_url,
                             quantity,
-                            display_unit_price: product.unit_price,
+                            display_unit_price: product.sale_price,
                             min_qty: product.min_qty,
                         }];
                     set({ guestItems: items, cart: guestCart(items) });

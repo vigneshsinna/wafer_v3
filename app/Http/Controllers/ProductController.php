@@ -1156,6 +1156,13 @@ class ProductController extends Controller
         return view('partials.product.multiPick_products', compact('products', 'single_select'));
     }
 
+    public function get_products_by_subcategory(Request $request)
+    {
+        $products = $this->productService->products_search($request->except(['_token']));
+        $single_select = $request->single_select ?? 0;
+        return view('partials.product.multiPick_products', compact('products', 'single_select'));
+    }
+
     public function generateWithAI(Request $request)
     {
        return $products = $this->aiService->productGenerateWithAI($request->all());

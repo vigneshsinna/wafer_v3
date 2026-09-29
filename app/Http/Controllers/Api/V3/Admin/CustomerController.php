@@ -38,6 +38,6 @@ class CustomerController extends Controller
         $request->validate(['banned' => 'required|boolean']);
         
         $customer = $this->service->updateBanStatus($id, $request->banned);
-        return $this->resourceResponse(new UserResource($customer));
+        return $this->resourceResponse($customer, UserResource::class);
     }
 }

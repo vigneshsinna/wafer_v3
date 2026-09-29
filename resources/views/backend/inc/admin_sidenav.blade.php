@@ -2693,8 +2693,8 @@
                 </li>
                 @endcanany
 
-                <!-- System Update & Server Status -->
-                @canany(['system_update','server_status'])
+                <!-- System tools -->
+                @canany(['server_status', 'sitemap_generator'])
                 <li class="aiz-side-nav-item">
                     <a href="#" class="aiz-side-nav-link">
                         <div class="aiz-side-nav-icon">
@@ -2743,13 +2743,6 @@
                         <span class="aiz-side-nav-arrow"></span>
                     </a>
                     <ul class="aiz-side-nav-list level-2">
-                        @can('system_update')
-                        <li class="aiz-side-nav-item">
-                            <a href="{{ route('system_update') }}" class="aiz-side-nav-link">
-                                <span class="aiz-side-nav-text">{{translate('Update')}}</span>
-                            </a>
-                        </li>
-                        @endcan
                         @can('server_status')
                         <li class="aiz-side-nav-item">
                             <a href="{{route('system_server')}}" class="aiz-side-nav-link">

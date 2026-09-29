@@ -41,14 +41,12 @@ return [
     | Requests per minute for each tier.
     | Public = unauthenticated browsing (products, categories)
     | Auth   = logged-in customer actions (cart, orders)
-    | Admin  = admin panel operations
     |
     */
 
     'rate_limits' => [
         'public' => (int) env('API_RATE_LIMIT_PUBLIC', 120),
         'auth'   => (int) env('API_RATE_LIMIT_AUTH', 60),
-        'admin'  => (int) env('API_RATE_LIMIT_ADMIN', 300),
     ],
 
     /*

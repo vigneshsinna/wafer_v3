@@ -53,6 +53,11 @@ class CurrencyController extends Controller
         }
     }
 
+    public function updateCurrency(Request $request)
+    {
+        return $this->updateYourCurrency($request);
+    }
+
     public function create()
     {
         return view('backend.setup_configurations.currencies.create');

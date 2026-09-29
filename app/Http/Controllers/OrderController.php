@@ -434,6 +434,34 @@ class OrderController extends Controller
         return 1;
     } 
 
+    public function bulk_order_status(Request $request)
+    {
+        $order_ids = $request->order_ids ?? $request->id ?? $request->ids;
+        if (is_string($order_ids)) {
+            $order_ids = explode(',', $order_ids);
+        }
+        if (!empty($order_ids) && is_array($order_ids)) {
+            foreach ($order_ids as $order_id) {
+                $order = Order::find($order_id);
+                if ($order) {
+                    if ($request->filled('delivery_status')) {
+                        $order->delivery_status = $request->delivery_status;
+                        if ($request->delivery_status == 'delivered') {
+                            $order->delivered_date = date("Y-m-d H:i:s");
+                        }
+                    }
+                    if ($request->filled('payment_status')) {
+                        $order->payment_status = $request->payment_status;
+                    }
+                    $order->save();
+                }
+            }
+            flash(translate('Orders status updated successfully'))->success();
+            return 1;
+        }
+        return 0;
+    } 
+
     public function order_details(Request $request)
     {
         $order = Order::findOrFail($request->order_id);

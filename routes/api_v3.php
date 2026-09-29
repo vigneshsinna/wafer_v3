@@ -101,7 +101,7 @@ Route::get('languages',                      [SettingsController::class, 'langua
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('auth')->group(function () {
+Route::prefix('auth')->middleware('throttle:v3_auth')->group(function () {
     Route::post('register',        [AuthController::class, 'register'])->middleware('throttle:5,1')->name('api.v3.auth.register');
     Route::post('login',           [AuthController::class, 'login'])->middleware('throttle:5,1')->name('api.v3.auth.login');
     Route::post('password/forgot', [AuthController::class, 'forgotPassword'])->middleware('throttle:3,1')->name('api.v3.auth.password.forgot');

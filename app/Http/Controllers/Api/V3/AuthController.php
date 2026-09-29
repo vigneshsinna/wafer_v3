@@ -56,7 +56,7 @@ class AuthController extends Controller
                 'required',
                 Rule::when($request->register_by === 'email', ['email', 'unique:users,email'], ['numeric', 'unique:users,phone']),
             ],
-            'password'         => 'required|min:6|confirmed',
+            'password'         => 'required|string|min:8|confirmed',
             'register_by'      => 'required|in:email,phone',
             'phone'            => 'nullable|string|max:30|unique:users,phone',
         ]);
