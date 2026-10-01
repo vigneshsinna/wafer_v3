@@ -2241,18 +2241,8 @@
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
-                                    <a href="{{ route('website.rudraspirit-settings') }}" class="aiz-side-nav-link {{ areActiveRoutes(['website.rudraspirit-settings'])}}">
-                                        <span class="aiz-side-nav-text">{{translate('RudraSpirit Theme')}}</span>
-                                    </a>
-                                </li>
-                                <li class="aiz-side-nav-item">
-                                    <a href="{{ route('mukhi-info.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['mukhi-info.index', 'mukhi-info.create', 'mukhi-info.edit'])}}">
-                                        <span class="aiz-side-nav-text">{{translate('Mukhi Information')}}</span>
-                                    </a>
-                                </li>
-                                <li class="aiz-side-nav-item">
-                                    <a href="{{ route('hero-slides.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['hero-slides.index', 'hero-slides.create', 'hero-slides.edit'])}}">
-                                        <span class="aiz-side-nav-text">{{translate('Home Hero Slides')}}</span>
+                                    <a href="{{ route('website.waferking-settings') }}" class="aiz-side-nav-link {{ areActiveRoutes(['website.waferking-settings'])}}">
+                                        <span class="aiz-side-nav-text">{{translate('Wafer King Settings')}}</span>
                                     </a>
                                 </li>
                             @endcan
@@ -2342,7 +2332,7 @@
                             @can('view_all_website_pages')
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('website.pages') }}"
-                                        class="aiz-side-nav-link {{ (areActiveRoutes(['website.pages', 'custom-pages.create', 'custom-pages.edit']) && request('id') != 'portfolio' && request('page') != 'portfolio') ? 'active' : '' }}">
+                                        class="aiz-side-nav-link {{ (areActiveRoutes(['website.pages', 'custom-pages.create', 'custom-pages.edit', 'custom-pages.resource-edit']) && request('id') != 'portfolio' && request('page') != 'portfolio') ? 'active' : '' }}">
                                         <span class="aiz-side-nav-text">{{translate('Pages')}}</span>
                                     </a>
                                 </li>

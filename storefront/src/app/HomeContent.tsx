@@ -35,7 +35,7 @@ export default function HomeContent({ products, error }: { products: Product[]; 
             {/* SECTION 2: VALUE TICKER / TRUST RIBBON */}
             <section className="w-full bg-primary-container text-on-primary py-space-md">
                 <div className="max-w-7xl mx-auto px-gutter-sm md:px-gutter">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-space-md items-center text-center md:text-left">
+                    <div data-scroll-stagger className="grid grid-cols-2 md:grid-cols-4 gap-space-md items-center text-center md:text-left">
                         <div className="flex items-center gap-space-sm justify-center md:justify-start">
                             <span className="material-symbols-outlined text-[28px] text-tertiary-fixed-dim">spa</span>
                             <div className="flex flex-col text-left">
@@ -96,7 +96,7 @@ export default function HomeContent({ products, error }: { products: Product[]; 
                             <span className="font-label-md text-label-md text-accent-700 font-semibold uppercase tracking-wider">
                                 Small-Batch Harvest Wafers
                             </span>
-                            <h2 className="font-headline-lg text-headline-lg text-primary font-bold">
+                            <h2 data-scroll-reveal className="font-headline-lg text-headline-lg text-primary font-bold">
                                 The Botanical Crisp Collection
                             </h2>
                             <p className="font-body-md text-body-md text-on-surface-variant">
@@ -133,7 +133,7 @@ export default function HomeContent({ products, error }: { products: Product[]; 
                 <div className="max-w-7xl mx-auto px-gutter-sm md:px-gutter flex flex-col gap-space-xl">
                     <div className="text-center max-w-2xl mx-auto flex flex-col items-center gap-space-xs">
                         <span className="font-label-md text-label-md text-accent-700 uppercase tracking-widest font-semibold">Nutritional Architecture</span>
-                        <h2 className="font-headline-lg text-headline-lg text-primary font-bold">The Supergrain Truth: Black Rice vs. Other Rice</h2>
+                        <h2 data-scroll-reveal className="font-headline-lg text-headline-lg text-primary font-bold">The Supergrain Truth: Black Rice vs. Other Rice</h2>
                         <p className="font-body-md text-body-md text-on-surface-variant">
                             Direct nutritional comparison per 100g raw edible portion from official Indian nutritional data (ICMR-NIN Indian Food Composition Tables [IFCT] &amp; TNAU bio-analytical studies).
                         </p>
@@ -330,7 +330,7 @@ export default function HomeContent({ products, error }: { products: Product[]; 
                         <span className="font-label-md text-label-md text-accent-700 uppercase tracking-widest font-semibold">
                             Traceable Farm to Crisp
                         </span>
-                        <h2 className="font-headline-lg text-headline-lg text-primary font-bold">
+                        <h2 data-scroll-reveal className="font-headline-lg text-headline-lg text-primary font-bold">
                             The 3-Step Craft Story
                         </h2>
                         <p className="font-body-md text-body-md text-on-surface-variant">
@@ -338,7 +338,7 @@ export default function HomeContent({ products, error }: { products: Product[]; 
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+                    <div data-scroll-stagger className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
                         {/* Step 1 */}
                         <div className="flex flex-col bg-surface-container-low rounded-2xl p-space-lg relative overflow-hidden">
                             <span className="text-[64px] font-black font-headline-xl text-surface-container-high leading-none -mb-4">01</span>
@@ -395,10 +395,10 @@ export default function HomeContent({ products, error }: { products: Product[]; 
                 <div className="max-w-7xl mx-auto px-gutter-sm md:px-gutter flex flex-col gap-space-xl">
                     <div className="text-center max-w-xl mx-auto flex flex-col items-center gap-space-xs">
                         <span className="font-label-md text-label-md text-accent-700 uppercase tracking-widest font-semibold">Community Verified</span>
-                        <h2 className="font-headline-lg text-headline-lg text-primary font-bold">{reviews.length ? "Loved by Our Customers" : "Your Story Starts Here"}</h2>
+                        <h2 data-scroll-reveal className="font-headline-lg text-headline-lg text-primary font-bold">{reviews.length ? "Loved by Our Customers" : "Your Story Starts Here"}</h2>
                         {averageRating !== null ? <div className="flex items-center gap-1 text-accent-700 pt-1"><span className="material-symbols-outlined text-[20px]">star</span><span className="font-label-md text-label-md text-primary font-bold">{averageRating.toFixed(1)} / 5 from {reviewCount} product reviews</span></div> : <p className="font-body-md text-body-md text-on-surface-variant">Explore the collection and be among the first to share a review.</p>}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+                    <div data-scroll-stagger className="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
                         {reviews.length ? reviews.map(review => <article key={review.id} className="flex flex-col bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm justify-between">
                             <div className="flex flex-col gap-space-sm"><div className="flex text-accent-700 gap-0.5" aria-label={`${review.rating} of 5 stars`}>{Array.from({ length: review.rating }, (_, i) => <span key={i} className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>)}</div><p className="font-body-md text-body-md text-primary italic leading-relaxed">“{review.comment}”</p></div>
                             <div className="flex items-center gap-space-sm pt-space-lg mt-space-md border-t border-surface-container"><div className="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center font-bold text-on-tertiary-fixed-variant">{review.user_name.slice(0, 2).toUpperCase()}</div><div className="flex flex-col"><span className="font-label-md text-label-md font-bold text-primary">{review.user_name}</span><span className="font-label-sm text-label-sm text-on-surface-variant">{new Date(review.created_at).toLocaleDateString("en-IN")}</span></div></div>
@@ -414,13 +414,13 @@ export default function HomeContent({ products, error }: { products: Product[]; 
                 <div className="max-w-7xl mx-auto px-gutter-sm md:px-gutter">
                     <div className="relative w-full rounded-3xl bg-primary-container text-on-primary overflow-hidden p-space-xl lg:p-16 shadow-2xl">
                         <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-tertiary-container blur-2xl opacity-60 pointer-events-none" />
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center relative z-10">
+                        <div data-scroll-stagger className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center relative z-10">
                             {/* Banner Copy (7 cols) */}
                             <div className="lg:col-span-7 flex flex-col gap-space-md">
                                 <div className="inline-flex items-center gap-space-xs px-space-md py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed-variant self-start font-label-sm text-label-sm font-bold uppercase tracking-wider">
                                     {sampler ? "Limited Edition Heritage Pack" : "The Botanical Collection"}
                                 </div>
-                                <h2 className="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-surface-container-lowest font-extrabold leading-tight">
+                                <h2 data-scroll-reveal className="font-headline-xl text-headline-xl-mobile md:text-headline-xl text-surface-container-lowest font-extrabold leading-tight">
                                     {sampler ? sampler.name : "Discover Every Botanical Flavour"}
                                 </h2>
                                 <p className="font-body-lg text-body-lg text-tertiary-fixed opacity-95 max-w-lg leading-relaxed">

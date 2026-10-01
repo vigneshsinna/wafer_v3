@@ -24,21 +24,21 @@
 				@csrf
 				<input type="hidden" name="types[]" value="homepage_select">
 				<div class="row">
-					<!-- Home Rudra Spirit -->
+					<!-- Home Wafer King -->
 					<div class="col-xxl-3 col-lg-4 col-sm-6 my-3">
 						<label class="aiz-megabox d-block mb-3">
-							<input value="rudraspirit" type="radio" name="homepage_select" @if(get_setting('homepage_select') == 'rudraspirit') checked @endif>
+							<input value="waferking" type="radio" name="homepage_select" @if(get_setting('homepage_select') == 'waferking') checked @endif>
 							<span class="d-block aiz-megabox-elem rounded-0 img-overlay">
 								<div class="h-350px w-100 overflow-hidden">
-									<img src="{{ static_asset('assets/img/pages/rudraspirit/Gemini_Generated_Image_9jfh569jfh569jfh.webp') }}" class="w-100" alt="home-page-rudraspirit">
+									<img src="{{ static_asset('assets/img/waferking-logo.svg') }}" class="w-100 h-100" style="object-fit:contain;padding:24px;background:#fff8ef" alt="Wafer King storefront">
 								</div>
 							</span>
 						</label>
 						<div class="d-flex flex-wrap justify-content-between align-items-center">
-							<span class="fs-14 fw-500 text-dark">{{ translate('Rudra Spirit') }}</span>
+							<span class="fs-14 fw-500 text-dark">{{ translate('Wafer King') }}</span>
 							<span>
 								<a href="javascript:void(0);" class="btn btn-xs btn-danger rounded-0"
-									onclick="imageShowOverlay('{{ static_asset('assets/img/pages/rudraspirit/Gemini_Generated_Image_9jfh569jfh569jfh.webp') }}')">{{ translate('View') }}</a>
+									onclick="imageShowOverlay('{{ static_asset('assets/img/waferking-logo.svg') }}')">{{ translate('View') }}</a>
 							</span>
 						</div>
 					</div>

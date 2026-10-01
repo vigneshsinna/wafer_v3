@@ -15,6 +15,8 @@ class PageController extends Controller
         $this->middleware(['permission:add_website_page'])->only('create', 'store');
         $this->middleware(['permission:edit_website_page'])->only('edit', 'update');
         $this->middleware(['permission:delete_website_page'])->only('destroy');
+        $this->middleware(['permission:view_all_website_pages'])->only('index');
+        $this->middleware(['permission:edit_website_page'])->only('show');
     }
 
     /**
@@ -24,7 +26,7 @@ class PageController extends Controller
      */
     public function index()
     {
-
+        return redirect()->route('website.pages');
     }
 
     /**
@@ -78,7 +80,7 @@ class PageController extends Controller
      */
     public function show($id)
     {
-        //
+        return redirect()->route('custom-pages.edit', ['id' => Page::findOrFail($id)->slug]);
     }
 
     /**
@@ -89,40 +91,30 @@ class PageController extends Controller
      */
     public function edit(Request $request, $id)
     {
-        $lang = $request->lang;
+        $lang = $request->lang ?: app()->getLocale();
         $page_name = $request->page;
-        $page = Page::where('slug', $id)->first();
-        if($page != null){
-            if ($page_name == 'home') {
-                return view('backend.website_settings.pages.'.get_setting('homepage_select').'.home_page_edit', compact('page','lang'));
-            }
-            elseif ($page_name == 'portfolio') {
-                return view('backend.website_settings.pages.portfolio.home_page_edit', compact('page','lang'));
-            }
-            elseif ($page_name == 'resource') {
-                return view('backend.website_settings.pages.portfolio.resource_page_edit', compact('page','lang'));
-            }
-            elseif ($page_name == 'about_us_page') {
-                return view('backend.website_settings.pages.portfolio.about_us_page_edit', compact('page','lang'));
-            }
-            elseif ($page_name == 'join_us_page') {
-                return view('backend.website_settings.pages.portfolio.join_us_page_edit', compact('page','lang'));
-            }
-            elseif ($page_name == 'news') {
-                return view('backend.website_settings.pages.portfolio.news_page_edit', compact('page','lang'));
-            }
-            elseif ($page_name == 'plans_package_page') {
-                return view('backend.website_settings.pages.portfolio.plans_package_page_edit', compact('page','lang'));
-            }
-            elseif ($id == 'contact-us') {
-                return view('backend.website_settings.pages.contact_us_page_edit', compact('page','lang'));
-            }
-            else{
-                return view('backend.website_settings.pages.edit', compact('page','lang'));
-            }
-            
+        if (($page_name === 'home' || $id === 'home') && get_setting('homepage_select', 'waferking') === 'waferking') {
+            return redirect()->route('website.waferking-settings');
         }
-        abort(404);
+        $page = $request->routeIs('custom-pages.resource-edit')
+            ? Page::find($id)
+            : Page::where('slug', $id)->first();
+        if (!$page && ctype_digit((string) $id)) {
+            $page = Page::find($id);
+        }
+        abort_unless($page, 404);
+        $view = 'backend.website_settings.pages.'.match ($page_name) {
+            'home' => get_setting('homepage_select', 'classic').'.home_page_edit',
+            'portfolio' => 'portfolio.home_page_edit',
+            'resource' => 'portfolio.resource_page_edit',
+            'about_us_page' => 'portfolio.about_us_page_edit',
+            'join_us_page' => 'portfolio.join_us_page_edit',
+            'news' => 'portfolio.news_page_edit',
+            'plans_package_page' => 'portfolio.plans_package_page_edit',
+            default => $page->slug === 'contact-us' ? 'contact_us_page_edit' : 'edit',
+        };
+        abort_unless(view()->exists($view), 404);
+        return view($view, compact('page', 'lang'));
     }
 
     /**

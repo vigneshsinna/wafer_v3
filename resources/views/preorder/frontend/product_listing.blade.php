@@ -427,7 +427,7 @@
                                             @if($product_type == 'preorder_product')
                                             @include('preorder.frontend.product_box2',['product' => $product])
                                             @else
-                                            @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                                            @include('frontend.'.get_frontend_layout().'.partials.product_box_1',['product' => $product])
                                             @endif
                                         </div>
                                     @endforeach

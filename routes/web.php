@@ -241,11 +241,10 @@ Route::controller(SearchController::class)->group(function () {
     Route::post('/ajax-search', 'ajax_search')->name('search.ajax');
     Route::get('/category/{category_slug}', 'listingByCategory')->name('products.category');
     Route::get('/brand/{brand_slug}', 'listingByBrand')->name('products.brand');
-    Route::get('/rudraksha/{slug}', 'mukhi_info')->name('mukhi.info');
     Route::get('/catalogue-buy/{identifier}', 'catalogueBuy')->name('catalogue.buy');
 });
 
-// Shiva Rudraksha Public Catalogue Integration (Redirect all to Root Website)
+// Keep old catalogue bookmarks pointing to the current store.
 Route::get('/catalogue', function () {
     return redirect('/', 301);
 })->name('catalogue.index');
@@ -555,45 +554,24 @@ Route::controller(BlogController::class)->group(function () {
 
 });
 
-// Rudra Spirit theme — FAQ + About are not modeled as admin CMS pages, so they get
-// dedicated routes here. Must be registered before the PageController catch-all
-// '/{slug}' route below, otherwise that wildcard would swallow these URIs first.
+// Customer pages live in the Wafer King storefront. Keep existing route names
+// for bookmarks and shared Blade links; register before the CMS catch-all.
 Route::get('/faq', function () {
     if (session('sf_skin') && config('storefronts.' . session('sf_skin'))) {
         return view('frontend.partials.sf_faq');
     }
-    return view('frontend.rudraspirit.faq');
+    return redirect()->away(rtrim(config('headless.storefront_url'), '/') . '/faq');
 })->name('faq');
 Route::get('/shop', function () {
-    return view('frontend.rudraspirit.shop');
+    return redirect()->away(rtrim(config('headless.storefront_url'), '/') . '/#flavours');
 })->name('rudraspirit.shop');
 
-Route::get('/guide', function () {
-    return view('frontend.rudraspirit.guide');
-})->name('rudraspirit.guide');
-
-Route::get('/knowledge', function () {
-    return view('frontend.rudraspirit.knowledge');
-})->name('rudraspirit.knowledge');
-
-Route::get('/maintenance', function () {
-    return view('frontend.rudraspirit.maintenance');
-})->name('rudraspirit.maintenance');
-
-Route::get('/lord-shiva', function () {
-    return view('frontend.rudraspirit.lord_shiva');
-})->name('rudraspirit.lord_shiva');
-
-Route::get('/recommendations', function () {
-    return view('frontend.rudraspirit.recommendations');
-})->name('rudraspirit.recommendations');
-
 Route::get('/about', function () {
-    return view('frontend.rudraspirit.about');
+    return redirect()->away(rtrim(config('headless.storefront_url'), '/') . '/about');
 })->name('rudraspirit.about');
 
 Route::get('/contact', function () {
-    return view('frontend.rudraspirit.contact');
+    return redirect()->away(rtrim(config('headless.storefront_url'), '/') . '/contact');
 })->name('rudraspirit.contact');
 
 // 3D supplement storefront (page source in resources/forge, models in public/assets/3d).

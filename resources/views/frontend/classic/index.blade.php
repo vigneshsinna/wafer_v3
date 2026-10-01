@@ -14,7 +14,7 @@
     <div class="container">
         <div class="d-flex flex-wrap position-relative">
             <div class="position-static d-none d-xl-block">
-                @include('frontend.' . get_setting('homepage_select') . '.partials.category_menu')
+                @include('frontend.' . get_frontend_layout() . '.partials.category_menu')
             </div>
 
             <!-- Sliders -->

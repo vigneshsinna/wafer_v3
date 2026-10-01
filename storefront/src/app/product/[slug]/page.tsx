@@ -9,8 +9,8 @@ async function RelatedProducts({ slug }: { slug: string }) {
     if (!products.length) return null;
     return <section className="mx-auto max-w-7xl px-gutter-sm pb-space-xl md:px-gutter">
         <p className="font-label-sm uppercase tracking-widest text-accent-700">Other Harvest Wafers</p>
-        <h2 className="mt-2 font-headline-lg text-primary">Complete Your Tasting Set</h2>
-        <div className="mt-space-lg grid gap-space-lg sm:grid-cols-2 lg:grid-cols-3">
+        <h2 data-scroll-reveal className="mt-2 font-headline-lg text-primary">Complete Your Tasting Set</h2>
+        <div data-scroll-stagger className="mt-space-lg grid gap-space-lg sm:grid-cols-2 lg:grid-cols-3">
             {products.map((related, index) => <ProductCard key={related.id} product={related} index={index} />)}
         </div>
     </section>;

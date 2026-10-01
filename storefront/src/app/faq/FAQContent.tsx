@@ -53,7 +53,7 @@ export default function FAQContent({ page }: { page: PublicPage | null }) {
                 </div>
             </section>)}
         </div>
-        <section className="bg-primary-container py-space-xl text-center text-on-primary">
+        <section data-scroll-reveal className="bg-primary-container py-space-xl text-center text-on-primary">
             <h2 className="font-headline-lg">Didn't find your answer? Connect with our Erode Concierge directly.</h2>
             <Link href="/contact" className="mt-5 inline-flex items-center gap-2 rounded-full bg-tertiary-fixed px-6 py-3 font-semibold text-on-tertiary-fixed">Contact Our Team<span className="material-symbols-outlined">arrow_forward</span></Link>
         </section>

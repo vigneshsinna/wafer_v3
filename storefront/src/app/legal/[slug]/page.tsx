@@ -176,7 +176,7 @@ export default async function LegalPage({ params }: { params: Promise<{ slug: st
                     {managedPage?.content ? managedPage.title : page.title}
                 </h1>
 
-                <div className="surface-panel legal-content max-w-none p-8 text-primary/80 md:p-12">
+                <div data-scroll-reveal className="surface-panel legal-content max-w-none p-8 text-primary/80 md:p-12">
                     {managedPage?.content ? <div className="whitespace-pre-line leading-relaxed">{managedPage.content}</div> : page.content}
                 </div>
             </div>

@@ -1906,6 +1906,23 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                 }
             });
         },
+        rememberSidebarScroll: function () {
+            var sidebar = document.querySelector('.aiz-sidebar');
+            if (!sidebar) return;
+            var key = 'aiz-sidebar-scroll:' + window.location.pathname.split('/')[1];
+            try {
+                var saved = sessionStorage.getItem(key);
+                var position = Number(saved);
+                if (saved !== null && Number.isFinite(position) && position >= 0) sidebar.scrollTop = position;
+            } catch (error) {
+                // Browser storage can be disabled; navigation must still work.
+            }
+            function remember() {
+                try { sessionStorage.setItem(key, String(sidebar.scrollTop)); } catch (error) {}
+            }
+            sidebar.addEventListener('scroll', remember, { passive: true });
+            window.addEventListener('pagehide', remember);
+        },
         deleteConfirm: function () {
             $(".confirm-delete").click(function (e) {
                 e.preventDefault();
@@ -2425,6 +2442,7 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
     AIZ.extra.showSessionPopup();
 
     AIZ.plugins.metismenu();
+    AIZ.extra.rememberSidebarScroll();
     AIZ.plugins.bootstrapSelect();
     //AIZ.plugins.tagify();
     AIZ.plugins.textEditor();

@@ -398,13 +398,7 @@
 						},
 						success: function (res) {
 							if (res.success) {
-								// Full image path with domain + public
-								let imagePath = '{{ url('public') }}/' + res.file_name;
-
-								// Set to preview image
-								$('#header-logo-preview').attr('src', imagePath);
-
-								console.log("Live Image Path:", imagePath);
+								$('#header-logo-preview').attr('src', res.image_url);
 							}
 							else {
 								alert(res.message);

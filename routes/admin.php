@@ -424,6 +424,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
             Route::get('/appearance', 'appearance')->name('website.appearance');
             Route::get('/select-homepage', 'select_homepage')->name('website.select-homepage');
             Route::get('/rudraspirit-settings', 'rudraspirit_settings')->name('website.rudraspirit-settings');
+            Route::get('/waferking-settings', 'waferking_settings')->name('website.waferking-settings');
             Route::get('/select-header', 'select_header')->name('website.select-header');
             Route::get('/authentication-layout-settings', 'authentication_layout_settings')->name('website.authentication-layout-settings');
             Route::get('/pages', 'pages')->name('website.pages');
@@ -431,28 +432,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
 
         });
 
-        // RudraSpirit — Mukhi Info management
-        Route::controller(\App\Http\Controllers\MukhiInfoController::class)->group(function () {
-            Route::get('/mukhi-info', 'index')->name('mukhi-info.index');
-            Route::get('/mukhi-info/create', 'create')->name('mukhi-info.create');
-            Route::post('/mukhi-info/store', 'store')->name('mukhi-info.store');
-            Route::get('/mukhi-info/edit/{id}', 'edit')->name('mukhi-info.edit');
-            Route::post('/mukhi-info/update/{id}', 'update')->name('mukhi-info.update');
-            Route::get('/mukhi-info/destroy/{id}', 'destroy')->name('mukhi-info.destroy');
-        });
-
-        // RudraSpirit — Hero slides management
-        Route::controller(\App\Http\Controllers\RudraspiritHeroSlideController::class)->group(function () {
-            Route::get('/hero-slides', 'index')->name('hero-slides.index');
-            Route::get('/hero-slides/create', 'create')->name('hero-slides.create');
-            Route::post('/hero-slides/store', 'store')->name('hero-slides.store');
-            Route::get('/hero-slides/edit/{id}', 'edit')->name('hero-slides.edit');
-            Route::post('/hero-slides/update/{id}', 'update')->name('hero-slides.update');
-            Route::get('/hero-slides/destroy/{id}', 'destroy')->name('hero-slides.destroy');
-        });
-
         // Custom Page
-        Route::resource('custom-pages', PageController::class);
+        Route::resource('custom-pages', PageController::class)->names([
+            'edit' => 'custom-pages.resource-edit',
+            'destroy' => 'custom-pages.resource-destroy',
+        ]);
         Route::controller(PageController::class)->group(function () {
             Route::get('/custom-pages/edit/{id}', 'edit')->name('custom-pages.edit');
             Route::get('/custom-pages/destroy/{id}', 'destroy')->name('custom-pages.destroy');

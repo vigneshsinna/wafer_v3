@@ -32,7 +32,7 @@ class SeedWaferKingCatalog extends Command
             } else {
                 $currencyId = $currency->id;
             }
-            foreach (['homepage_select' => 'classic', 'sslcommerz_sandbox' => '1'] as $type => $value) {
+            foreach (['homepage_select' => 'waferking', 'sslcommerz_sandbox' => '1'] as $type => $value) {
                 if (!DB::table('business_settings')->where('type', $type)->exists()) {
                     DB::table('business_settings')->insert(['type' => $type, 'value' => $value]);
                 }
@@ -42,10 +42,14 @@ class SeedWaferKingCatalog extends Command
                     'type' => 'system_default_currency', 'value' => (string) $currencyId,
                 ]);
             }
-            $header = DB::table('element_types')->where('name', 'header1')->first();
+            DB::table('elements')->insertOrIgnore(['id' => 1, 'name' => 'Header']);
+            if (!DB::table('pages')->where('slug', 'home')->exists()) {
+                DB::table('pages')->insert(['slug' => 'home', 'type' => 'home_page', 'title' => 'Home', 'content' => '[]']);
+            }
+            $header = DB::table('element_types')->where('element_id', 1)->where('name', 'Wafer King')->first();
             if (!$header) {
                 $headerId = DB::table('element_types')->insertGetId([
-                    'element_id' => 1, 'name' => 'header1', 'is_default' => 1,
+                    'element_id' => 1, 'name' => 'Wafer King', 'is_default' => 1,
                 ]);
             } else {
                 $headerId = $header->id;

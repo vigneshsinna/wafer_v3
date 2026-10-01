@@ -70,9 +70,9 @@ else
     echo "✅ Per-file migration pass complete."
 fi
 
-# 4b. Sync Shiva Rudraksha branding & purge demo categories
-echo "🕉️ Syncing Shiva Rudraksha branding & catalogue..."
-php artisan shivarudraksha:sync 2>&1 || true
+# 4b. Migrate legacy branding without overwriting Wafer King admin edits.
+echo "Syncing Wafer King branding..."
+php artisan waferking:sync-branding || exit 1
 
 # 5. Rebuild caches
 echo "⚡ Rebuilding caches..."

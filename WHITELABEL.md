@@ -16,8 +16,10 @@ php artisan brand:set "Client Store Name" --motto="Their tagline"
 ```
 
 Sets the visible brand (`site_name` / `site_motto`) used across storefront, admin,
-page titles and emails. The product default (when no `site_name` is set and no
-`APP_NAME` env) is **Zolo Cart** — see `config/app.php`.
+page titles and emails. This Wafer King deployment defaults to **Wafer King**
+when no `APP_NAME` is configured — see `config/app.php`. Run
+`php artisan waferking:sync-branding` to migrate missing or legacy settings while
+preserving admin edits.
 
 - Logo: `php artisan brand:logo "path/to/logo.png"` — registers the image and
   points header/footer/admin logo settings at it in one step. Or upload via
@@ -64,6 +66,6 @@ addon identifiers. Enterprise entitles all of them.
 | Client-specific (per deploy) | Product-wide (ships in repo) |
 |---|---|
 | `site_name` / logo / colors | Theme + modules code |
-| `APP_URL` / domain | `config/app.php` default name = Zolo Cart |
+| `APP_URL` / domain | Reusable ecommerce modules and helpers |
 | `LICENSE_KEY` / plan | License client + gating logic |
 | Currency + pincode data | `brand:set`, `pincode:import` tooling |

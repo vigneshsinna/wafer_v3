@@ -231,7 +231,7 @@
                         <div class="aiz-carousel sm-gutters-16 arrow-none featured-products" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2.5" data-xs-items="2.5" data-arrows='true' data-autoplay='true' data-infinute="true">
                             @foreach ($feature_products as $key => $product)
                             <div class="carousel-box px-3 position-relative has-transition hov-animate-outline border-right border-top border-bottom @if($key == 0) border-left @endif">
-                                @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                                @include('frontend.'.get_frontend_layout().'.partials.product_box_1',['product' => $product])
                             </div>
                             @endforeach
                         </div>
@@ -386,7 +386,7 @@
                     <div class="aiz-carousel sm-gutters-16 arrow-none featured-products" data-items="6" data-xl-items="5" data-lg-items="4"  data-md-items="3" data-sm-items="2.5" data-xs-items="2.5" data-arrows='true' data-infinite='false'>
                         @foreach ($products as $key => $product)
                         <div class="carousel-box px-3 position-relative has-transition hov-animate-outline border-right border-top border-bottom @if($key == 0) border-left @endif">
-                            @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                            @include('frontend.'.get_frontend_layout().'.partials.product_box_1',['product' => $product])
                         </div>
                         @endforeach
                     </div>
@@ -647,7 +647,7 @@
                                 <div class="row gutters-16 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-4 row-cols-md-3 row-cols-2 border-top border-left">
                                     @foreach ($products as $key => $product)
                                         <div class="col border-right border-bottom has-transition hov-shadow-out z-1">
-                                            @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                                            @include('frontend.'.get_frontend_layout().'.partials.product_box_1',['product' => $product])
                                         </div>
                                     @endforeach
                                 </div>
@@ -790,7 +790,7 @@
                                 <div class="row gutters-16 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-4 row-cols-md-3 row-cols-2 border-top border-left">
                                     @foreach ($products as $key => $product)
                                         <div class="col border-right border-bottom has-transition hov-shadow-out z-1">
-                                            {{-- @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product]) --}}
+                                            {{-- @include('frontend.'.get_frontend_layout().'.partials.product_box_1',['product' => $product]) --}}
                                             @include('preorder.frontend.product_box3',['product' => $product])
                                         </div>
                                     @endforeach
@@ -809,7 +809,7 @@
                     <div class="row gutters-16 row-cols-xxl-6 row-cols-xl-5 row-cols-lg-4 row-cols-md-3 row-cols-2 border-left border-top">
                         @foreach ($products as $key => $product)
                             <div class="col border-bottom border-right overflow-hidden has-transition hov-shadow-out z-1">
-                                @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                                @include('frontend.'.get_frontend_layout().'.partials.product_box_1',['product' => $product])
                             </div>
                         @endforeach
                     </div>

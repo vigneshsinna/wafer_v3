@@ -39,7 +39,7 @@
                                             }
                                         @endphp
                                         <div class="col text-center border-right border-bottom has-transition hov-shadow-out z-1">
-                                            @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                                            @include('frontend.'.get_frontend_layout().'.partials.product_box_1',['product' => $product])
                                         </div>
                                     @endif
                                 @endforeach

@@ -13,7 +13,7 @@ export default async function AboutPage() {
         <div className="min-h-screen bg-background pt-20">
             <section className="relative overflow-hidden border-b border-surface-container-high bg-surface-container-low py-space-xl md:py-28">
                 <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-tertiary-fixed-dim/20 blur-3xl" />
-                <div className="relative mx-auto grid max-w-7xl items-center gap-space-xl px-gutter-sm md:px-gutter lg:grid-cols-12">
+                <div data-scroll-stagger className="relative mx-auto grid max-w-7xl items-center gap-space-xl px-gutter-sm md:px-gutter lg:grid-cols-12">
                     <div className="flex flex-col gap-space-md lg:col-span-7">
                         <span className="inline-flex self-start rounded-full bg-accent-50 px-space-md py-space-xs text-label-md font-semibold uppercase tracking-widest text-accent-700">The WaferKing story</span>
                         <h1 className="font-headline-xl text-headline-xl-mobile md:text-headline-xl font-bold tracking-tight text-primary">{page?.title || "Our Story"}</h1>
@@ -40,7 +40,7 @@ export default async function AboutPage() {
             </section>
 
             <section className="bg-surface py-space-xl md:py-24">
-                <div className="mx-auto grid max-w-7xl items-center gap-space-xl px-gutter-sm md:px-gutter lg:grid-cols-12">
+                <div data-scroll-stagger className="mx-auto grid max-w-7xl items-center gap-space-xl px-gutter-sm md:px-gutter lg:grid-cols-12">
                     <div className="order-2 space-y-space-md lg:order-1 lg:col-span-5">
                         <div className="relative h-72 overflow-hidden rounded-2xl bg-surface-container shadow-md">{storyImages[1]?.thumbnail_url ? <Image src={storyImages[1].thumbnail_url} alt={storyImages[1].name} fill unoptimized={!isOptimizableImage(storyImages[1].thumbnail_url)} sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover" /> : <span className="material-symbols-outlined flex h-full items-center justify-center text-[72px] text-primary-50">inventory_2</span>}</div>
                         <div className="grid grid-cols-2 gap-space-md">
@@ -60,9 +60,9 @@ export default async function AboutPage() {
             <section className="border-y border-surface-container-high bg-surface-container-low py-space-xl md:py-24">
                 <div className="mx-auto max-w-7xl px-gutter-sm md:px-gutter">
                     <span className="text-label-md font-semibold uppercase tracking-wider text-accent-700">Our approach</span>
-                    <h2 className="mt-2 font-headline-xl text-headline-xl-mobile md:text-headline-xl font-bold text-primary">The Clean Craft Philosophy</h2>
+                    <h2 data-scroll-reveal className="mt-2 font-headline-xl text-headline-xl-mobile md:text-headline-xl font-bold text-primary">The Clean Craft Philosophy</h2>
                     <p className="mt-3 max-w-2xl text-body-md text-on-surface-variant">Learn about the products, ingredients, and help available from our team.</p>
-                    <div className="mt-space-xl grid gap-space-lg md:grid-cols-3">
+                    <div data-scroll-stagger className="mt-space-xl grid gap-space-lg md:grid-cols-3">
                         {[
                             { icon: "agriculture", title: "Ingredients", body: "Find the ingredient list on each product page and pack.", href: "/#flavours", link: "Browse products" },
                             { icon: "bakery_dining", title: "The Products", body: "Explore the available wafer flavours and pack options.", href: "/#flavours", link: "Explore flavours" },
@@ -78,7 +78,7 @@ export default async function AboutPage() {
                 </div>
             </section>
 
-            <section className="bg-background py-space-xl text-center md:py-20"><div className="mx-auto flex max-w-3xl flex-col items-center gap-space-md px-gutter-sm md:px-gutter"><span className="text-label-sm font-semibold uppercase tracking-widest text-accent-700">Ready to explore?</span><h2 className="font-headline-xl text-headline-xl-mobile md:text-headline-xl font-bold text-primary">Experience the Collection for Yourself</h2><p className="font-body-lg text-body-lg text-on-surface-variant">See current flavours, pack sizes, availability, and prices in the collection.</p><Link href="/#flavours" className="inline-flex items-center gap-2 rounded-full bg-primary-container px-space-xl py-space-md text-on-primary shadow-md hover:bg-primary-700">Explore the Collection<span className="material-symbols-outlined text-[18px]">arrow_forward</span></Link></div></section>
+            <section data-scroll-reveal className="bg-background py-space-xl text-center md:py-20"><div className="mx-auto flex max-w-3xl flex-col items-center gap-space-md px-gutter-sm md:px-gutter"><span className="text-label-sm font-semibold uppercase tracking-widest text-accent-700">Ready to explore?</span><h2 className="font-headline-xl text-headline-xl-mobile md:text-headline-xl font-bold text-primary">Experience the Collection for Yourself</h2><p className="font-body-lg text-body-lg text-on-surface-variant">See current flavours, pack sizes, availability, and prices in the collection.</p><Link href="/#flavours" className="inline-flex items-center gap-2 rounded-full bg-primary-container px-space-xl py-space-md text-on-primary shadow-md hover:bg-primary-700">Explore the Collection<span className="material-symbols-outlined text-[18px]">arrow_forward</span></Link></div></section>
         </div>
     );
 }

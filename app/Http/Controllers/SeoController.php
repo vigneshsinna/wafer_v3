@@ -70,7 +70,7 @@ class SeoController extends Controller
     public function merchantFeed()
     {
         $currency = optional(Currency::find(get_setting('system_default_currency')))->code ?: 'INR';
-        $shopName = get_setting('website_name', 'Shiva Rudraksha');
+        $shopName = get_setting('website_name', config('app.name'));
 
         $items = '';
         $this->safe(function () use (&$items, $currency) {
@@ -102,7 +102,7 @@ class SeoController extends Controller
         $image = $p->thumbnail ? get_image($p->thumbnail) : uploaded_asset($p->thumbnail_img);
         $price = number_format((float) $p->unit_price, 2, '.', '') . ' ' . $currency;
         $availability = ($p->current_stock ?? 0) > 0 ? 'in_stock' : 'out_of_stock';
-        $brand = optional($p->brand)->name ?: get_setting('website_name', 'Shiva Rudraksha');
+        $brand = optional($p->brand)->name ?: get_setting('website_name', config('app.name'));
 
         $item  = "  <item>\n";
         $item .= '    <g:id>' . e($p->id) . "</g:id>\n";

@@ -10,24 +10,27 @@
                         @csrf
 
                         <div class="mx-1 header-card">
-                            @foreach ($element_types as $key => $element_type)
+                            @forelse ($element_types as $element_type)
                                 
                                     <div class="card text-center px-2 py-3 w-100" data-header="{{$element_type->name}}">
-                                        <input type="radio" hidden 
-                                               id="element_type_{{ $key }}" 
+                                        <input type="radio" class="d-block mx-auto mb-2"
+                                               id="element_type_{{ $element_type->id }}"
                                                name="header_element"
-                                               value="{{ $key+1 }}" 
-                                               @if(get_setting('header_element') == $key+1) checked @endif>
+                                               value="{{ $element_type->id }}"
+                                               @if(get_setting('header_element') == $element_type->id) checked @endif required>
 
-                                        <img src="{{ static_asset('assets/img/headers/header' . ($key+1) . '.webp') }}"
-                                             class="card-img-top mx-auto" alt="header layout">
+                                        <div class="text-left mx-3" inert aria-hidden="true">
+                                            @include('header.'.get_element_type_by_id($element_type->id))
+                                        </div>
 
-                                        <p class="mt-2 mb-0 font-weight-bold">
+                                        <label for="element_type_{{ $element_type->id }}" class="mt-2 mb-0 font-weight-bold">
                                             {{ $element_type->name }}
-                                        </p>
+                                        </label>
                                     </div>
                                 
-                            @endforeach
+                            @empty
+                                <p class="text-center">{{ translate('No header layouts are available.') }}</p>
+                            @endforelse
                         </div>
 
                         <div class="row p-1">
@@ -40,7 +43,7 @@
                             </div>
                             <div class="col-md-4 d-flex align-items-center justify-content-end">
                                 <button type="submit"
-                                    class="btn btn-success  w-100 btn-md rounded-2 fs-14 fw-700 shadow-success">
+                                    class="btn btn-success  w-100 btn-md rounded-2 fs-14 fw-700 shadow-success" @if($element_types->isEmpty()) disabled @endif>
                                     {{ translate('Save') }}
                                 </button>
                             </div>

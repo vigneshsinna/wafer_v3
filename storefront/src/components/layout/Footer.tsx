@@ -9,7 +9,7 @@ export default function Footer({ settings }: { settings: StoreSettings | null })
 
     return (
         <footer className="w-full bg-surface-container-low shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-space-xl pb-space-lg text-on-surface border-t border-surface-container-high/60">
-            <div className="max-w-7xl mx-auto px-gutter-sm md:px-gutter grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl pb-space-xl">
+            <div data-scroll-stagger className="max-w-7xl mx-auto px-gutter-sm md:px-gutter grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl pb-space-xl">
                 {/* Column 1: Brand & Origin */}
                 <div className="flex flex-col gap-space-sm">
                     <div className="flex items-center gap-space-xs">

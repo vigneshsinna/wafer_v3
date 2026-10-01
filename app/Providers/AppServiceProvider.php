@@ -29,7 +29,22 @@ class AppServiceProvider extends ServiceProvider
       if (class_exists(\Illuminate\Foundation\Console\ServeCommand::class)) {
           \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables = array_unique(array_merge(
               \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables,
-              ['TEMP', 'TMP', 'SystemDrive', 'USERPROFILE']
+              [
+                  'TEMP',
+                  'TMP',
+                  'SystemDrive',
+                  'SystemRoot',
+                  'SYSTEMROOT',
+                  'windir',
+                  'WINDIR',
+                  'USERPROFILE',
+                  'HOMEDRIVE',
+                  'HOMEPATH',
+                  'APPDATA',
+                  'LOCALAPPDATA',
+                  'ComSpec',
+                  'COMSPEC',
+              ]
           ));
       }
   }

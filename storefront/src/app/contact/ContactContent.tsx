@@ -51,7 +51,7 @@ export default function ContactContent({ settings }: { settings: StoreSettings |
         </section>
 
         <section className="mx-auto grid max-w-7xl gap-space-xl px-gutter-sm py-space-xl md:px-gutter lg:grid-cols-12 lg:py-20">
-            <aside className="space-y-space-lg lg:col-span-4">
+            <aside data-scroll-stagger className="space-y-space-lg lg:col-span-4">
                 <div className="rounded-xl bg-background-cream p-space-lg shadow-sm">
                     <span className="material-symbols-outlined text-3xl text-accent-700">mail</span>
                     <h3 className="mt-2 font-headline-sm text-primary">Email Dispatch Desk</h3>
@@ -105,7 +105,7 @@ export default function ContactContent({ settings }: { settings: StoreSettings |
         </section>
 
         <section className="bg-surface-container-low py-space-xl">
-            <div className="mx-auto grid max-w-7xl gap-space-xl px-gutter-sm md:px-gutter lg:grid-cols-2">
+            <div data-scroll-stagger className="mx-auto grid max-w-7xl gap-space-xl px-gutter-sm md:px-gutter lg:grid-cols-2">
                 <div>
                     <h2 className="font-headline-lg text-primary">Our Heritage Milling Grounds</h2>
                     {settings?.contact_address && <p className="mt-3 whitespace-pre-line text-on-surface-variant">{settings.contact_address}</p>}

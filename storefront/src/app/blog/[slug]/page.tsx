@@ -22,8 +22,8 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
             {post.category && <p className="mt-space-xl font-label-md font-semibold uppercase tracking-widest text-accent-700">{post.category}</p>}
             <h1 className="mt-space-sm font-headline-xl text-headline-xl-mobile font-extrabold text-primary md:text-headline-xl">{post.title}</h1>
             {post.published_at && <p className="mt-space-md font-body-sm text-body-sm text-on-surface-variant">{new Date(post.published_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</p>}
-            {post.image_url && <div className="relative mt-space-xl aspect-[16/9] overflow-hidden rounded-2xl bg-background-warm"><Image src={post.image_url} alt="" fill unoptimized={!isOptimizableImage(post.image_url)} sizes="(max-width: 896px) 100vw, 896px" className="object-cover" priority /></div>}
-            <div className="mt-space-xl space-y-space-md font-body-lg text-body-lg leading-relaxed text-on-surface-variant">
+            {post.image_url && <div data-scroll-reveal="image" className="relative mt-space-xl aspect-[16/9] overflow-hidden rounded-2xl bg-background-warm"><Image src={post.image_url} alt="" fill unoptimized={!isOptimizableImage(post.image_url)} sizes="(max-width: 896px) 100vw, 896px" className="object-cover" priority /></div>}
+            <div data-scroll-stagger className="mt-space-xl space-y-space-md font-body-lg text-body-lg leading-relaxed text-on-surface-variant">
                 {(post.body || post.excerpt).split(/\n\s*\n/).map((paragraph, index) => <p key={index}>{paragraph.trim()}</p>)}
             </div>
         </div>

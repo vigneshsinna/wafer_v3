@@ -45,7 +45,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
                         alt={product.name}
                         fill
                         unoptimized={!isOptimizableImage(product.thumbnail_url)}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover motion-safe:[@media(hover:hover)_and_(pointer:fine)]:group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     /> : <span className="flex h-full items-center justify-center text-primary-50"><span className="material-symbols-outlined text-[64px]">inventory_2</span></span>}
                     {/* Badge top-left */}

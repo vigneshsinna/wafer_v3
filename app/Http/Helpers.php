@@ -1460,14 +1460,14 @@ if (!function_exists('rudraspirit_root_category')) {
     /**
      * Root catalog category for the RudraSpirit theme.
      * Slug is configurable via the `rudraspirit_root_category` business setting
-     * (default keeps the original 'rudraksha-beads' so nothing breaks if unset).
+     * Defaults to the Wafer King catalog. The setting key is retained for compatibility.
      * Result is cached for the request to avoid the repeated per-render query.
      */
     function rudraspirit_root_category()
     {
         static $cat = false;
         if ($cat === false) {
-            $slug = get_setting('rudraspirit_root_category', 'rudraksha-beads');
+            $slug = get_setting('rudraspirit_root_category', 'wafer-biscuits');
             $cat = \App\Models\Category::where('slug', $slug)->first();
         }
         return $cat;
@@ -3358,11 +3358,21 @@ function filter_single_preorder_product($product)
 }
 
 
+if (!function_exists('get_frontend_layout')) {
+    function get_frontend_layout()
+    {
+        // Wafer King renders in Next.js; retained Blade routes use an installed theme.
+        $layout = get_setting('homepage_select', 'classic');
+        return view()->exists('frontend.'.$layout.'.index') ? $layout : 'classic';
+    }
+}
+
 if (!function_exists('get_element_type_by_id')) {
     function get_element_type_by_id($id)
     {
         $elementType = ElementType::find($id);
-        return $elementType ? strtolower(str_replace(' ', '', $elementType->name)) : null;
+        $name = $elementType ? strtolower(str_replace(' ', '', $elementType->name)) : null;
+        return $elementType && $elementType->element_id == 1 && view()->exists('header.'.$name) ? $name : 'waferking';
     }
 }
 

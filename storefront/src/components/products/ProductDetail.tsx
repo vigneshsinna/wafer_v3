@@ -73,7 +73,7 @@ export default function ProductDetail({ product }: { product: Product }) {
         </div>
         <section className="mx-auto grid max-w-7xl gap-space-xl px-gutter-sm py-space-xl md:px-gutter lg:grid-cols-12">
             <div className="space-y-space-md lg:col-span-7">
-                <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-surface-container shadow-sm">
+                <div data-scroll-reveal="image" className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-surface-container shadow-sm">
                     {images.length ? <Image src={images[imageIndex]} alt={product.name} fill priority unoptimized={!isOptimizableImage(images[imageIndex])} sizes="(max-width: 1024px) 100vw, 60vw" className="object-cover" /> : <span className="material-symbols-outlined text-8xl text-outline">inventory_2</span>}
                     <span className="absolute bottom-4 left-4 rounded-full bg-background-cream/95 px-4 py-1 text-sm font-semibold text-primary">{available ? "In Stock" : "Out of Stock"}</span>
                 </div>

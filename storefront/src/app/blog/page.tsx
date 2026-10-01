@@ -26,10 +26,10 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
             </div>
         </section>
         <section className="mx-auto max-w-7xl px-gutter-sm py-space-xl md:px-gutter lg:py-24">
-            {items.length ? <div className="grid gap-space-lg sm:grid-cols-2 lg:grid-cols-3">
+            {items.length ? <div data-scroll-stagger className="grid gap-space-lg sm:grid-cols-2 lg:grid-cols-3">
                 {items.map(post => <article key={post.slug} className="flex flex-col overflow-hidden rounded-2xl bg-surface-container-lowest shadow-sm">
                     <Link href={`/blog/${post.slug}`} className="relative block aspect-[4/3] overflow-hidden bg-background-warm">
-                        {post.image_url ? <Image src={post.image_url} alt="" fill unoptimized={!isOptimizableImage(post.image_url)} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-300 hover:scale-105" /> : <span className="material-symbols-outlined flex h-full items-center justify-center text-[72px] text-primary-50">menu_book</span>}
+                        {post.image_url ? <Image src={post.image_url} alt="" fill unoptimized={!isOptimizableImage(post.image_url)} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-300 motion-safe:[@media(hover:hover)_and_(pointer:fine)]:hover:scale-105" /> : <span className="material-symbols-outlined flex h-full items-center justify-center text-[72px] text-primary-50">menu_book</span>}
                     </Link>
                     <div className="flex flex-1 flex-col p-space-lg">
                         {post.category && <span className="font-label-sm font-semibold uppercase tracking-wider text-accent-700">{post.category}</span>}

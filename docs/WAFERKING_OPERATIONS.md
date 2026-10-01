@@ -29,6 +29,8 @@ Checkout summary uses free shipping at ₹499 or more for Tamil Nadu and ₹699 
 
 ## Environment and operations
 
+- Run `php artisan migrate` when deploying routing fixes. The October 1 migrations restore missing header/homepage records while preserving existing edits. See [the routing audit](WAFERKING_ROUTING_AUDIT_2026-10-01.md) for verification and scope.
+- Run `php artisan waferking:sync-branding --dry-run`, then `php artisan waferking:sync-branding` to migrate missing or legacy branding without overwriting admin edits. Website Setup → Wafer King Settings links to the existing editors. Select the Wafer King homepage to send Laravel's root URL to `STOREFRONT_URL`.
 - Set `APP_NAME`, `APP_TIMEZONE=Asia/Kolkata`, `STOREFRONT_URL`, and exact `API_CORS_ORIGINS` for the deployment.
 - Set the SMTP variables and `MAIL_FROM_NAME="Wafer King"`; verify reset, order, cancellation, and refund mail where enabled.
 - Save Razorpay test `RAZOR_KEY`, `RAZOR_SECRET`, and `RAZOR_WEBHOOK_SECRET` in `/admin/payment-method`, then activate Razorpay there. Configure the signed `payment.captured` webhook at `/api/v3/checkout/razorpay/webhook` on the public Laravel origin. Never put secrets in the storefront.

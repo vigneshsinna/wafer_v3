@@ -17,6 +17,8 @@ use Artisan;
 use CoreComponentRepository;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Str;
 use DB;
 use ZipArchive;
@@ -43,6 +45,7 @@ class BusinessSettingsController extends Controller
         $this->middleware(['permission:google_firebase_setting'])->only('google_firebase');
         $this->middleware(['permission:shipping_configuration'])->only('shipping_configuration', 'shipping_method', 'shipping_configuration_update');
         $this->middleware(['permission:business_settings'])->only('business_settings');
+        $this->middleware(['permission:select_header'])->only('select_header');
     }
 
     public function general_setting(Request $request)
@@ -430,6 +433,13 @@ class BusinessSettingsController extends Controller
 
     public function update(Request $request)
     {
+        if (in_array('homepage_select', $request->types ?? [], true)) {
+            $request->validate(['homepage_select' => 'required|in:waferking,classic,metro,minima,megamart,reclassic,thecore']);
+        }
+        if (in_array('authentication_layout_select', $request->types ?? [], true)) {
+            $request->validate(['authentication_layout_select' => 'required|in:boxed,free,focused']);
+        }
+
        // dd($request->all());
         $types = $request->types ?? [];
         $resetRefundData = in_array('refund_type', $types);
@@ -685,27 +695,22 @@ class BusinessSettingsController extends Controller
 
     public function select_header(Request $request)
     {
-        $business_settings = BusinessSetting::where('type', 'header_element')->first();
-        if (!$business_settings) {
-            $business_settings = new BusinessSetting();
-            $business_settings->type = 'header_element';
-        }
+        $request->validate(['header_element' => ['required', 'integer', Rule::exists('element_types', 'id')->where('element_id', 1)]]);
+        DB::transaction(function () use ($request) {
+            $selectedElementType = ElementType::where('element_id', 1)->lockForUpdate()->findOrFail($request->header_element);
+            if (!view()->exists('header.'.strtolower(str_replace(' ', '', $selectedElementType->name)))) {
+                throw ValidationException::withMessages(['header_element' => translate('Select an available header layout.')]);
+            }
 
-        $business_settings->value = $request->header_element;
-        $business_settings->save();
-        $selectedElementType = ElementType::find($request->header_element);
-        foreach ($selectedElementType->element_styles as $style) {
-            $businessSetting = BusinessSetting::where('type', $style->name)->first();
-            if (!$businessSetting) {
-                $businessSetting = new BusinessSetting();
-                $businessSetting->type = $style->name;
-                $businessSetting->value = $style->value;
-                $businessSetting->save();
-            }else{
+            $businessSetting = BusinessSetting::firstOrNew(['type' => 'header_element']);
+            $businessSetting->value = $selectedElementType->id;
+            $businessSetting->save();
+            foreach ($selectedElementType->element_styles as $style) {
+                $businessSetting = BusinessSetting::firstOrNew(['type' => $style->name]);
                 $businessSetting->value = $style->value;
                 $businessSetting->save();
             }
-        }
+        });
         Artisan::call('cache:clear');
         flash(translate('Header layout updated successfully'))->success();
         return redirect()->back();

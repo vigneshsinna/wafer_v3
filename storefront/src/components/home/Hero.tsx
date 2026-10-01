@@ -15,7 +15,7 @@ export default function Hero({ products }: { products: Product[] }) {
             <div className="max-w-7xl mx-auto px-gutter-sm md:px-gutter relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl lg:gap-8 items-center">
                     {/* Left Editorial Column (7 cols) */}
-                    <div className="lg:col-span-7 flex flex-col items-start gap-space-md">
+                    <div data-scroll-reveal className="lg:col-span-7 flex flex-col items-start gap-space-md">
                         {/* Eyebrow Pill */}
                         <div className="inline-flex items-center gap-space-xs px-space-md py-1 rounded-full bg-accent-50 text-accent-700">
                             <span className="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse" />
@@ -38,10 +38,10 @@ export default function Hero({ products }: { products: Product[] }) {
                         <div className="flex flex-wrap items-center gap-space-md pt-space-xs w-full sm:w-auto">
                             <a
                                 href="#flavours"
-                                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-space-xs px-space-xl py-space-sm bg-primary-container text-on-primary font-label-lg text-label-lg rounded-full shadow-lg hover:bg-primary-700 transition-all transform active:scale-95 group"
+                                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-space-xs px-space-xl py-space-sm bg-primary-container text-on-primary font-label-lg text-label-lg rounded-full shadow-lg hover:bg-primary-700 transition-[background-color,transform] motion-safe:active:scale-95 group"
                             >
                                 <span>Explore Flavours</span>
-                                <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
+                                <span className="material-symbols-outlined text-[18px] motion-safe:[@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-x-1 transition-transform">
                                     arrow_forward
                                 </span>
                             </a>
@@ -78,7 +78,7 @@ export default function Hero({ products }: { products: Product[] }) {
 
                         {/* Main Product Container */}
                         <div className="relative z-10 w-full max-w-md p-space-sm">
-                            <div className="relative w-full h-[430px] rounded-2xl overflow-hidden shadow-xl bg-surface-container">
+                            <div data-scroll-reveal="image" className="relative w-full h-[430px] rounded-2xl overflow-hidden shadow-xl bg-surface-container">
                                 <Image src="/images/stitch/hero-flatlay.jpg" alt="WaferKing black rice wafer pouches with botanicals and black rice" fill className="object-cover" priority sizes="(max-width: 1024px) 100vw, 40vw" />
                             </div>
 

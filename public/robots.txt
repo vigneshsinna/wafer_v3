@@ -1,4 +1,4 @@
-# Shiva Rudraksha — robots.txt
+# Wafer King — robots.txt
 User-agent: *
 Allow: /
 Disallow: /admin
@@ -30,5 +30,3 @@ Allow: /
 
 User-agent: Applebot-Extended
 Allow: /
-
-Sitemap: https://shivarudraksha.in/sitemap.xml

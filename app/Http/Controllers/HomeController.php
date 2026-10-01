@@ -52,6 +52,10 @@ class HomeController extends Controller
      */
     public function index()
     {
+        if (get_setting('homepage_select', 'waferking') === 'waferking') {
+            return redirect()->away(rtrim(config('headless.storefront_url'), '/'));
+        }
+
         $lang = get_system_language() ? get_system_language()->code : null;
         $featured_categories = Cache::rememberForever('featured_categories', function () {
             return Category::with('bannerImage')->where('featured', 1)->get();
@@ -73,13 +77,13 @@ class HomeController extends Controller
         }
 
 
-        return view('frontend.' . get_setting('homepage_select') . '.index', compact('featured_categories','hot_categories', 'lang'));
+        return view('frontend.' . get_frontend_layout() . '.index', compact('featured_categories','hot_categories', 'lang'));
     }
 
     public function load_todays_deal_section()
     {
         $todays_deal_products = filter_products(Product::where('todays_deal', '1'))->orderBy('id', 'desc')->get();
-        return view('frontend.' . get_setting('homepage_select') . '.partials.todays_deal', compact('todays_deal_products'));
+        return view('frontend.' . get_frontend_layout() . '.partials.todays_deal', compact('todays_deal_products'));
     }
 
     public function load_newest_product_section(Request $request)
@@ -94,23 +98,23 @@ class HomeController extends Controller
                 ->skip($offset)
                 ->take($limit)
                 ->get();
-            return view('frontend.' . get_setting('homepage_select') . '.partials.newest_products_section', compact('newest_products'));
+            return view('frontend.' . get_frontend_layout() . '.partials.newest_products_section', compact('newest_products'));
         }
         $newest_products = Cache::remember('newest_products', 3600, function () use ($limit) {
             return filter_products(Product::latest())->take($limit)->get();
         });
 
-        return view('frontend.' . get_setting('homepage_select') . '.partials.newest_products_section', compact('newest_products'));
+        return view('frontend.' . get_frontend_layout() . '.partials.newest_products_section', compact('newest_products'));
     }
 
     public function load_featured_section()
     {
-        return view('frontend.' . get_setting('homepage_select') . '.partials.featured_products_section');
+        return view('frontend.' . get_frontend_layout() . '.partials.featured_products_section');
     }
 
     public function load_best_selling_section()
     {
-        return view('frontend.' . get_setting('homepage_select') . '.partials.best_selling_section');
+        return view('frontend.' . get_frontend_layout() . '.partials.best_selling_section');
     }
 
     public function load_auction_products_section()
@@ -119,17 +123,17 @@ class HomeController extends Controller
             return;
         }
         $lang = get_system_language() ? get_system_language()->code : null;
-        return view('auction.frontend.' . get_setting('homepage_select') . '.auction_products_section', compact('lang'));
+        return view('auction.frontend.' . get_frontend_layout() . '.auction_products_section', compact('lang'));
     }
 
     public function load_home_categories_section()
     {
-        return view('frontend.' . get_setting('homepage_select') . '.partials.home_categories_section');
+        return view('frontend.' . get_frontend_layout() . '.partials.home_categories_section');
     }
 
     public function load_best_sellers_section()
     {
-        return view('frontend.' . get_setting('homepage_select') . '.partials.best_sellers_section');
+        return view('frontend.' . get_frontend_layout() . '.partials.best_sellers_section');
     }
     public function load_preorder_featured_products_section()
     {
@@ -147,7 +151,7 @@ class HomeController extends Controller
             ->limit(12)
             ->get();
         // });
-        return view('frontend.' . get_setting('homepage_select') . '.partials.preorder_products_section', compact('preorder_products'));
+        return view('frontend.' . get_frontend_layout() . '.partials.preorder_products_section', compact('preorder_products'));
     }
 
     public function login()
@@ -456,7 +460,7 @@ class HomeController extends Controller
             if ($sfCfg && optional(\App\Models\Category::find($detailedProduct->category_id))->slug === $sfCfg['cat']) {
                 return view('frontend.partials.sf_pdp', compact('detailedProduct'));
             }
-            return view('frontend.' . get_setting('homepage_select') . '.product_details', compact('detailedProduct', 'product_queries', 'total_query', 'reviews', 'review_status', 'order_id'));
+            return view()->first(['frontend.'.get_frontend_layout().'.product_details', 'frontend.product_details'], compact('detailedProduct', 'product_queries', 'total_query', 'reviews', 'review_status', 'order_id'));
         }
         abort(404);
     }
@@ -637,7 +641,7 @@ class HomeController extends Controller
             ->where('parent_id', 0)
             ->whereNotIn('slug', ['supplements', 'demo'])
             ->where(function ($q) {
-                $q->where('slug', 'rudraksha-beads')
+                $q->where('slug', get_setting('rudraspirit_root_category', 'wafer-biscuits'))
                   ->orWhereHas('products', function ($pq) {
                       $pq->where('published', 1);
                   })

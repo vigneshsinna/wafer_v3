@@ -1,4 +1,4 @@
-name: Direct Deployment CI/CD (shivarudraksha.in)
+name: Wafer King Deployment
 
 on:
   push:

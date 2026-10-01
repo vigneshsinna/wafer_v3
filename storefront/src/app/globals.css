@@ -6,6 +6,7 @@
   html {
     scroll-behavior: smooth;
   }
+
   
   body {
     @apply bg-background text-primary font-sans antialiased;
@@ -105,4 +106,9 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-primary/50;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-bounce, .animate-pulse, .animate-shimmer { animation: none; }
 }

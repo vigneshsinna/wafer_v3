@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Element;
 use App\Models\ElementType;
 use App\Models\Language;
 use App\Models\Page;
@@ -16,12 +14,12 @@ class WebsiteController extends Controller
     public function __construct()
     {
         // Staff Permission Check
-        $this->middleware(['permission:header_setup'])->only('header');
+        $this->middleware(['permission:header_setup'])->only('header', 'portfolio_header');
         $this->middleware(['permission:footer_setup'])->only('footer');
         $this->middleware(['permission:view_all_website_pages'])->only('pages');
         $this->middleware(['permission:website_appearance'])->only('appearance');
         $this->middleware(['permission:select_homepage'])->only('select_homepage');
-        $this->middleware(['permission:select_homepage'])->only('rudraspirit_settings');
+        $this->middleware(['permission:select_homepage'])->only('waferking_settings', 'rudraspirit_settings');
         $this->middleware(['permission:select_header'])->only('select_header');
         $this->middleware(['permission:authentication_layout_settings'])->only('authentication_layout_settings');
     }
@@ -31,6 +29,9 @@ class WebsiteController extends Controller
         $user = Auth::user();
         $system_language = Language::where('code', app()->getLocale())->first();
         $element_type = ElementType::find(get_setting('header_element'));
+        if (!$element_type || $element_type->element_id != 1 || !view()->exists('header.'.strtolower(str_replace(' ', '', $element_type->name)))) {
+            return redirect()->route('website.select-header');
+        }
         return view('backend.website_settings.header', compact('system_language', 'user', 'element_type'));
     }
     public function footer(Request $request)
@@ -53,17 +54,22 @@ class WebsiteController extends Controller
     }
     public function rudraspirit_settings(Request $request)
     {
-        $categories = Category::orderBy('name', 'asc')->get();
-        return view('backend.website_settings.rudraspirit_settings', compact('categories'));
+        return redirect()->route('website.waferking-settings');
+    }
+
+    public function waferking_settings(Request $request)
+    {
+        return view('backend.website_settings.waferking_settings');
     }
 
     public function select_header(Request $request)
     {
-        $element = Element::find(1);
-        $element_types = ElementType::where('element_id', $element->id)->get();
+        $element_types = ElementType::where('element_id', 1)->get()->filter(function ($type) {
+            return view()->exists('header.'.strtolower(str_replace(' ', '', $type->name)));
+        });
         $user = Auth::user();
         $system_language = Language::where('code', app()->getLocale())->first();
-        return view('backend.website_settings.select_header', compact('element', 'element_types', 'user', 'system_language'));
+        return view('backend.website_settings.select_header', compact('element_types', 'user', 'system_language'));
     }
 
     public function authentication_layout_settings(Request $request)
@@ -100,6 +106,7 @@ class WebsiteController extends Controller
             return response()->json([
                 'success' => true,
                 'file_name' => $upload->file_name,
+                'image_url' => uploaded_asset($upload->id),
             ]);
         } else {
             return response()->json([
@@ -129,9 +136,6 @@ class WebsiteController extends Controller
 
     public function portfolio_header(Request $request)
     {
-        $user = Auth::user();
-        $system_language = Language::where('code', app()->getLocale())->first();
-        $element_type = ElementType::find(get_setting('header_element'));
-        return view('backend.website_settings.portfolio_header', compact('system_language', 'user', 'element_type'));
+        return redirect()->route('website.header');
     }
 }

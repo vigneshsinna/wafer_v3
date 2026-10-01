@@ -20,7 +20,7 @@
                         @foreach (get_featured_products() as $key => $product)
                         <div class="carousel-box position-relative px-0 has-transition hov-animate-outline">
                             <div class="px-3">
-                                @include('frontend.'.get_setting('homepage_select').'.partials.product_box_1',['product' => $product])
+                                @include('frontend.'.get_frontend_layout().'.partials.product_box_1',['product' => $product])
                             </div>
                         </div>
                         @endforeach

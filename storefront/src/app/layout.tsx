@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
+import StorefrontMotion from "@/components/layout/StorefrontMotion";
 import { getStoreSettings } from "@/lib/storeContent";
 
 const inter = Inter({
@@ -40,10 +41,12 @@ export default async function RootLayout({
                 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
             </head>
             <body className="min-h-screen flex flex-col">
-                <Header settings={settings} />
-                <main className="flex-1">{children}</main>
-                <Footer settings={settings} />
-                <CartDrawer />
+                <StorefrontMotion>
+                    <Header settings={settings} />
+                    <main className="flex-1">{children}</main>
+                    <Footer settings={settings} />
+                    <CartDrawer />
+                </StorefrontMotion>
             </body>
         </html>
     );

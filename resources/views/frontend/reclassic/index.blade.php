@@ -47,7 +47,7 @@
             <div class="row gutters-12 position-relative">
                 <!-- category menu -->
                 <div class="position-static d-none d-xl-block col-auto">
-                    @include('frontend.'.get_setting("homepage_select").'.partials.category_menu')
+                    @include('frontend.'.get_frontend_layout().'.partials.category_menu')
                 </div>
 
                 <div class="col-lg mt-4">
