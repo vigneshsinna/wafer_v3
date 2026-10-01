@@ -26,9 +26,28 @@ declare global {
     }
 }
 
+let razorpayScript: Promise<void> | null = null;
+
+function ensureRazorpayScript(): Promise<void> {
+    if (window.Razorpay) return Promise.resolve();
+    if (razorpayScript) return razorpayScript;
+    razorpayScript = new Promise<void>((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => resolve();
+        script.onerror = () => {
+            script.remove();
+            razorpayScript = null;
+            reject(new Error("Could not load Razorpay checkout SDK."));
+        };
+        document.body.appendChild(script);
+    });
+    return razorpayScript;
+}
+
 export default function CheckoutPage() {
     const router = useRouter();
-    const { cart, fetchCart } = useCartStore();
+    const { cart, fetchCart, ensureCartLoaded } = useCartStore();
     const { isAuthenticated, user } = useAuthStore();
 
     const [addresses, setAddresses] = useState<Address[]>([]);
@@ -50,7 +69,7 @@ export default function CheckoutPage() {
 
     useEffect(() => {
         let active = true;
-        const loadCart = () => void fetchCart().finally(() => {
+        const loadCart = () => void ensureCartLoaded().finally(() => {
             if (active) setCartReady(true);
         });
         if (useCartStore.persist.hasHydrated()) loadCart();
@@ -59,7 +78,11 @@ export default function CheckoutPage() {
             return () => { active = false; unsubscribe(); };
         }
         return () => { active = false; };
-    }, [fetchCart]);
+    }, [ensureCartLoaded]);
+
+    useEffect(() => {
+        if (cartReady && paymentAvailable && cart.items.length > 0) void ensureRazorpayScript().catch(() => {});
+    }, [cartReady, paymentAvailable, cart.items.length]);
 
     useEffect(() => {
         if (!isAuthenticated || !addressId || !cart.items.length || addressDirty) {
@@ -95,17 +118,7 @@ export default function CheckoutPage() {
 
         try {
             const order = await startRazorpayPayment(addressId, carrierId ?? summary.carrier_id ?? undefined);
-            await new Promise<void>((resolve, reject) => {
-                if (window.Razorpay) {
-                    resolve();
-                    return;
-                }
-                const script = document.createElement("script");
-                script.src = "https://checkout.razorpay.com/v1/checkout.js";
-                script.onload = () => resolve();
-                script.onerror = () => reject(new Error("Could not load Razorpay checkout SDK."));
-                document.body.appendChild(script);
-            });
+            await ensureRazorpayScript();
 
             const razorpay = new window.Razorpay({
                 key: order.key,

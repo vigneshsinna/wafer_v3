@@ -129,9 +129,9 @@ class CartService
     /**
      * Get cart summary (totals, tax, shipping, discount).
      */
-    public function getSummary(int $userId): array
+    public function getSummary(int $userId, ?Collection $items = null): array
     {
-        $items = Cart::where('user_id', $userId)->active()->get();
+        $items ??= Cart::where('user_id', $userId)->active()->with('product.stocks')->get();
 
         if ($items->isEmpty()) {
             return [
@@ -151,7 +151,7 @@ class CartService
         $includedGst = 0;
 
         foreach ($items as $cartItem) {
-            $product = Product::find($cartItem['product_id']);
+            $product = $cartItem->product;
             if ($product) {
                 $gross = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
                 $grossSubtotal += $gross;

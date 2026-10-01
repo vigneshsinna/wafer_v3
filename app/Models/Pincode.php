@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Pincode extends Model
 {
@@ -18,7 +19,13 @@ class Pincode extends Model
             return false;
         }
 
-        return self::where('pincode', $pin)->whereRaw('UPPER(state) = ?', [self::canonicalIndianState($state)])->exists();
+        return self::where('pincode', $pin)->where('state', self::canonicalIndianState($state))->exists();
+    }
+
+    public static function activeIndianStates(): array
+    {
+        return Cache::remember('active_indian_pincode_states', 86400, fn () =>
+            self::query()->distinct()->pluck('state')->mapWithKeys(fn ($name) => [strtoupper($name) => true])->all());
     }
 
     public static function canonicalIndianState(string $state): string

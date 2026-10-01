@@ -3,11 +3,10 @@
 namespace App\Services\Checkout;
 
 use App\Models\Cart;
-use App\Models\Product;
 use App\Models\Address;
-use App\Models\Carrier;
 use App\Models\Pincode;
 use App\Services\Cart\CartService;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * CheckoutService — Shipping calculation and order placement.
@@ -33,7 +32,14 @@ class CheckoutService
 
     public function summary(int $userId, int $addressId, ?int $carrierId = null): array
     {
-        $this->validateCheckout($userId);
+        return $this->summaryWithCart($userId, $addressId, $carrierId)['summary'];
+    }
+
+    /** @return array{summary: array, items: Collection} */
+    public function summaryWithCart(int $userId, int $addressId, ?int $carrierId = null): array
+    {
+        $items = $this->loadCart($userId);
+        $this->validateItems($items);
         $address = Address::where('id', $addressId)->where('user_id', $userId)
             ->with(['country', 'state'])->firstOrFail();
         if (strtoupper((string) $address->country?->code) !== 'IN' || !$address->state || !$address->city_id) {
@@ -46,60 +52,16 @@ class CheckoutService
         if (!$shippingType) {
             throw new \InvalidArgumentException('Configure Laravel shipping rates before checkout.');
         }
-        $items = Cart::where('user_id', $userId)->active()->with('product')->get();
-        $base = (new CartService())->getSummary($userId);
+        $base = (new CartService())->getSummary($userId, $items);
         $merchandiseTotal = $base['sub_total'] + $base['tax'] - $base['discount'];
         $freeShipping = self::qualifiesForFreeShipping($address->state->name, $merchandiseTotal);
-        $shipping = 0;
-        $shippingOptions = [];
-        $location = ['country_id' => $address->country_id, 'city_id' => $address->city_id, 'area_id' => $address->area_id];
-        if ($shippingType === 'carrier_wise_shipping') {
-            $zoneId = $address->country->zone_id;
-            foreach (Carrier::active()->with('carrier_ranges.carrier_range_prices')->get() as $carrier) {
-                if (!$carrier->free_shipping && (!$zoneId || !$carrier->carrier_range_prices()->where('zone_id', $zoneId)->exists())) {
-                    continue;
-                }
-                $rate = 0;
-                $unratedPhysicalItem = false;
-                if (!$carrier->free_shipping) {
-                    foreach ($items as $index => $item) {
-                        $itemRate = getShippingCost($items, $index, $location, $carrier->id);
-                        if ($itemRate <= 0 && $item->product?->digital != 1) {
-                            $unratedPhysicalItem = true;
-                            break;
-                        }
-                        $rate += $itemRate;
-                    }
-                }
-                if (!$carrier->free_shipping && ($unratedPhysicalItem || $rate <= 0)) {
-                    continue;
-                }
-                $shippingOptions[] = [
-                    'id' => $carrier->id,
-                    'name' => $carrier->name,
-                    'transit_time' => $carrier->transit_time,
-                    'cost' => round($freeShipping ? 0 : $rate, 2),
-                ];
-            }
-            if (!$shippingOptions) {
-                throw new \InvalidArgumentException('No courier rate is configured for this address and cart.');
-            }
-            $chosen = collect($shippingOptions)->firstWhere('id', $carrierId ?? $shippingOptions[0]['id']);
-            if (!$chosen) {
-                throw new \InvalidArgumentException('Select an available courier.');
-            }
-            $carrierId = $chosen['id'];
-            $shipping = $chosen['cost'];
-        } elseif (!$freeShipping) {
-            foreach ($items as $index => $item) {
-                $shipping += getShippingCost($items, $index, $location);
-            }
-            if ($shipping <= 0) {
-                throw new \InvalidArgumentException('No shipping rate is configured for this address.');
-            }
-        }
+        $shippingResult = (new CheckoutShippingCalculator($items, $address, $shippingType))
+            ->calculate($freeShipping, $carrierId);
+        $shipping = $shippingResult['cost'];
+        $carrierId = $shippingResult['carrier_id'];
+        $shippingOptions = $shippingResult['options'];
 
-        return [
+        return ['items' => $items, 'summary' => [
             'address_id' => $addressId,
             'carrier_id' => $carrierId,
             'shipping_options' => $shippingOptions,
@@ -109,7 +71,7 @@ class CheckoutService
             'discount' => $base['discount'],
             'grand_total' => round($merchandiseTotal + $shipping, 2),
             'total_items' => $base['total_items'],
-        ];
+        ]];
     }
 
     public static function qualifiesForFreeShipping(string $state, float $merchandiseTotal): bool
@@ -124,8 +86,17 @@ class CheckoutService
      */
     public function validateCheckout(int $userId): array
     {
-        $cartItems = Cart::where('user_id', $userId)->active()->get();
+        return $this->validateItems($this->loadCart($userId));
+    }
 
+    private function loadCart(int $userId): Collection
+    {
+        return Cart::where('user_id', $userId)->active()->orderBy('id')
+            ->with('product.stocks')->get();
+    }
+
+    private function validateItems(Collection $cartItems): array
+    {
         if ($cartItems->isEmpty()) {
             throw new \Exception('Cart is empty.');
         }
@@ -134,7 +105,7 @@ class CheckoutService
         if (get_setting('minimum_order_amount_check') == 1) {
             $subtotal = 0;
             foreach ($cartItems as $cartItem) {
-                $product = Product::find($cartItem['product_id']);
+                $product = $cartItem->product;
                 if ($product) {
                     $subtotal += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
                 }
@@ -147,7 +118,7 @@ class CheckoutService
 
         // Validate stock availability
         foreach ($cartItems as $cartItem) {
-            $product = Product::find($cartItem->product_id);
+            $product = $cartItem->product;
             if (!$product || !$product->published) {
                 throw new \Exception("Product no longer available.");
             }

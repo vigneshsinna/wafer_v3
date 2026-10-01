@@ -27,16 +27,15 @@ class StorefrontPurchaseService
         if (\App\Models\Currency::find(get_setting('system_default_currency'))?->code !== 'INR') {
             throw new \InvalidArgumentException('Set the store currency to INR before accepting Razorpay payments.');
         }
-        $summary = $this->checkout->summary($userId, $addressId, $carrierId);
+        ['summary' => $summary, 'items' => $items] = $this->checkout->summaryWithCart($userId, $addressId, $carrierId);
         $amount = (int) round($summary['grand_total'] * 100);
         if ($amount < 100) {
             throw new \InvalidArgumentException('Order total must be at least ₹1.');
         }
-        $items = Cart::where('user_id', $userId)->active()->orderBy('id')->get();
         $shippingRemaining = (int) round($summary['shipping_cost'] * 100);
         $lines = [];
         foreach ($items as $index => $cart) {
-            $product = Product::with('stocks')->findOrFail($cart->product_id);
+            $product = $cart->product;
             if ($product->added_by !== 'admin') {
                 throw new \InvalidArgumentException('Only Wafer King products can be purchased in this storefront.');
             }

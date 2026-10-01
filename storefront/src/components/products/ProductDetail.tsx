@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { addToWishlist, getProducts } from "@/lib/api";
+import { addToWishlist } from "@/lib/api";
 import { formatINR } from "@/lib/money";
 import { isOptimizableImage } from "@/lib/images";
 import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
 import type { Product } from "@/types";
-import ProductCard from "./ProductCard";
-import ProductReviews from "./ProductReviews";
+
+const ProductReviews = dynamic(() => import("./ProductReviews"), { ssr: false });
 
 export default function ProductDetail({ product }: { product: Product }) {
     const router = useRouter();
@@ -23,15 +24,18 @@ export default function ProductDetail({ product }: { product: Product }) {
     const [tab, setTab] = useState<"ingredients" | "tasting" | "storage">("ingredients");
     const [message, setMessage] = useState("");
     const [busy, setBusy] = useState(false);
-    const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+    const reviewsRef = useRef<HTMLDivElement>(null);
+    const [showReviews, setShowReviews] = useState(false);
 
     useEffect(() => {
-        let active = true;
-        void getProducts().then(products => {
-            if (active) setRelatedProducts(products.filter(item => item.slug !== product.slug).slice(0, 3));
-        }).catch(() => {});
-        return () => { active = false; };
-    }, [product.slug]);
+        const target = reviewsRef.current;
+        if (!target) return;
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) { setShowReviews(true); observer.disconnect(); }
+        }, { rootMargin: "400px" });
+        observer.observe(target);
+        return () => observer.disconnect();
+    }, []);
     const available = product.stock_status === "in_stock";
     const packOptions = [1, 3, 6].map(count => count * Math.max(product.min_qty, 1));
     const savings = product.compare_at_price > product.sale_price
@@ -112,8 +116,8 @@ export default function ProductDetail({ product }: { product: Product }) {
                 {tab === "storage" && <><h2 className="font-headline-sm text-primary">Storage &amp; Shelf Life</h2><p className="mt-3">Follow the storage directions and best-before date printed on your package.</p></>}
             </div>
         </div></section>
-        <div id="reviews-breakdown" className="mx-auto max-w-7xl px-gutter-sm py-space-xl md:px-gutter"><ProductReviews slug={product.slug} />
-            {relatedProducts.length > 0 && <section className="mt-space-xl"><p className="font-label-sm uppercase tracking-widest text-accent-700">Other Harvest Wafers</p><h2 className="mt-2 font-headline-lg text-primary">Complete Your Tasting Set</h2><div className="mt-space-lg grid gap-space-lg sm:grid-cols-2 lg:grid-cols-3">{relatedProducts.map((related, index) => <ProductCard key={related.id} product={related} index={index} />)}</div></section>}
+        <div id="reviews-breakdown" ref={reviewsRef} className="mx-auto max-w-7xl px-gutter-sm py-space-xl md:px-gutter min-h-48">
+            {showReviews ? <ProductReviews slug={product.slug} /> : <h2 className="text-2xl font-bold text-primary">Customer Reviews</h2>}
         </div>
     </div>;
 }

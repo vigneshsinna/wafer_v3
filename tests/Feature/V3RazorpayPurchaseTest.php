@@ -5,20 +5,66 @@ namespace Tests\Feature;
 use App\Models\Address;
 use App\Models\Cart;
 use App\Models\City;
+use App\Models\Country;
 use App\Models\Order;
 use App\Models\ProductStock;
 use App\Models\StorefrontPaymentAttempt;
 use App\Models\User;
 use App\Services\Checkout\CheckoutService;
+use App\Services\Checkout\CheckoutShippingCalculator;
 use App\Services\Checkout\StorefrontPurchaseService;
 use App\Services\Payment\RazorpayGateway;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 use Tests\TestCase;
 
 class V3RazorpayPurchaseTest extends TestCase
 {
+    public function test_preloaded_carrier_shipping_matches_legacy_rate_with_fewer_queries(): void
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('business_settings')->where('type', 'shipping_type')->update(['value' => 'carrier_wise_shipping']);
+            Cache::forget('business_settings');
+            $country = Country::findOrFail(101);
+            $address = new Address(['country_id' => $country->id]);
+            $address->setRelation('country', $country);
+            $carrierId = DB::table('carriers')->insertGetId(['name' => 'Checkout Test Courier', 'status' => 1, 'free_shipping' => 0]);
+            $rangeId = DB::table('carrier_ranges')->insertGetId([
+                'carrier_id' => $carrierId, 'billing_type' => 'weight_based', 'delimiter1' => 0, 'delimiter2' => 100,
+            ]);
+            DB::table('carrier_range_prices')->insert([
+                'carrier_id' => $carrierId, 'carrier_range_id' => $rangeId, 'zone_id' => $country->zone_id, 'price' => 45,
+            ]);
+            $items = new Collection();
+            foreach ([6, 7] as $id) {
+                $cart = new Cart(['product_id' => $id, 'variation' => '', 'quantity' => 1]);
+                $cart->setRelation('product', \App\Models\Product::with('stocks')->findOrFail($id));
+                $items->add($cart);
+            }
+            $calculator = new CheckoutShippingCalculator($items, $address, 'carrier_wise_shipping');
+
+            DB::connection()->enableQueryLog();
+            DB::connection()->flushQueryLog();
+            $option = collect($calculator->calculate(false, $carrierId)['options'])->firstWhere('id', $carrierId);
+            $preloadedQueries = count(DB::getQueryLog());
+            DB::connection()->flushQueryLog();
+            $legacy = getShippingCost($items, 0, ['country_id' => $country->id], $carrierId)
+                + getShippingCost($items, 1, ['country_id' => $country->id], $carrierId);
+            $legacyQueries = count(DB::getQueryLog());
+            DB::connection()->disableQueryLog();
+
+            $this->assertEqualsWithDelta($legacy, $option['cost'], 0.01);
+            $this->assertLessThan($legacyQueries, $preloadedQueries);
+        } finally {
+            DB::connection()->disableQueryLog();
+            DB::rollBack();
+            Cache::forget('business_settings');
+        }
+    }
+
     public function test_captured_payment_creates_one_paid_order_and_updates_stock_once(): void
     {
         DB::beginTransaction();

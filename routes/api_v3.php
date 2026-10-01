@@ -63,6 +63,7 @@ Route::get('products/featured',              [ProductController::class, 'feature
 Route::get('products/best-sellers',          [ProductController::class, 'bestSellers'])->name('api.v3.products.best_sellers');
 Route::get('products/todays-deals',          [ProductController::class, 'todaysDeals'])->name('api.v3.products.todays_deals');
 Route::get('products/{slug}',                [ProductController::class, 'show'])->name('api.v3.products.show');
+Route::get('products/{slug}/related',        [ProductController::class, 'related'])->name('api.v3.products.related');
 Route::post('products/{slug}/variant-price', [ProductController::class, 'variantPrice'])->name('api.v3.products.variant_price');
 Route::get('products/{slug}/reviews',         [ReviewController::class, 'index'])->name('api.v3.reviews.index');
 Route::get('products/{slug}/reviews/summary', [ReviewController::class, 'summary'])->name('api.v3.reviews.summary');

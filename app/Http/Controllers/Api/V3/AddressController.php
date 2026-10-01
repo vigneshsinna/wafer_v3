@@ -32,9 +32,8 @@ class AddressController extends Controller
         $states = State::where('country_id', $countryId)
             ->where('status', 1)->orderBy('name')->get(['id', 'name']);
         if (strtoupper((string) $country->code) === 'IN') {
-            $validStates = Pincode::query()->distinct()->pluck('state')
-                ->mapWithKeys(fn ($name) => [strtoupper($name) => true]);
-            $states = $states->filter(fn ($state) => $validStates->has(Pincode::canonicalIndianState($state->name)))->values();
+            $validStates = Pincode::activeIndianStates();
+            $states = $states->filter(fn ($state) => isset($validStates[Pincode::canonicalIndianState($state->name)]))->values();
         }
 
         return $this->successResponse($states);

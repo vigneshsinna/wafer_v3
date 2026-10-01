@@ -19,6 +19,10 @@ const emptyCart: Cart = {
     item_count: 0,
 };
 
+let pendingInitialCart: Promise<void> | null = null;
+let pendingInitialToken: string | null = null;
+let cartFetchVersion = 0;
+
 function guestCart(items: GuestItem[]): Cart {
     const cartItems: CartItem[] = items.map(item => ({
         id: item.product_id,
@@ -46,9 +50,12 @@ interface CartState {
     cart: Cart;
     guestItems: GuestItem[];
     isLoading: boolean;
+    hasLoaded: boolean;
+    loadedForToken: string | null;
     isOpen: boolean;
     error: string | null;
     fetchCart: () => Promise<void>;
+    ensureCartLoaded: () => Promise<void>;
     addItem: (productId: number, quantity?: number, product?: Product) => Promise<void>;
     updateItem: (cartItemId: number, quantity: number) => Promise<void>;
     removeItem: (cartItemId: number) => Promise<void>;
@@ -66,19 +73,35 @@ export const useCartStore = create<CartState>()(
             cart: emptyCart,
             guestItems: [],
             isLoading: false,
+            hasLoaded: false,
+            loadedForToken: null,
             isOpen: false,
             error: null,
             fetchCart: async () => {
-                if (!api.storedToken()) {
-                    set({ cart: guestCart(get().guestItems), isLoading: false });
+                const version = ++cartFetchVersion;
+                const token = api.storedToken();
+                if (!token) {
+                    set({ cart: guestCart(get().guestItems), isLoading: false, hasLoaded: true, loadedForToken: null });
                     return;
                 }
-                set({ isLoading: true, error: null });
+                set({ isLoading: true, error: null, hasLoaded: false });
                 try {
-                    set({ cart: await api.getCart(), isLoading: false });
+                    const cart = await api.getCart();
+                    if (cartFetchVersion === version && api.storedToken() === token) set({ cart, isLoading: false, hasLoaded: true, loadedForToken: token });
                 } catch (error) {
-                    set({ cart: guestCart(get().guestItems), error: error instanceof Error ? error.message : "Could not load cart", isLoading: false });
+                    if (cartFetchVersion === version && api.storedToken() === token) set({ cart: guestCart(get().guestItems), error: error instanceof Error ? error.message : "Could not load cart", isLoading: false, hasLoaded: false });
                 }
+            },
+            ensureCartLoaded: () => {
+                const token = api.storedToken();
+                if (get().hasLoaded && get().loadedForToken === token) return Promise.resolve();
+                if (pendingInitialCart && pendingInitialToken === token) return pendingInitialCart;
+                pendingInitialToken = token;
+                const shared = get().fetchCart().finally(() => {
+                    if (pendingInitialCart === shared) pendingInitialCart = null;
+                });
+                pendingInitialCart = shared;
+                return shared;
             },
             addItem: async (productId, quantity = 1, product) => {
                 set({ isOpen: true, error: null });
@@ -163,7 +186,7 @@ export const useCartStore = create<CartState>()(
                 await get().fetchCart();
                 if (failed.length) set({ error: `Could not merge ${failed.join("; ")}`, isOpen: true });
             },
-            resetToGuestCart: () => set({ cart: guestCart(get().guestItems) }),
+            resetToGuestCart: () => { cartFetchVersion++; set({ cart: guestCart(get().guestItems), hasLoaded: true, loadedForToken: null, isLoading: false }); },
             openCart: () => set({ isOpen: true }),
             closeCart: () => set({ isOpen: false }),
             toggleCart: () => set(state => ({ isOpen: !state.isOpen })),
@@ -171,7 +194,7 @@ export const useCartStore = create<CartState>()(
         {
             name: "guest-cart",
             partialize: state => ({ guestItems: state.guestItems }),
-            onRehydrateStorage: () => state => { if (state) void state.fetchCart(); },
+            onRehydrateStorage: () => state => { if (state) void state.ensureCartLoaded(); },
         }
     )
 );

@@ -42,6 +42,11 @@ class ProductController extends Controller
         return $this->resourceResponse($product, ProductResource::class);
     }
 
+    public function related(string $slug): JsonResponse
+    {
+        return $this->collectionResponse($this->service->getRelatedBySlug($slug), ProductResource::class);
+    }
+
     /**
      * POST /api/v3/products/{slug}/variant-price
      * Get price for a specific variant.

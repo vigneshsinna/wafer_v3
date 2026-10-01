@@ -74,6 +74,10 @@ export async function getProduct(slug: string): Promise<Product> {
     return fetchApi<Product>(`/products/${encodeURIComponent(slug)}`, typeof window === "undefined" ? { next: { revalidate: 60 } } as RequestInit : {});
 }
 
+export async function getRelatedProducts(slug: string): Promise<Product[]> {
+    return fetchApi<Product[]>(`/products/${encodeURIComponent(slug)}/related`, typeof window === "undefined" ? { next: { revalidate: 60 } } as RequestInit : {});
+}
+
 // Cart API
 export async function getCart(): Promise<Cart> {
     const data = await fetchApi<{ items: CartItem[]; summary: Cart["summary"] }>("/cart");

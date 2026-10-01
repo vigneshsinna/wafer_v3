@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 return new class extends Migration
 {
@@ -45,6 +46,7 @@ return new class extends Migration
         } finally {
             fclose($handle);
         }
+        Cache::forget('active_indian_pincode_states');
     }
 
     public function down(): void

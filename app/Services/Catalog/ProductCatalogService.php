@@ -110,6 +110,17 @@ class ProductCatalogService
         return Product::withStorefrontData()->where('slug', $slug)->where('published', 1)->firstOrFail();
     }
 
+    public function getRelatedBySlug(string $slug): Collection
+    {
+        $product = Product::query()->without(['product_translations', 'taxes', 'thumbnail'])
+            ->where('slug', $slug)->where('published', 1)->firstOrFail(['id', 'category_id']);
+
+        $related = Product::withStorefrontData()->physical()->where('id', '!=', $product->id);
+        return filter_products($related)
+            ->orderByRaw('CASE WHEN category_id = ? THEN 0 ELSE 1 END', [$product->category_id])
+            ->latest()->limit(3)->get();
+    }
+
     /**
      * Get variant price details for a product.
      */
