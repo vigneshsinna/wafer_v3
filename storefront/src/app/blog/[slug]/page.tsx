@@ -5,13 +5,15 @@ import { notFound } from "next/navigation";
 import { getStoreBlog } from "@/lib/storeContent";
 import { isOptimizableImage } from "@/lib/images";
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-    const post = await getStoreBlog(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const post = await getStoreBlog(slug);
     return { title: post ? `${post.title} | WaferKing` : "Article | WaferKing", description: post?.excerpt || undefined };
 }
 
-export default async function BlogArticlePage({ params }: { params: { slug: string } }) {
-    const post = await getStoreBlog(params.slug);
+export default async function BlogArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const post = await getStoreBlog(slug);
     if (!post) notFound();
 
     return <article className="min-h-screen bg-background pt-20">

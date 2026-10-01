@@ -5,19 +5,39 @@ on: [push, pull_request, workflow_dispatch]
 jobs:
   php:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: waferking_checkout_test
+          MYSQL_ROOT_PASSWORD: checkout_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: waferking_checkout_test
+      DB_USERNAME: root
+      DB_PASSWORD: checkout_test
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, xml, gd, zip, intl, bcmath, sqlite3, pdo_sqlite
+          extensions: mbstring, xml, gd, zip, intl, bcmath, pdo_mysql, sqlite3, pdo_sqlite
           coverage: none
       - run: cp .env.example .env
       - run: composer install --no-interaction --prefer-dist --no-progress
       - run: php artisan key:generate
-      # Database-backed feature tests need a sanitized base schema and seed fixture.
       - run: php artisan test --testsuite=Unit
       - run: php artisan test tests/Feature/ReleaseRouteSafetyTest.php
+      - run: php artisan test tests/Feature/V3CheckoutShippingTest.php tests/Feature/V3RazorpayPurchaseTest.php
 
   storefront:
     runs-on: ubuntu-latest
@@ -32,5 +52,6 @@ jobs:
           cache: npm
           cache-dependency-path: storefront/package-lock.json
       - run: npm ci
+      - run: npm audit --audit-level=high
       - run: npm run build
       - run: npx tsc --noEmit

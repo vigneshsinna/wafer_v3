@@ -10,9 +10,9 @@ use App\Services\Checkout\CheckoutService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
-use Tests\TestCase;
+use Tests\CheckoutTestCase;
 
-class V3CheckoutShippingTest extends TestCase
+class V3CheckoutShippingTest extends CheckoutTestCase
 {
     public function test_admin_courier_rates_and_indian_pin_validation(): void
     {

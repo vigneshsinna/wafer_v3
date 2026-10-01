@@ -16,8 +16,9 @@ async function RelatedProducts({ slug }: { slug: string }) {
     </section>;
 }
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
-    const product = await getProduct(params.slug).catch(() => null);
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const product = await getProduct(slug).catch(() => null);
     if (!product) notFound();
-    return <><ProductDetail product={product} /><Suspense fallback={null}><RelatedProducts slug={params.slug} /></Suspense></>;
+    return <><ProductDetail product={product} /><Suspense fallback={null}><RelatedProducts slug={slug} /></Suspense></>;
 }

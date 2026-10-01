@@ -9,6 +9,7 @@ class ReleaseRouteSafetyTest extends TestCase
 {
     public function test_legacy_entry_points_and_v3_admin_api_are_not_registered(): void
     {
+        $this->assertFileDoesNotExist(public_path('deploy-webhook.php'));
         $uris = array_map(fn ($route) => $route->uri(), Route::getRoutes()->getRoutes());
 
         foreach (['update', 'update/step1', 'update/step2', 'update/step3', 'purchase_code',

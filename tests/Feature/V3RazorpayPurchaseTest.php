@@ -18,9 +18,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 use Mockery;
-use Tests\TestCase;
+use Tests\CheckoutTestCase;
 
-class V3RazorpayPurchaseTest extends TestCase
+class V3RazorpayPurchaseTest extends CheckoutTestCase
 {
     public function test_preloaded_carrier_shipping_matches_legacy_rate_with_fewer_queries(): void
     {
@@ -31,7 +31,7 @@ class V3RazorpayPurchaseTest extends TestCase
             $country = Country::findOrFail(101);
             $address = new Address(['country_id' => $country->id]);
             $address->setRelation('country', $country);
-            $carrierId = DB::table('carriers')->insertGetId(['name' => 'Checkout Test Courier', 'status' => 1, 'free_shipping' => 0]);
+            $carrierId = DB::table('carriers')->insertGetId(['name' => 'Checkout Test Courier', 'transit_time' => 'Test', 'status' => 1, 'free_shipping' => 0]);
             $rangeId = DB::table('carrier_ranges')->insertGetId([
                 'carrier_id' => $carrierId, 'billing_type' => 'weight_based', 'delimiter1' => 0, 'delimiter2' => 100,
             ]);

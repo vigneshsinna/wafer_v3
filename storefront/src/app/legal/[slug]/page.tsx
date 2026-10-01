@@ -160,13 +160,14 @@ const legalContent: Record<string, { title: string; content: React.ReactNode }> 
     },
 };
 
-export default async function LegalPage({ params }: { params: { slug: string } }) {
-    const page = legalContent[params.slug];
+export default async function LegalPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const page = legalContent[slug];
 
     if (!page) {
         notFound();
     }
-    const managedPage = await getStorePage(params.slug);
+    const managedPage = await getStorePage(slug);
 
     return (
         <div className="min-h-screen bg-background pb-20 pt-32">

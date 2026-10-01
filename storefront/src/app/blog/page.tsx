@@ -9,8 +9,9 @@ export const metadata: Metadata = {
     description: "Stories and articles from WaferKing.",
 };
 
-export default async function BlogPage({ searchParams }: { searchParams: { page?: string } }) {
-    const page = Math.max(1, Number.parseInt(searchParams.page || "1", 10) || 1);
+export default async function BlogPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+    const query = await searchParams;
+    const page = Math.max(1, Number.parseInt(query.page || "1", 10) || 1);
     const posts = await getStoreBlogs(page);
     const items = posts?.items || [];
     const pagination = posts?.pagination;
